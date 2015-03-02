@@ -1,0 +1,169 @@
+﻿@model MassMessagesEditModel
+@{
+    Layout = "_ControlPanel";
+    IEnumerable<MenuItem> roles = ViewData.Get<IEnumerable<MenuItem>>("Roles", null);
+    var maxUserRank = ViewData.Get<long>("maxUserRank", 1);
+    Html.Script("~/Bundle/Scripts/HtmlEditor"); 
+}
+<div class="tn-block tnc-ctnborder">
+    <div class="tnc-main">
+        <div class="tnc-ctn-center">
+            <h1>
+                <span>群发消息</span></h1>
+            <div class="tnc-ctnright-list">
+                <div class="tn-form-box">
+                    @using (Html.BeginAjaxForm("MassMessages", "ControlPanelOperation", null, FormMethod.Post, new AjaxFormOptions { OnSuccessCallBack = "OnSuccessCallBack" }, new RouteValueDictionary { { "Id", "MassMessage" } }))
+                    {
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th>收件人： </th>
+                                    <td>
+                                        <ul class="tn-radiobutton-list">
+                                            <li class="tn-inline-list">
+                                                @Html.RadioButton("IsByRole", true, true, new { @id = "isByRole-true", @class = "tn-radiobutton" })
+                                                <label for="isByRole-true">
+                                                    按角色</label>
+                                            </li>
+                                            <li class="tn-inline-list">
+                                                @Html.RadioButton("IsByRole", false, false, new { @id = "isByRole-false", @class = "tn-radiobutton" })
+                                                <label for="isByRole-false">
+                                                    按等级</label>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr id="byRoleName">
+                                    <th>&nbsp;</th>
+                                    <td>
+                                        @Html.Hidden("RoleName")
+                                        @Html.MenuButton("RoleNames", "请选择用户角色", MenuItemType.CheckBox, roles)<span class="tn-text-note" style="color: Red">注意：此项不选择会给所有用户发送消息！</span>
+                                    </td>
+                                </tr>
+                                <tr style="display: none" id="byRank">
+                                    <th>&nbsp;</th>
+                                    <td>
+                                        @Html.TextBox("MinRank", 1, new { @class = "tn-textbox tn-input-short tn-border-gray {required:true,digits:true,min:1,max:" + maxUserRank + ", messages:{required:'请填写等级下限',min:'等级下限最小为1级',max:'等级下限最大为" + maxUserRank + "级',digits:'等级下限必须为整数'}}", watermark = "等级下限" })
+                                        -
+                            @Html.TextBox("MaxRank", maxUserRank, new { @class = "tn-textbox tn-input-short tn-border-gray {required:true,digits:true,min:1,max:" + maxUserRank + ",messages:{required:'请填写等级上限',min:'等级上限最小为1级',max:'等级上限最大为" + maxUserRank + "级',digits:'等级上限必须为整数'}}", watermark = "等级上限" })
+                                        @Html.ValidationMessage("MinRank")
+                                        @Html.ValidationMessage("MaxRank")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>发送方式：</th>
+                                    <td>
+                                        <ul class="tn-radiobutton-list">
+                                            <li class="tn-inline-list">
+                                                @Html.RadioButton("isMessage", true, true, new { @id = "isMessage-true", @class = "tn-radiobutton" })
+                                                <label for="isMessage-true">
+                                                    站内信</label>
+                                            </li>
+                                            <li class="tn-inline-list">
+                                                @Html.RadioButton("isMessage", false, false, new { @id = "isMessage-false", @class = "tn-radiobutton" })
+                                                <label for="isMessage-false">
+                                                    邮件</label>
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr id="subject" style="display: none">
+                                    <th>标题：</th>
+                                    <td>
+                                        @Html.TextBoxFor(m => m.Subject, InputWidthTypes.Long)
+                                        @Html.ValidationMessage("Subject")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>内容：</th>
+                                    <td style="width: 500px">
+                                        @Html.HtmlEditorFor(m => m.Body, new HtmlEditorOptions(HtmlEditorMode.Simple).MergeHtmlAttribute("style", "height:300px;"))
+                                        @Html.ValidationMessage("Body")
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <td>
+                                        <span class="tn-text-note tn-action">最多3000字</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <td>
+                                        @Html.Button("提交", ButtonTypes.Button, HighlightStyles.Primary, htmlAttributes: new { id = "massMessageSubmit" })
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.ScriptBlock(@<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        $('input[name="roleName"]').click(function () {
+            var $span = $("button[name='roleName_Button']").find("span.tn-button-text");
+            var str = "";
+            $('input[name="roleName"]:checked').each(function () {
+                str += $(this).next().text() + ",";
+            });
+            if (str.length == 0)
+                str = "请选择用户角色";
+            else
+                str = str.substring(0, str.length - 1);
+            $span.text(str);
+        });
+
+        $("#isByRole-true").click(function () {
+            $("#byRoleName").show();
+            $("#byRank").hide();
+        });
+        $("#isByRole-false").click(function () {
+            $("#byRoleName").hide();
+            $("#byRank").show();
+        });
+
+        $("#isMessage-true").click(function () {
+            $("#subject").hide();
+        });
+        $("#isMessage-false").click(function () {
+            $("#subject").show();
+        });
+        
+        $("#massMessageSubmit").click(function () {
+            if (!$("#MassMessage").valid())
+                return false;
+            $("#roleName_Menu").appendTo($("#massMessageSubmit").parents("form:first"));
+            tinyMCE.triggerSave();
+            $("#massMessageSubmit").parents("form:first").submit();
+        });
+
+        //火狐刷新被重新选中
+        if ($(".tn-checkbox").length) {
+            $(".tn-checkbox").each(function () {
+                this.checked = false;
+            });
+        }
+
+        //将选中的角色名字放放到表单中去
+        $("[name='RoleNames'][type='checkbox']").click(function () {
+            var roleNames = $("#RoleName").val();
+            var currentRolename = $(this).val() + ",";
+            if (this.checked) {
+                if (roleNames.indexOf(currentRolename) == -1) {
+                    roleNames += currentRolename;
+                }
+            }
+            else {
+                roleNames = roleNames.replace(currentRolename, "");
+            }
+            $("#RoleName").val(roleNames);
+        });
+
+    });
+    function OnSuccessCallBack(data) {
+        art.dialog.tips(data.MessageContent, 1.5, data.MessageType)
+    }
+</script>)

@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Tunynet.Common.ItemInTag>
+@if (Model != null)
+{
+
+    <ul class="tnc-tags-list tn-helper-clearfix">
+        @foreach (var userTag in Model)
+        {
+            <li id="myUserTag_@(userTag.Id)" class="tnc-tag tn-border-gray tn-bg-gray">
+                @(userTag.TagName)
+                @Html.AjaxDeleteButton(new AjaxDeleteButton().SetConfirm("确认要删除标签吗? &nbsp;&nbsp;")
+                                        .MergeHtmlAttribute("class", "tn-icon tn-smallicon-cross tn-icon-inline")
+                                        .MergeHtmlAttribute("data-tagname", userTag.TagName)
+                                       .SetTooltip("删除标签")
+                                       .SetText("删除")
+                                       .SetDeleteTarget("#myUserTag_" + userTag.Id)
+                                       .SetUrl(SiteUrls.Instance().DeleteMyUserTag(Url.SpaceKey(), userTag.Id)).SetOnSuccessCallBack("DeleteMyUserTagCallBack"))
+            </li>
+        }
+    </ul>
+}
+
+@Html.ScriptBlock(@<script type="text/javascript">
+    function DeleteMyUserTagCallBack(data, $this) {
+        var tagname = $this.data("tagname");
+        $("#UserSiteTagsDiv").find("a.tn-state-disabled:contains(" + tagname + ")").removeClass("tn-bg-gray tn-state-disabled");
+    }
+</script>)

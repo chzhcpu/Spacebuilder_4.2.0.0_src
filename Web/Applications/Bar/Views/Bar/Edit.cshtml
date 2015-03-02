@@ -1,0 +1,9 @@
+﻿@model BarThreadEditModel
+@{
+    Layout = "app-1col";
+    Html.Style("~/Applications/Bar/Styles/app.css");
+}
+@section ContentHeader{
+    @Html.Action("_BarSubmenu", "Bar", new { SectionId = Model.SectionId })
+}
+@Html.Partial("~/Applications/Bar/Views/Bar/_Edit.cshtml", Model)

@@ -1,0 +1,449 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{52AD1CC6-BFD6-4297-8F20-232D35144582}</ProjectGuid>
+    <ProjectTypeGuids>{E53F8FEA-EAE0-44A6-8774-FFD645390401};{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Spacebuilder.CMS</RootNamespace>
+    <AssemblyName>Spacebuilder.CMS</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <OldToolsVersion>4.0</OldToolsVersion>
+    <UpgradeBackupLocation />
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\bin\Spacebuilder.CMS.xml</DocumentationFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>..\..\bin\Spacebuilder.CMS.xml</DocumentationFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=3.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Autofac.3.1.5\lib\net40\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="C5, Version=1.1.0.0, Culture=neutral, PublicKeyToken=06a1b38866503b69, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Quartz.2.0.1\lib\net40\C5.dll</HintPath>
+    </Reference>
+    <Reference Include="CodeKicker.BBCode, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\BBCode.5.0.0\lib\CodeKicker.BBCode.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=af08829b84f0328e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Common.Logging.2.0.0\lib\2.0\Common.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="DevTrends.MvcDonutCaching">
+      <HintPath>..\..\..\packages\MvcDonutCaching.1.2.1\lib\net40\DevTrends.MvcDonutCaching.dll</HintPath>
+    </Reference>
+    <Reference Include="Enyim.Caching, Version=2.11.0.0, Culture=neutral, PublicKeyToken=cec98615db04012e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\EnyimMemcached.2.11\lib\net35\Enyim.Caching.dll</HintPath>
+    </Reference>
+    <Reference Include="Fasterflect">
+      <HintPath>..\..\..\packages\fasterflect.2.1.0\lib\net40\Fasterflect.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.4.0.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\HtmlAgilityPack.1.4.0\lib\Net40\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>..\..\..\packages\DotNetZip.1.9.1.8\lib\net20\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.11.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\log4net.1.2.11\lib\net40-full\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Lucene.Net, Version=2.9.4.2, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Lucene.Net.2.9.4.2\lib\net40\Lucene.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="NPinyin, Version=0.2.4588.20158, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\NPinyin.0.2.0\lib\NPinyin.dll</HintPath>
+    </Reference>
+    <Reference Include="PanGu, Version=2.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\PanGu.2.3.1.0\lib\PanGu.dll</HintPath>
+    </Reference>
+    <Reference Include="PanGu.HighLight, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\PanGu.2.3.1.0\lib\PanGu.HighLight.dll</HintPath>
+    </Reference>
+    <Reference Include="PanGu.Lucene.Analyzer, Version=1.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\PanGu.2.3.1.0\lib\PanGu.Lucene.Analyzer.dll</HintPath>
+    </Reference>
+    <Reference Include="Quartz, Version=2.0.1.100, Culture=neutral, PublicKeyToken=f6b8c98a402cc8a4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Quartz.2.0.1\lib\net40\Quartz.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="RazorEngine, Version=3.3.0.0, Culture=neutral, PublicKeyToken=9ee697374c7e744a, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\RazorEngine.3.3.0\lib\net40\RazorEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="Spacebuilder.Identifier, Version=4.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Spacebuilder.Identifier.4.2.1\lib\net40\Spacebuilder.Identifier.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Helpers, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Mvc.4.0.20710.0\lib\net40\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.Razor.2.0.30506.0\lib\net40\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\..\..\packages\Microsoft.AspNet.WebPages.2.0.20710.0\lib\net40\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Tunynet.Infrastructure, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Tunynet.Infrastructure.2.2.0\lib\net40\Tunynet.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="Tunynet.License, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Tunynet.License.2.0.0\lib\net40\Tunynet.License.dll</HintPath>
+    </Reference>
+    <Reference Include="Spacebuilder.CMS.Service, Version=4.2.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\Spacebuilder.CMS.Service.4.2.0.0\Spacebuilder.CMS.Service.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\GlobalAssemblyInfo.cs">
+      <Link>Properties\GlobalAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="Configuration\CmsBodyProcessor.cs" />
+    <Compile Include="Configuration\CmsCommentUrlGetter.cs" />
+    <Compile Include="Configuration\CmsOwnerDataGetter.cs" />
+    <Compile Include="Configuration\CmsTagUrlGetter.cs" />
+    <Compile Include="Configuration\CmsApplicationStatisticDataGetter.cs" />
+    <Compile Include="Configuration\CmsRecommendUrlGetter.cs" />
+    <Compile Include="Configuration\CommentRecommendUrlGetter.cs" />
+    <Compile Include="ContentPages.cs" />
+    <Compile Include="Extensions\ContentTypeKeys.cs" />
+    <Compile Include="Extensions\ActivityItemKeys.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Extensions\Authorizer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Extensions\HtmlHelper.FolderDropDownList.cs" />
+    <Compile Include="Extensions\NoticeTemplateNames.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Extensions\PermissionItemKeys.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Extensions\PointItemKeys.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Extensions\RecommendItemExtensionByCms.cs" />
+    <Compile Include="Extensions\SiteUrls.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Extensions\HtmlEditorOptions.cs" />
+    <Compile Include="Handlers\ContentAttachmentAuthorizeHandler.cs" />
+    <Compile Include="Handlers\ContentAttachmentDownloadHandler.cs" />
+    <Compile Include="Resources\Resource.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CmsApplication.cs" />
+    <Compile Include="CmsConfig.cs" />
+    <Compile Include="Controllers\ChannelCmsController.cs" />
+    <Compile Include="Controllers\ControlPanelCmsController.cs" />
+    <Compile Include="EventModules\CmsIndexEventModule.cs" />
+    <Compile Include="EventModules\CmsEventModule.cs" />
+    <Compile Include="EventModules\CmsOperationLogEventModule.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\CmsFullTextQuery.cs" />
+    <Compile Include="Search\CmsIndexDocument.cs" />
+    <Compile Include="Search\CmsSearcher.cs" />
+    <Compile Include="Tasks\ExpireStickyContentItemTask.cs" />
+    <Compile Include="UrlRoutingRegistration.cs" />
+    <Compile Include="ViewModels\ContentItemEditModel.cs" />
+    <Compile Include="ViewModels\FolderEditModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Languages\zh-CN\NoticeTemplates.xml">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Setup\Install\MySql\01_Install_CMS_Schema.sql" />
+    <Content Include="Setup\Install\MySql\02_Install_CMS_InitialData.sql" />
+    <Content Include="Setup\Install\SqlServer\01_Install_CMS_Schema.sql" />
+    <Content Include="Setup\Install\SqlServer\02_Install_CMS_InitialData.sql" />
+    <Content Include="Styles\app.css" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Scripts\" />
+    <Folder Include="Setup\Install\SqlCe\" />
+    <Folder Include="Setup\UnInstall\" />
+    <Folder Include="Setup\Upgrade\SqlServer\" />
+    <Folder Include="Styles\images\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BusinessComponents\BusinessComponents.csproj">
+      <Project>{BA9B85CB-76A1-435E-85E0-8C6646BECC4A}</Project>
+      <Name>BusinessComponents</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Common\Common.csproj">
+      <Project>{4FE558F7-2E94-49C3-8A8A-50F52FBFBBC6}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Application.Config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ControlPanelCms\EditNews.cshtml">
+      <SubType>Code</SubType>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ControlPanelCms\ManageContentItems.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ControlPanelCms\EditLink.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\Home.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\TagDetail.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\CmsUser.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_LastestItems.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_Tops.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\ContentItemDetail.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_UserContentItems.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\FolderDetail.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\EditNews.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\Comments.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ControlPanelCms\_ManageRightMenu.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_UserData.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_HisContribute.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_VisitorAlsoVisited.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_RecommendContentItems.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_ContentItem.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_List.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_Tops_Title.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_Tops_Count.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_GlobalSearch.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_QuickSearch.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_ContentItemSearch.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\Search.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ControlPanelCms\ManageContentFolders.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ControlPanelCms\EditContentFolder.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ControlPanelCms\_MoveContentFolder.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ControlPanelCms\_EditContentFolderLink.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_SetStickyDate.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_SetContentFolder.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_TagSelector.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_RecommendComments.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_CreateCmsComment.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\ManageContentItems.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Layouts\cms-2cols.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_EditContentAttachment.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_ListContentAttachments.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_ContentAttachmentManage.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ControlPanelCms\ManageContentAttachments.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_PreviewVideo.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\ChannelCms\_UserComment.cshtml" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <!-- To modify your build process, add your tWiki inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>35517</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:64690/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

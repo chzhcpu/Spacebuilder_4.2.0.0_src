@@ -1,0 +1,128 @@
+﻿@model PagingDataSet<ContentAttachment>
+@{
+    string keyword = Request.QueryString.Get<string>("keyword", string.Empty);
+    DateTime? startDate = Request.QueryString.Get<DateTime?>("startDate", null);
+    DateTime? endDate = Request.QueryString.Get<DateTime?>("endDate", null);
+    MediaType? mediaType = Request.QueryString.Get<MediaType?>("mediaType", null);
+}
+<div id="_ListAttachments" class="tnc-upload-attach">
+
+    <div class="tn-text-heading tn-border-bottom tn-border-gray">
+        <strong>文件列表</strong>
+    </div>
+    @using (Html.BeginAjaxForm("_ListContentAttachments", "ChannelCms", null, FormMethod.Get, new AjaxFormOptions { OnSuccessCallBack = "success" }, new { id = "_ListContentAttachmentsForm" }))
+    {
+        <div class="tn-form tn-label-right tnc-form-list">
+            <div class="tn-form-row">
+                <label class="tn-form-label">上传时间：</label>
+                @Html.DateTimePicker("startDate", new DateTimePicker().SetMinDate("-10Y").SetMaxDate("+10Y").SetSelectedDate(startDate).MergeHtmlAttribute("watermark", "开始时间"))
+                至
+                @Html.DateTimePicker("endDate", new DateTimePicker().SetMinDate("-10Y").SetMaxDate("+10Y").SetSelectedDate(endDate).MergeHtmlAttribute("watermark", "截止时间"))
+            </div>
+            <div class="tn-form-row">
+                <label class="tn-form-label">附件名称：</label>
+                @Html.TextBox("keyword", keyword, InputWidthTypes.Short, new RouteValueDictionary { { "watermark", "附件名称" } })
+
+                <label class="tn-form-label">类型：</label>
+                @Html.EnumDropDownList("mediaType", mediaType, MediaType.Image, "全部", new { @class = "tn-dropdownlist" })
+                <label class="tn-form-label">
+                    @Html.Button("搜索", ButtonTypes.Submit, HighlightStyles.Primary)
+                </label>
+            </div>
+        </div>
+    }
+    <div class="tnc-file-gallery">
+        @if (Model != null && Model.Count() > 0)
+        { 
+            <ul class="tnc-file-list tn-helper-clearfix">
+                @foreach (var attachment in Model)
+                {               
+                    <li id="attachmentId_@(attachment.AttachmentId)" value="@attachment.AttachmentId" class="tnc-file-item ">
+                        <span class="tn-bg-deep tn-action">
+                            @Html.AjaxDeleteButton(new AjaxDeleteButton()
+                        .SetConfirm("确定要删除文件？")
+                        .SetText("删除")
+                        .SetUrl(SiteUrls.Instance()._DeleteContentAttachments(attachment.AttachmentId))
+                        .MergeHtmlAttribute("class", "tn-icon tn-smallicon-cross")
+                        .MergeHtmlAttribute("plugin", "tipsy")
+                        .MergeHtmlAttribute("title", "删除文件")
+                         .MergeHtmlAttribute("name", "operate_" + (attachment.AttachmentId))
+                        .MergeHtmlAttribute("style", "display:none")
+                         .SetDeleteTarget("#attachmentId_" + attachment.AttachmentId))
+                        </span>
+                        @if (attachment.MediaType == MediaType.Flash || attachment.MediaType == MediaType.Video || attachment.MediaType == MediaType.Audio)
+                        {
+                            <span class="tn-bg-deep tn-action tn-search"><a class="tn-icon tn-smallicon-triangle-right" href="@SiteUrls.Instance()._PreviewVideo(attachment.AttachmentId)" plugin="dialog" title="@(attachment.MediaType == MediaType.Audio ? "试听音乐" : "预览视频")">预览</a></span>
+                        }
+                        <p name="attachmentSelect" class="tnc-file-wrap tn-widget-content tn-border-gray">
+                            <a title="点击文件插入编译器" href="javascript:;">@Html.ContentTypeThumbnail(attachment.FriendlyFileName, ContentTypeThumbnailSize.Large)</a>
+                        </p>
+                        <p class="tn-text-heading" title="@(attachment.FriendlyFileName)">
+                            @(StringUtility.Trim(attachment.FriendlyFileName, 5))
+                        </p>
+                        @{string renderHtml;}
+                        @if (attachment.MediaType == MediaType.Flash)
+                        {
+                            renderHtml = string.Format("<object width=\"400\" height=\"400\" data=\"{0}\" type=\"application/x-shockwave-flash\"><param name=\"allowFullScreen\" value=\"true\"><param name=\"src\" value=\"{0}\" /></object>", SiteUrls.Instance().ContentAttachmentDirectUrl(attachment));
+                        }
+                        else if (attachment.MediaType == MediaType.Audio || attachment.MediaType == MediaType.Video)
+                        {
+                            renderHtml = string.Format("<img src=\"{3}\" id=\"media_{0}\" data-url=\"{1}\" title=\"{2}\"/>", attachment.AttachmentId, SiteUrls.Instance().ContentAttachmentDirectUrl(attachment), attachment.FriendlyFileName, Tunynet.Utilities.WebUtility.ResolveUrl("~/Themes/Shared/Styles/images/" + (attachment.MediaType == MediaType.Video ? "video.png" : "music.png")));
+                        }
+                        else
+                        {
+                            renderHtml = string.Format("[attach:{0}]", attachment.AttachmentId);
+                        }
+                        <input type="hidden" name="renderHtml" value="@renderHtml" />
+                    </li>
+                }
+            </ul>
+            <div class="tn-pagination">
+                @Html.AjaxPagingButton(Model, "_ListAttachments", PaginationMode.NextPrevious, ajaxUrl: SiteUrls.Instance()._ListContentAttachments(keyword, startDate, endDate, mediaType))
+            </div>
+        }
+        else
+        {
+            <div class="tn-no-data">
+                暂无文件
+            </div>
+        }
+    </div>
+
+    @Html.ScriptBlock(@<script type="text/javascript">
+        function success(data) {
+            $("#_ListAttachments").replaceWith(data);
+        }
+
+        $(document).ready(function () {
+            $("p[name='attachmentSelect'] a").click(function () {
+                var $li = $(this).parents("li:first");
+                var $renderHtml = $li.find('input[name="renderHtml"]');
+                var price = $li.find("div.tnc-sale-price").attr("value");
+                var editorId = UE.instants.ueditorInstant0.key;
+                var ue = UE.getEditor(editorId);
+                ue.ready(function () {
+                    if ($renderHtml) {
+                        if (price > 0)
+                            ue.execCommand("insertHtml", '[attach:' + $li.attr("value") + ']');
+                        else
+                            ue.execCommand("insertHtml", $renderHtml.attr("value"));
+                        return false;
+                    }
+                });
+            });
+            $("li[id^='attachmentId_']", $("ul.tnc-file-list")).hover(function () {
+                $("a[name='operate_" + $(this).attr("id").replace(/[^0-9]/ig, "") + "']").show();
+                $(this).addClass("tn-hover"); $(this).find("p").first().addClass("tn-border-deep tn-bg-light").removeClass("tn-border-gray");
+            },
+            function () {
+                $("a[name='operate_" + $(this).attr("id").replace(/[^0-9]/ig, "") + "']").hide();
+                $(this).removeClass("tn-hover"); $(this).find("p").first().removeClass("tn-border-deep tn-bg-light").addClass("tn-border-gray");
+            });
+        });
+        function selectAttachments() {
+            $('p[name="attachmentSelect"] a').click();
+        }
+
+    </script>)
+</div>

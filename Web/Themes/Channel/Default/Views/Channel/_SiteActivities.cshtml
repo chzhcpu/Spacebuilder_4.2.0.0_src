@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Activity>
+@{
+    bool haveData = ViewData.Get<bool>("haveData", true);
+    var applicationService = new ApplicationService();
+
+}
+<input type="hidden" class="tnui-havedata" value="@(haveData)" />
+@if (Model != null && Model.Count() > 0)
+{
+    Html.ViewContext.RouteData.Values["isSiteActivity"] = true;
+    foreach (var item in Model)
+    {
+        string areaName = "Common";
+        if (item.ApplicationId > 0)
+        {
+            var application = applicationService.Get(item.ApplicationId);
+            if (application == null || !application.IsEnabled)
+            {
+                continue;
+            }
+            areaName = application.ApplicationKey;
+        }
+
+        string tenantTypeIdPart = "";
+        if (!string.IsNullOrEmpty(item.TenantTypeId))
+        {
+            tenantTypeIdPart = "ActivityDetail_" + item.TenantTypeId;
+        }
+        string routeName = string.Format("{0}_{1}", tenantTypeIdPart, item.ActivityItemKey);
+        var route = RouteTable.Routes[routeName] as Route;
+        if (route == null)
+        {
+            continue;
+        }
+        string controllerName = route.Defaults["controller"].ToString();
+        string actionName = route.Defaults["action"].ToString();
+    @Html.Action(actionName, controllerName, new { ActivityId = item.ActivityId, area = areaName, isSiteActivity = true })
+    }
+}
+@if (haveData)
+{
+    <div class="tn-load-more tn-bg-gray tn-corner-all" plugin="GetMore" data-pagecount="3"><a href="@Html.Raw(SiteUrls.Instance()._SiteActivities(Request.QueryString.Get<int>("pageIndex", 1) + 1))">下一页</a></div>
+}

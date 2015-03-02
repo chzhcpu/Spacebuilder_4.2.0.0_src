@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "app-list-2cols";
+    Html.Style("~/Applications/Blog/Styles/app.css");
+    Html.Script("~/Applications/Blog/Scripts/jquery.spb.blog.js");
+}
+@section Aside{
+    @Html.Action("_Panel", "Blog", new RouteValueDictionary { { "spaceKey", Url.SpaceKey() }, { "menu", "Home" } })
+    @Html.Action("_Categories", "Blog", new { spaceKey = Url.SpaceKey() })
+    @Html.Action("_Tags", "Blog", new { spaceKey = Url.SpaceKey() })
+    @Html.Action("_Archives", "Blog", new { spaceKey = Url.SpaceKey() })
+    @Html.AdvertisingPosition("11000000003")
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-blog-flow">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="spb-blog-flow-wrap">
+            @Html.Action("_MyTimeline", "UserSpace", new { area = "Common", spaceKey = Url.SpaceKey(), applicationId = BlogConfig.Instance().ApplicationId })
+        </div>
+    </div>
+</div>

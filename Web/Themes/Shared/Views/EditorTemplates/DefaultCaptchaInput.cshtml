@@ -1,0 +1,26 @@
+﻿@{
+    string inputName = ViewData.Get<string>("InputName", string.Empty);
+    string captchaImageUrl = SiteUrls.Instance().CaptchaImage();
+    bool showCaptchaImage = ViewData.Get("ShowCaptchaImage", false);
+    int randomNumber = new Random().Next(100000, 999999);
+}
+<input autocomplete="off" class="tn-textbox tn-border-gray" id="@(inputName)_@randomNumber" name="@inputName" type="text" value="" />
+@if (showCaptchaImage)
+{ 
+    <span class="tnc-reg-input">
+        <img id="CaptchaInputTextImg_@randomNumber" src="@(captchaImageUrl + "?date=" + randomNumber)" title="点击换一换" />
+        <span class="tn-action"><a href="javascript:;" id="@(inputName)_@(randomNumber)_refresh">看不清？</a> </span></span>
+}
+@Html.ScriptBlock(@<script type="text/javascript">
+    $(document).ready(function () {
+        $("#@(inputName)_@randomNumber").focus(function () {
+            if ($('#CaptchaInputTextImg_@randomNumber').attr('src') == '')
+                $('#CaptchaInputTextImg_@randomNumber').attr('src', '@captchaImageUrl' + "?date=" + new Date()).parent().show();
+            $('#@(inputName)_@randomNumber').val($.trim($('#@(inputName)_@randomNumber').val()));
+        });
+        $("#CaptchaInputTextImg_@randomNumber,#@(inputName)_@(randomNumber)_refresh").click(function () {
+            $('#CaptchaInputTextImg_@randomNumber').attr('src', '@captchaImageUrl' + "?isremove=true&date=" + new Date());
+            return false;
+        });
+    });
+</script>)

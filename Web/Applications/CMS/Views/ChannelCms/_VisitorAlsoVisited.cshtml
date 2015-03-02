@@ -1,0 +1,21 @@
+﻿@model IEnumerable<ContentItem>
+
+@if (Model != null && Model.Count() > 0)
+{      
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all spb-textbox-list">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">浏览过本文的人还看过</h3>
+        </div>
+        <div class="tn-box-content tn-widget-content tn-corner-bottom">
+            <ul class="tn-list">
+                @foreach (var item in Model)
+                { 
+                    <li  class="tn-img-sprite tn-list-bullet">
+                        <a href="@SiteUrls.Instance().ContentItemDetail(item.ContentItemId)">@item.Title</a>
+                    </li>
+                }
+
+            </ul>
+        </div>
+    </div>
+}

@@ -1,0 +1,27 @@
+﻿@{
+    
+    //User user = ViewData.Get<User>("user", null);
+    IUser currentUser = UserContext.CurrentUser;
+    
+
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-bar-user-panel">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="spb-user-panel-wrap">
+            <div class="tn-card tn-helper-clearfix">
+                @Html.ShowUserAvatar(currentUser.UserId, AvatarSizeType.Small, true)
+                <div class="tn-info">
+                    <p class="tn-user-name">
+                        <a href="@SiteUrls.Instance().CmsUser(currentUser.UserId)"><strong>@currentUser.DisplayName</strong></a>
+                    </p>
+                   
+                    <div class="tn-list-item-row">
+                     <span>评论数:</span><a href="@SiteUrls.Instance().ListCommentsOutBox(currentUser.UserName,null,TenantTypeIds.Instance().ContentItem())">@(ViewData.Get<long>("userCommentCount",0))</a>
+                    </div>
+                </div>
+            
+            </div>
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,21 @@
+﻿@model PagingDataSet<ContentItem>
+@if (Model != null && Model.Count() > 0)
+{
+    <div id="contentItemsContainer" class="spb-story-list">
+        <ul class="tn-list">
+            @foreach (var contentItem in Model)
+            {
+                @Html.Partial("_ContentItem", contentItem)
+            }
+        </ul>
+        <div class="tn-pagination">
+            @Html.AjaxPagingButton(Model, "contentItemsContainer")
+        </div>
+    </div>
+}
+else
+{ 
+    <div class="tn-no-data">
+        暂无资讯
+    </div>
+}

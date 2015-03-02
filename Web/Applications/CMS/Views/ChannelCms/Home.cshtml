@@ -1,0 +1,32 @@
+﻿@{
+    Layout = "~/Applications/CMS/Layouts/cms-2cols.cshtml";
+    Html.Style("~/Applications/CMS/Styles/app.css");
+}
+
+@Html.Action("_RecommendContentItems", "ChannelCms", new { topNumber = 8, recommendTypeId = "10150101" })
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-story-last-box">
+ <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">
+                    最新资讯
+            </h3>
+        </div>
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="spb-story-list">
+            
+            @Html.Action("_LastestItems", "ChannelCms", new { pageSize = 15 })
+        </div>
+    </div>
+</div>
+
+@section Aside{
+    @Html.Action("_Tops", "ChannelCms", new { topNumber = 5, sortBy = ContentItemSortBy.StageHitTimes })
+    @Html.Action("_Tops", "ChannelCms", new { topNumber = 5, sortBy = ContentItemSortBy.StageCommentCount })
+
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">热门标签</h3>
+        </div>
+        @Html.Action("_TagCloud", "Channel", new { tenantTypeId = TenantTypeIds.Instance().ContentItem(), Area = "Common" })
+    </div>
+    @Html.Action("_RecommendComments", "ChannelCms", new { topNumber = 5, recommendTypeId = "10150102" })
+}

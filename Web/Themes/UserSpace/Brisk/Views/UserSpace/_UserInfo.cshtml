@@ -1,0 +1,180 @@
+﻿@model User
+@{
+    bool isSameUser = ViewData.Get<bool>("isSameUser", false);
+    var currentUser = UserContext.CurrentUser;
+    bool isAnonymousUser = currentUser == null ? true : false;
+    bool isFollowed = ViewData.Get<bool>("isFollowed", false);
+    bool isQuietly = ViewData.Get<bool>("isQuietly", false);
+    bool isRequestFollow = ViewData.Get<bool>("isRequestFollow", false);
+    bool isSuperAdmin_CurrentUser = ViewData.Get<bool>("isSuperAdmin_CurrentUser", false);
+    bool isSuperAdmin_User = ViewData.Get<bool>("isSuperAdmin_User", false);
+    var display = isFollowed ? "display:block" : "display:none";
+    bool showAction = ViewData.Get<bool>("showAction", false);
+    bool showManage = TempData.Get<bool>("ShowManage", false);
+    string url = string.Empty;
+    if (isAnonymousUser)
+    {
+        url = SiteUrls.Instance().Login(false, SiteUrls.LoginModal._LoginInModal, SiteUrls.Instance().SpaceHome(Model.UserName));
+    }
+    else if (!isSameUser)
+    {
+        if (!isFollowed)
+        {
+            url = SiteUrls.Instance()._AddFollowedUser(currentUser.UserName, Model.UserId);
+        }
+        else
+        {
+            url = "#";
+        }
+    }
+}
+<div class="tn-avatar-wrap tn-hover">
+    @Html.ShowUserAvatar(Model.UserId, AvatarSizeType.Big, enableCachingInClient: !isSameUser,navigateTarget:HyperLinkTarget._self,isShowUserCard:false)
+    @if (isSameUser)
+    {
+        <a href="@SiteUrls.Instance().EditAvatar(Url.SpaceKey())" class="tn-action tn-action-text-icon tn-state-hidden tn-in-pic">
+            <span class="tn-icon tn-smallicon-write"></span><span class="tn-action-text">上传头像</span>
+        </a>
+    }
+</div>
+<h1 class="tn-user-name">@Model.DisplayName</h1>
+@Html.Hidden("isQuietly", isQuietly)
+@if (showManage)
+{
+    if (isSameUser)
+    {
+    <div class="tn-br-actions">
+        <a href="@SiteUrls.Instance().EditUserProfile(Model.UserName)" class="tn-button tn-corner-all tn-button-text-only tn-button-primary">
+            <span class="tn-button-text">编辑资料</span></a>
+    </div>
+    }
+    else
+    {
+    <div class="tn-br-actions" id="follow-followed">
+        @if (isFollowed)
+        {
+            <a id="hasFollowed-@Model.UserId" class="tn-button tn-corner-all tn-button-text-only tn-button-default">
+                <span class="tn-button-text">已关注</span></a>
+        }
+        else
+        {
+            <a href="@url" plugin="dialog" @if(!isAnonymousUser){<text>data="@Json.Encode(new { close = "DialogCloseFn" })"</text>} @if (isFollowed)
+                                                                                                {<text>style="display:none"</text>} id="addfollowedUser-@Model.UserId" name="@Model.UserId" class="tn-button tn-corner-all tn-button-text-only tn-button-default">
+                <span class="tn-button-text">加关注</span></a>
+            <a id="hasFollowed-@Model.UserId" style="display:none" class="tn-button tn-corner-all tn-button-text-only tn-button-default">
+                <span class="tn-button-text">已关注</span></a>
+        }
+        @if (!isAnonymousUser)
+        {
+            <a menu="#moreOptions" href="javaScript:;" class="tn-button tn-corner-all tn-button-default tn-button-icon-only">
+                <span class="tn-icon tn-smallicon-triangle-down"></span><span class="tn-button-text">
+                    更多操作</span> </a>
+            <div class="tn-more-options tn-widget-content tn-border-gray" style="display: none;"
+                id="moreOptions">
+                <ul class="tn-more-list">
+                    <li>@Html.Link("发私信", SiteUrls.Instance()._CreateMessage(currentUser.UserName, Model.UserId), "发私信", new { @class = "tn-item-link", plugin = "dialog", id = "sendMegLi" })</li>
+                    @if (isRequestFollow)
+                    {
+                        <li>@Html.Link("求关注", SiteUrls.Instance()._InviteFollow(Url.SpaceKey()), "求关注", new { @class = "tn-item-link", plugin = "dialog" })</li>
+                    }
+                    <li style="@display">@Html.Link("取消关注", SiteUrls.Instance().CancelFollow(currentUser.UserName, Model.UserId), "取消关注", new { style = display, name = "Follow", status = "1", @class = "tn-item-link" })</li>
+                    @if (!isQuietly && !isFollowed)
+                    {
+                        <li>@Html.Link("悄悄关注", SiteUrls.Instance().QuietlyFollow(currentUser.UserName, Model.UserId), "悄悄关注", new { @class = "tn-item-link", name = "QuietlyFollow" })</li>
+                    }
+                    <li>@Html.Link("加入黑名单", SiteUrls.Instance().CreateStopedUser(currentUser.UserName, Model.UserId), "加入黑名单", new { @class = "tn-item-link", name = "StopUser" })</li>
+                    <li><a href="@SiteUrls.Instance()._ImpeachReport(Model.UserId, SiteUrls.Instance().SpaceHome(Model.UserId), Model.DisplayName)" plugin="dialog" class="tn-item-link">
+                        举报此人</a></li>
+                    @if (DIContainer.Resolve<Authorizer>().RecommendItem_Manage(TenantTypeIds.Instance().User()))
+                    { 
+                        <li><a href="@SiteUrls.Instance()._RecommendItem(TenantTypeIds.Instance().User(), Model.UserId, Model.DisplayName, userId: Model.UserId)" plugin="dialog" class="tn-item-link">
+                            管理员推荐</a></li>
+                    }
+                    @if (isSuperAdmin_CurrentUser && !isSuperAdmin_User)
+                    {
+                        <li><a href="@SiteUrls.Instance().EditUserProfile(Url.SpaceKey())" class="tn-item-link">
+                            管理@(Model.DisplayName)的资料</a></li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+    }
+}
+<ul class="spb-user-atten tn-helper-clearfix">
+    <li class="tn-border-gray tn-border-right"><a href="@SiteUrls.Instance().ListFollowedUsers(Url.SpaceKey())">
+        <span>关注</span><strong class="tn-count">@Model.FollowedCount</strong></a> </li>
+    <li class="tn-border-gray tn-border-right"><a href="@SiteUrls.Instance().ListFollowers(Url.SpaceKey())">
+        <span>粉丝</span><strong class="tn-count" id="userFollowerCount">@Model.FollowerCount</strong></a>
+    </li>
+    <li class="tn-border-gray tn-border-right"><a href="#" plugin="tipsyHoverCard" data-user-card-url="@SiteUrls.Instance()._ContentPop(Url.SpaceKey())">
+        <span>内容</span><strong class="tn-count">@Model.ContentCount</strong></a> </li>
+</ul>
+@if (currentUser != null)
+{ 
+    @Html.ScriptBlock(@<script type="text/javascript">
+    $(function () {
+        //取消关注
+        $("a[name='Follow']").click(function (e) {
+            e.preventDefault();
+            var $this = $(this);
+
+            art.dialog.confirm('确定要取消关注用户吗？&nbsp;&nbsp;', function () {
+                $.ajax({
+                    type: "Post",
+                    url: $this.attr("href"),
+                    success: function (msg) {
+                        $this.hide();
+                        $this.parent().hide();
+                        $("a[name='QuietlyFollow']").show();
+                        $("a[name='QuietlyFollow']").parent().show();
+                        if(!$("#addfollowUser-@Model.UserId").attr("href"))
+                        {
+                        var follow ="<a href=\"@SiteUrls.Instance()._AddFollowedUser(currentUser.UserName, Model.UserId)\" data=\"@Json.Encode(new { close = "DialogCloseFn" })\" plugin=\"dialog\" style=\"display:none\" id=\"addfollowUser-@Model.UserId\" name=\"@Model.UserId\" class=\"tn-button tn-corner-all tn-button-text-only tn-button-default\"><span class=\"tn-button-text\">加关注</span></a>"
+                        $("#follow-followed").prepend(follow);
+                        }
+                        $("#addfollowUser-" + '@Model.UserId').show();
+                        $("#hasFollowed-" + '@Model.UserId').hide();
+                        if ($("#isQuietly").val() == "False") {
+                            $("#userFollowerCount").text(parseInt($("#userFollowerCount").text()) - 1);
+                        }
+                        $("#isQuietly").val("False");
+
+                    },
+                    error: function () {
+                        art.dialog.tips("取消失败", 1.5, -1);
+                    }
+                });
+            });
+        });
+        //悄悄关注
+        $("a[name='QuietlyFollow']").click(function (e) {
+            e.preventDefault();
+            var $this = $(this);
+
+            art.dialog.confirm('悄悄关注？&nbsp;&nbsp;', function () {
+                $.ajax({
+                    type: "Post",
+                    url: $this.attr("href"),
+                    success: function (data) {
+                        if (data.success == true) {
+                            art.dialog.tips("您已成功悄悄关注该用户！", 1.5, 0);
+                            $this.hide();
+                            $this.parent().hide();
+                            $("a[name='Follow']").show();
+                            $("a[name='Follow']").parent().show();
+                            $("#isQuietly").val("True")
+                        }
+                        else {
+                            alert(data.message);
+                        }
+                    },
+                    error: function () {
+                        art.dialog.tips("悄悄关注失败", 1.5, -1);
+                    }
+                });
+            });
+        });
+    });
+    </script>)
+}

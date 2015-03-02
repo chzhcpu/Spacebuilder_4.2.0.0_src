@@ -1,0 +1,12 @@
+﻿@model BarPostEditModel
+@{
+    Layout = "app-form-2cols";
+    ViewData["TenantTypeId"] = TenantTypeIds.Instance().Group();
+    Html.Style("~/Applications/Bar/Styles/app.css");
+    Html.ViewContext.RouteData.Values["CurrentNavigationId"] = 13101201;
+}
+@section Aside{
+    @Html.Action("_BarThreadSearch", "GroupSpaceBar", new { spaceKey = Url.SpaceKey() })
+    @Html.Action("_TagCloud", "GroupSpaceBar", new { spaceKey = Url.SpaceKey() })
+}
+@Html.Partial("~/Applications/Bar/Views/Bar/_EditPost.cshtml", Model)

@@ -1,0 +1,47 @@
+﻿@model PagingDataSet<GroupEntity>
+@{
+    Layout = "app-home-2cols";
+    SortBy_Group? sortBy = ViewData.Get<SortBy_Group?>("sortBy", null);
+    var tag = ViewData.Get<Tag>("tag", Tag.New());
+}
+@section ContentHeader{
+    @Html.Action("_GroupSubmenu", "ChannelGroup")
+}
+@section Aside{
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom ">
+            <div class="tn-option">
+                <a href="@SiteUrls.Instance().GroupTagMap()">更多</a>
+            </div>
+            <h3 class="tn-helper-reset">热门标签
+            </h3>
+        </div>
+        @Html.Action("_TagCloud", "Channel", new { area = "Common", tenantTypeId = TenantTypeIds.Instance().Group() })
+    </div>
+    @Html.Action("_TopGroups", "ChannelGroup", new { topNumber = 10, sortBy = SortBy_Group.StageHitTimes, viewName = "_TopGroups_Rank" })
+    @Html.Action("_RecommendedGroupOwners", "ChannelGroup", new { topNumber = 5, recommendTypeId = "00001111" })
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-group-list-box">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="spb-group-list">
+            <div class="tn-main-heading">
+                <h2>标签：@tag.TagName</h2>
+                @if (DIContainer.Resolve<Authorizer>().Tag_Edit(tag))
+                {
+                    <div class="tn-option">
+                        <a href="@SiteUrls.Instance()._EditTag(tag.TagId)" plugin="dialog" title="编辑标签">编辑</a>
+                    </div>
+                }
+
+            </div>
+            <div class="tn-list-header">
+                <div class="tn-list-header-row tn-helper-clearfix tn-border-gray tn-border-bottom">
+                    <div class="tn-filter tn-helper-align-right">
+                        排序方式：<a class="tn-action @(sortBy == SortBy_Group.DateCreated_Desc ? "tn-selected" : "")" href="@SiteUrls.Instance().ListByTag(tag.TagName)"><span class="tn-action-text">最新</span></a><span class="tn-spacer tn-text-note">|</span><a class="tn-action @(sortBy == SortBy_Group.MemberCount_Desc ? "tn-selected" : "")" href="@SiteUrls.Instance().ListByTag(tag.TagName, sortBy: SortBy_Group.MemberCount_Desc)"><span class="tn-action-text">成员数</span></a>
+                    </div>
+                </div>
+            </div>
+            @Html.Partial("_List", Model, new ViewDataDictionary { { "showJoinButton", false } })
+        </div>
+    </div>
+</div>

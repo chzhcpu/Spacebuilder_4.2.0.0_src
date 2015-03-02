@@ -1,0 +1,41 @@
+﻿@model IEnumerable<User>
+@{
+    Layout = "_Follow";
+    SpaceHomeMoreType type = ViewData.Get<SpaceHomeMoreType>("type", SpaceHomeMoreType.TogetherFollowedUsers);
+    string showString = ViewData.Get<string>("showString", string.Empty);
+}
+@section ContentHeader{
+    <div class="spb-po-user-profile">
+        <div class="spb-po-profile-wrap tn-helper-clearfix">
+            <div class="spb-po-face-info">
+                @Html.Action("_UserInfo", "UserSpace")
+            </div>
+            <div class="spb-po-user-info">
+                @Html.Action("UserInfo", "UserSpace", new { spaceKey = Url.SpaceKey() })
+                @Html.Action("_SelectMenu", "UserSpace")
+            </div>
+        </div>
+    </div>
+}
+@section Aside{
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all tnc-user-profile">
+        <div class="tn-box-content tn-widget-content tn-corner-bottom">
+            <div class="tn-info-part">
+                @Html.Action("_UserStatus", "UserSpace")
+            </div>
+        </div>
+    </div>
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all tnc-user-tags">
+        @Html.Action("_TopUserTags", "UserSpace")
+    </div>
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all tnc-more-follow">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="tn-main-heading tn-border-gray tn-border-bottom">
+            <h2>@showString</h2>
+        </div>
+        <div class="tnc-user-list">
+            @Html.Action("_SpaceHomeMore", "Follow", new { spaceKey = Url.SpaceKey(), type = (int)type })
+        </div>
+    </div>
+</div>

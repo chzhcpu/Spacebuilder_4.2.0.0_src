@@ -1,0 +1,117 @@
+﻿@model PagingDataSet<Activity>
+@{
+    ViewBag.Title = "我的首页";
+    List<Category> categoriesShow = ViewData.Get<List<Category>>("categoriesShow", null);
+    IEnumerable<MenuItem> menuItem = ViewData.Get<IEnumerable<MenuItem>>("menuItem", null);
+    IEnumerable<ApplicationBase> applications = ViewData.Get<IEnumerable<ApplicationBase>>("applications", null);
+    long? groupId = ViewData.Get<long?>("groupId", null);
+    User user = ViewData.Get<User>("user", null);
+    int integrity = ViewData.Get<int>("integrity", 0);
+    Dictionary<PresentAreaNavigation, string> navigations = ViewData.Get<Dictionary<PresentAreaNavigation, string>>("navigations", null);
+    string message = System.Configuration.ConfigurationManager.AppSettings.Get("quickNotice");
+
+    Dictionary<int, List<OwnerStatisticData>> OwnerStatisticDataDictionary = ViewData.Get<Dictionary<int, List<OwnerStatisticData>>>("OwnerStatisticDataDictionary", null);
+    Dictionary<int, string> dictionary = ViewData.Get<Dictionary<int, string>>("dictionary", null);
+    IEnumerable<ApplicationBase> applicationBase = ViewData.Get<IEnumerable<ApplicationBase>>("applicationBase", null);
+}
+<!DOCTYPE html>
+<html>
+@using (Html.BeginHead())
+{
+    @Styles.Render("~/Bundle/Styles/Site")
+    @Html.RenderStyles() 
+    @Scripts.Render("~/Bundle/Scripts/jQuery")
+}
+@Html.PointMessage()
+<body id="@Html.GenerateBodyId()" class="tn-page-bg spb-my-home">
+    <div id="tn-doc" class="tn-doc-bg">
+        <div id="tn-header" class="tn-header-bg">
+            <div class="tn-wrapper">@Html.Action("_Header", "UserSpace", new { spaceKey = Url.SpaceKey(), area = "Common" })</div>
+        </div>
+        <div id="tn-content" class="tn-content-bg">
+            <div class="tn-wrapper">
+                <div class="tn-grid-3-1">
+                    <div class="tn-unit tn-first">
+                        <div class="tnc-main">
+                            <script src="@Tunynet.Utilities.WebUtility.ResolveUrl("~/Applications/Microblog/Scripts/tunynet/jquery.spb.microblog.List.js")" type="text/javascript"></script>
+                            <div class="tn-box tn-widget tn-widget-content tn-corner-all spb-my-following">
+                                @if (user != null && string.IsNullOrEmpty(user.AccountEmail))
+                                {
+                                    <div class="tn-cue-highlight tn-corner-all tn-message-box">
+                                        <span class="tn-helper-left">
+                                            <span class="tn-icon tn-icon-exclamation"></span>
+                                        </span>
+                                        <div class="tn-helper-flowfix">
+                                            <strong>注意：</strong>
+                                            你没有填写邮箱信息，存在账号丢失，无法找回的危险。请及时<a href="@SiteUrls.Instance().EditUserProfile(user.UserName)">编辑个人资料</a>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="tn-box-content tn-widget-content tn-corner-all">
+                                    @Html.Action("_AnnouncementItem", "Channel", new { displayArea = Announcement_DisplayArea.UserSpace })
+                                    @Html.Action("_MyHomeActivities", new { spaceKey = Url.SpaceKey(), area = "Common" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tn-unit">
+                        <div class="tnc-aside">
+                            <div class="tn-box tn-widget tn-widget-content tn-corner-all spb-user-panel">
+                                <div class="tn-box-content tn-widget-content tn-corner-all">
+                                    <div class="spb-user-panel-wrap">
+                                        <div class="spb-profile-card tn-helper-clearfix">
+                                            <div class="tn-info">
+                                                <div class="spb-profile">
+                                                    <h1 class="tn-user-name">
+                                                        <a href="@SiteUrls.Instance().SpaceHome(user.UserId)">@user.DisplayName</a></h1>
+                                                </div>
+                                                @if (integrity > 30)
+                                                {
+                                                    <div class="spb-status">
+                                                        <a href="@SiteUrls.Instance().MyRank(Url.SpaceKey())">@Html.UserRankIcon(user.Rank)</a>
+                                                    </div>
+                                                }
+                                                else
+                                                {
+                                                    <div class="spb-status">
+                                                        <a class="tn-action tn-action-text-icon-right" href="@SiteUrls.Instance().EditUserProfile(Url.SpaceKey())">
+                                                            <span class="tn-icon tn-smallicon-write"></span><span class="tn-action-text">编辑资料</span></a>
+                                                    </div>
+                                                    <div class="spb-progress-bar-pad tn-helper-clear" title="资料完整度为@(integrity)%">
+                                                        <div class="tn-progress-bar tn-widget-content tn-corner-all">
+                                                            <div style="width: @(integrity)%;" class="tn-progress-bar-value tn-border-deep tn-bg-deep tn-corner-left tn-border-tbl" >
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                        <ul class="spb-user-atten tn-helper-clearfix">
+                                            <li class="tn-border-gray tn-border-right"><a href="@SiteUrls.Instance().ManageFollowedUsers(Url.SpaceKey())">
+                                                <strong class="tn-count">@user.FollowedCount</strong><span>关注</span></a> </li>
+                                            <li class="tn-border-gray tn-border-right"><a href="@SiteUrls.Instance().ManageFollowers(Url.SpaceKey())">
+                                                <strong class="tn-count">@user.FollowerCount</strong><span>粉丝</span></a> </li>
+                                            <li plugin="tipsyHoverCard" data-user-card-url="@SiteUrls.Instance()._ContentPop(Url.SpaceKey())"><a href="#"><strong class="tn-count">@user.ContentCount</strong><span>内容</span></a></li>
+                                        </ul>
+                                        @Html.Action("_MyHomeNavigations", new { area = "Common", spaceKey = Url.SpaceKey() })
+                                    </div>
+                                </div>
+                            </div>
+                            @Html.Action("_InterestedWithAllSide", "FindUser", new { area = "Common", pageSize = 5 })
+                            @Html.Action("_HomeLastVisitList", "UserSpace", new { area = "Common", spaceKey = Url.SpaceKey() })
+                            @Html.Action("_ListTopUsers", "UserSpace", new { area = "Common", spaceKey = Url.SpaceKey(), topNumber = 12 })
+                            @Html.AdvertisingPosition("11000000001")
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tn-footer" class="tn-footer-bg">
+            <div class="tn-wrapper">@Html.Action("_Footer", "UserSpace", new { spaceKey = Url.SpaceKey(), area = "Common" })</div>
+        </div>
+    </div>
+    @Scripts.Render("~/Bundle/Scripts/Site")
+    @Html.RenderScripts()
+    @Html.RenderScriptBlocks()
+</body>
+</html>

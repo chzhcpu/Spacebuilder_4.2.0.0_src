@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Navigation>
+@{  
+    IUser currentUser = UserContext.CurrentUser;
+}
+<ul class="tn-widget-content tn-border-gray spb-app-menu">
+    @if (Model != null)
+    {
+        foreach (var nav in Model)
+        {
+            if (!nav.IsVisible(currentUser))
+            {
+                continue;
+            }
+
+        <li><a class="tn-item-link" href="@nav.GetUrl()" target="@nav.NavigationTarget">
+            @if (!string.IsNullOrEmpty(nav.IconName))
+            {
+                @Html.Icon((IconTypes)Enum.Parse(typeof(IconTypes), nav.IconName, false))
+            }
+            else if (!string.IsNullOrEmpty(nav.ImageUrl))
+            {
+                string imageUrl = nav.ImageUrl;
+                if (!nav.ImageUrl.Trim().ToLower().StartsWith("http"))
+                {
+                    imageUrl = Tunynet.Utilities.WebUtility.ResolveUrl(nav.ImageUrl);
+                }
+                <span class="tn-icon-wrap">
+                    <img src="@imageUrl" width="16" height="16" alt="@HtmlUtility.TrimHtml(nav.Text, 12)"/></span>
+            }
+            @nav.NavigationText</a></li>
+        }
+    }
+</ul>

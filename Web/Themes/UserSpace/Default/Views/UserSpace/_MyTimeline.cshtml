@@ -1,0 +1,115 @@
+﻿@model PagingDataSet<Activity>
+@{
+    IEnumerable<ApplicationBase> applicationBases = ViewData.Get<IEnumerable<ApplicationBase>>("applicationBases ", null);
+    long? groupId = ViewData.Get<long?>("groupId", null);
+    int? applicationId = ViewData.Get<int?>("applicationId", null);
+    bool? isOriginalThread = ViewData.Get<bool?>("isOriginalThread", null);
+    MediaType? mediaType = ViewData.Get<MediaType?>("mediaType", null);
+    long lastActivityId = ViewData.Get<long>("lastActivityId", 0);
+    string countUrl = SiteUrls.Instance().GetNewerCount(Url.SpaceKey(), applicationId);
+    int pageIndex = ViewData.Get<int>("pageIndex", 1);
+    int pageCount = Model.PageCount;
+
+    ApplicationService applicationService = DIContainer.Resolve<ApplicationService>();
+}
+@Html.Hidden("lastActivityId", lastActivityId)
+<ul class="tn-list tnc-dynamic" id="listUl">
+    @if (groupId == null)
+    {
+        <li class="tnc-dynamic-new" id="newerActivitiesLi" style="display: none;"><a href="@SiteUrls.Instance()._GetNewerActivities(Url.SpaceKey(), applicationId)" class="tn-instant-note tn-corner-all" ></a></li>
+    }
+    @if (Model != null && Model.Count > 0)
+    {
+        PageData["isMyTimeline"] = true;
+        Html.ViewContext.RouteData.Values["isMyTimeline"] = true;
+        foreach (var item in Model)
+        {
+            string areaName = "Common";
+            if (item.ApplicationId > 0)
+            {
+                var application = applicationService.Get(item.ApplicationId);
+                if (application == null || !application.IsEnabled)
+                {
+                    continue;
+                }
+                areaName = application.ApplicationKey;
+            }
+            string tenantTypeIdPart = "";
+            if (!string.IsNullOrEmpty(item.TenantTypeId))
+            {
+                tenantTypeIdPart = "_" + item.TenantTypeId;
+            }
+            string spaceKey = UserIdToUserNameDictionary.GetUserName(item.UserId);
+
+            string routeName = string.Format("ActivityDetail{0}_{1}", tenantTypeIdPart, item.ActivityItemKey);
+            var route = RouteTable.Routes[routeName] as Route;
+            if (route == null)
+            {
+                continue;
+            }
+            string controllerName = route.Defaults["controller"].ToString();
+            string actionName = route.Defaults["action"].ToString();
+            
+        @Html.Action(actionName, controllerName, new { ActivityId = item.ActivityId, area = areaName })            
+        }
+    }
+    else
+    {
+        <div class="tn-no-data">
+            暂无动态
+        </div>
+    }
+</ul>
+@if (Model.PageCount > Model.PageIndex)
+{
+    <div class="tn-load-more tn-bg-gray tn-border-gray" plugin="GetMore">
+        <a href="@Html.Raw(SiteUrls.Instance()._MyTimeline(Url.SpaceKey(), groupId, applicationId, isOriginalThread, mediaType, Model.PageIndex + 1))" class="tn-action tn-action-text-icon-right">@Html.Icon(IconTypes.SmallCollapseOpen)
+            <span class="tn-action-text">更多信息</span> </a>
+    </div>
+}
+@Html.ScriptBlock(@<script type="text/javascript">
+
+    $(document).ready(function () {
+        //新动态
+        if ($("#newerActivitiesLi").length == 0)
+            return;
+        function GetNewerActivities() {
+            $.ajax({
+                type: "POST",
+                url: "@countUrl",
+                data: { lastActivityId: $("#lastActivityId").val() },
+                success: function (data) {
+                    if (data.hasNew) {
+                        $("#newerActivitiesLi").show();
+                        $("#newerActivitiesLi a").text(data.showName);
+                    }
+                    clearTimeout(t);
+                    t = setTimeout(GetNewerActivities, 60000);
+                }
+            });
+        }
+        if (typeof t != "undefined")
+            clearTimeout(t);
+        t = setTimeout(GetNewerActivities, 60000);
+
+        $("#newerActivitiesLi").click(function (e) {
+            var lastAddress = "<li class=\"tn-mark\" id=\"lastAddress\"><div class=\"tn-cue-highlight tn-mark\"><div class=\"tn-widget-content\">上次浏览到这里</div></div></li>";
+            e.preventDefault();
+            var url = $("a", this).attr("href");
+            $this = $(this);
+            $.ajax({
+                type: "GET",
+                url: url,
+                cache: false,
+                data: { lastActivityId: $("#lastActivityId").val() },
+                success: function (data) {
+                    $this.hide();
+                    $("li#lastAddress").remove();
+                    $this.after(lastAddress);
+                    $this.after(data);
+                }
+            });
+        });
+    })
+
+</script>)

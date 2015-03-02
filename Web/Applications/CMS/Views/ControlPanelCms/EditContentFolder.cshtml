@@ -1,0 +1,161 @@
+﻿@model FolderEditModel
+@{
+    Layout = "_ControlPanel";
+}
+<div class="tn-block tnc-ctnborder">
+    <div class="tnc-main">
+        <div class="tnc-ctn-center">
+            <h1>
+                <span>@(Model.ContentFolderId > 0 ? "编辑栏目" : "创建栏目")</span>
+            </h1>
+
+            @using (Html.BeginForm("EditContentFolder", "ControlPanelCms", FormMethod.Post))
+            {
+                @Html.HiddenFor(n => n.ContentFolderId)
+                @Html.HiddenFor(n => n.ParentId)
+                <div class="tnc-ctnright-list">
+                    <div class="tn-form-box">
+                        <table>
+                            <tbody>
+
+                                @if (Model.ParentId > 0)
+                                {
+                                    <tr>
+                                        <th>父栏目名称：
+                                        </th>
+                                        <td>
+                                            @(Model.ParentName == null ? "" : Model.ParentName)
+                                        </td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <th><span class="tn-form-required">*</span>
+                                        @Html.FormLabelFor(n => n.FolderName)
+                                    </th>
+                                    <td>
+                                        @Html.TextBoxFor(n => n.FolderName, InputWidthTypes.Long, new RouteValueDictionary { { "maxlength", 64 } })
+                                        @Html.ValidationMessageFor(n => n.FolderName)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>@Html.FormLabelFor(n => n.Description)
+                                    </th>
+                                    <td>
+                                        @Html.TextAreaFor(n => n.Description, InputWidthTypes.Long, htmlAttributes: new RouteValueDictionary { { "maxlength", TextLengthSettings.TEXT_DESCRIPTION_MAXLENGTH } })
+                                        @Html.ValidationMessageFor(n => n.Description)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><span class="tn-form-required">*</span>
+                                        @Html.FormLabelFor(n => n.ContentTypeKeys)
+                                    </th>
+                                    <td>
+
+                                        <ul class="tn-checkbox-list">
+                                            <li class="tn-inline-list">
+                                                @Html.SipmleCheckBox("ContentTypeKeys", ContentTypeKeys.Instance().News(), Model.ContentTypeKeys.Contains(ContentTypeKeys.Instance().News()), new { id = "News", @class = "required" })
+                                                <label for="News">
+                                                    文章模块</label>&nbsp;&nbsp;
+                                                @Html.SipmleCheckBox("ContentTypeKeys", ContentTypeKeys.Instance().NewsLink(), Model.ContentTypeKeys.Contains(ContentTypeKeys.Instance().NewsLink()), new { id = "NewsLink", @class = "required" })
+                                                <label for="NewsLink">
+                                                    链接模块</label>
+                                            </li>
+                                        </ul>
+                                        @Html.ValidationMessageFor(n => n.ContentTypeKeys)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>栏目管理员：
+                                    </th>
+                                    <td>
+                                        @Html.UserSelector("ModeratorUserIds", 5, ViewData.Get<IEnumerable<long>>("moderatorUserIds", null), SelectorWidthType.Longest, UserSelectorSearchScope.Site)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>@Html.FormLabelFor(n => n.Editor)
+                                    </th>
+                                    <td>
+                                        @Html.TextBoxFor(n => n.Editor, InputWidthTypes.Medium)
+                                        @Html.ValidationMessageFor(n => n.Editor)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>@Html.FormLabelFor(n => n.IsEnabled)
+                                    </th>
+                                    <td>
+
+                                        <ul class="tn-radiobutton-list">
+                                            <li class="tn-inline-list">
+                                                @Html.RadioButton("IsEnabled", true, new { id = "IsEnabled-true", @class = "tnui-type" })
+                                                <label for="IsEnabled-true">
+                                                    是</label>&nbsp;&nbsp;
+                                        @Html.RadioButton("IsEnabled", false, new { id = "IsEnabled-false", @class = "tnui-type" })
+                                                <label for="IsEnabled-false">
+                                                    否</label>
+                                                @Html.ValidationMessageFor(n => n.IsEnabled)
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>@Html.FormLabelFor(n => n.NeedAuditing)
+                                    </th>
+                                    <td>
+
+                                        <ul class="tn-radiobutton-list">
+                                            <li class="tn-inline-list">
+                                                @Html.RadioButton("NeedAuditing", true, new { id = "NeedAuditing-true", @class = "tnui-type" })
+                                                <label for="NeedAuditing-true">
+                                                    是</label>&nbsp;&nbsp;
+                                        @Html.RadioButton("NeedAuditing", false, new { id = "NeedAuditing-false", @class = "tnui-type" })
+                                                <label for="NeedAuditing-false">
+                                                    否</label>
+                                                @Html.ValidationMessageFor(n => n.NeedAuditing)
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>@Html.FormLabelFor(n => n.METATitle)
+                                    </th>
+                                    <td>
+                                        @Html.TextBoxFor(n => n.METATitle, InputWidthTypes.Longest)
+                                        @Html.ValidationMessageFor(n => n.METATitle)
+                                        <span class="tn-text-note">针对搜索引擎设置的标题 </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>@Html.FormLabelFor(n => n.METAKeywords)
+                                    </th>
+                                    <td>
+                                        @Html.TextAreaFor(n => n.METAKeywords, InputWidthTypes.Longest)
+                                        @Html.ValidationMessageFor(n => n.METAKeywords)
+                                        <div class="tn-explain"><span class="tn-text-note">关键字中间用半角逗号隔开</span></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>@Html.FormLabelFor(n => n.METADescription)
+                                    </th>
+                                    <td>
+                                        @Html.TextAreaFor(n => n.METADescription, InputWidthTypes.Longest)
+                                        @Html.ValidationMessageFor(n => n.METADescription)
+                                        <div class="tn-explain"><span class="tn-text-note">针对搜索引擎设置的描述</span></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <td>
+                                        @Html.Button("提交", ButtonTypes.Submit, HighlightStyles.Primary)
+                                        @Html.Button("取消", ButtonTypes.Button, HighlightStyles.Secondary, url: SiteUrls.Instance().ManageContentFolders())
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>

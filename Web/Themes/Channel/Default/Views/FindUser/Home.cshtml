@@ -1,0 +1,22 @@
+﻿@{
+    Layout = "app-home-2cols";
+    bool enableTrackAnonymous = ViewData.Get<bool>("enableTrackAnonymous", false);
+}
+@section ContentHeader{
+    @Html.Action("_Header", "FindUser", new { menu = "Home" })
+}
+@section Aside{
+    @Html.AjaxAction("_QuickSearch", "FindUser")
+    @Html.Action("_RecommendUser", "FindUser", new { topNumber = 5, recommendTypeId = "00001101" })
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">热门用户标签</h3>
+        </div>
+        @Html.Action("_TagCloud", "Channel", new { tenantTypeId = TenantTypeIds.Instance().User() })
+    </div>
+}
+@Html.Action("_InterestedWithAll", "FindUser", new { pageSize = 6 })
+@Html.Action("_TopUsers", "FindUser", new { sortBy = SortBy_User.DateCreated, topNumber = 20 })
+@Html.Action("_TopUsers", "FindUser", new { sortBy = SortBy_User.PreWeekHitTimes, topNumber = 20 })
+
+@Html.Action("OnlineUser", "FindUser", new { topNumber = 25, viewName = "_OnlineUser", ignoreAnonymousUsers = !enableTrackAnonymous })

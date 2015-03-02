@@ -1,0 +1,11 @@
+﻿<div class="tnc-attchment-dailog" style="width: 580px; height: 441px;">
+    @Html.Tabs(new TabControl().SetName("_ContentAttachmentManageTab")
+         .SetIsSimple(true)
+                 .AddTabItem(new TabItem("上传文件").SetUrl(SiteUrls.Instance()._EditContentAttachment()).SetSelected())
+                 .AddTabItem(new TabItem("网络文件").SetUrl(SiteUrls.Instance()._EditNetAttachment()))
+)
+</div>
+<script type="text/dialog">
+this.position(450, 100);
+this.title('上传文件');
+</script>

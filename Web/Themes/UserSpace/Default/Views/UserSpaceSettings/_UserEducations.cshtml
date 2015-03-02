@@ -1,0 +1,44 @@
+﻿@model IEnumerable<EducationExperience> 
+@{ 
+    StatusMessageData statusMessageData = ViewData["statusMessageData"] as StatusMessageData;
+}
+@Html.StatusMessage(statusMessageData)
+@if (Model != null && Model.Count() > 0)
+{
+    <table class="tn-table-grid tn-border-gray tn-border-trl">
+        @foreach (var education in Model)
+        {
+            <tr id="education_@(education.Id)" class="tn-table-grid-row">
+                <td class="tn-bg-gray tn-border-gray tn-border-bottom"><strong>@(education.School)</strong></td>
+                <td class="tn-bg-gray tn-border-gray tn-border-bottom">@(education.Department)</td>
+                <td class="tn-bg-gray tn-border-gray tn-border-bottom tn-nowrap">
+                    @switch (education.Degree)
+                    {
+                        case DegreeType.PrimarySchool:
+                        @Html.Raw("小学"); break;
+                        case DegreeType.MiddleSchool:
+                        @Html.Raw("初中"); break;
+                        case DegreeType.HighSchool:
+                        @Html.Raw("高中"); break;
+                        case DegreeType.VocationalSchool:
+                        @Html.Raw("中专/技校"); break;
+                        case DegreeType.CommunityCollege:
+                        @Html.Raw("大专"); break;
+                        case DegreeType.Undergraduate:
+                        @Html.Raw("本科"); break;
+                        case DegreeType.Master:
+                        @Html.Raw("硕士"); break;
+                        case DegreeType.Doctor:
+                        @Html.Raw("博士"); break;
+                        default:@Html.Raw("本科"); break;
+                    }
+                </td>
+                <td class="tn-bg-gray tn-border-gray tn-border-bottom tn-nowrap">@(education.StartYear)</td>
+                <td class="tn-bg-gray tn-border-gray tn-border-bottom tn-nowrap">
+                    @Html.Link("修改", "javascript:;", "修改", htmlAttributes: new { @class = "tn-action", id = "UpdateEdu", onclick = "UserEducationInfoCallback(" + education.Id + ")" })
+                    @Html.AjaxDeleteButton(new AjaxDeleteButton().SetConfirm("确认要删除教育经历吗? &nbsp; &nbsp;").SetText("删除").SetTooltip("删除教育经历").SetDeleteTarget("#education_" + education.Id).SetUrl(SiteUrls.Instance().DeleteUserEducation(Url.SpaceKey(), education.Id)))
+                </td>
+            </tr>
+        }
+    </table>
+}

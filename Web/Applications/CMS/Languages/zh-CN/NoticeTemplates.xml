@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<notices>
+  <notice templateName="ContributeAccepted">
+    您的投稿<a href="@Model.RelativeObjectUrl" target="_blank">@Model.RelativeObjectName</a>已被管理员采纳
+  </notice>
+  <notice templateName="ContributeGlobalStickied">
+    您的文章<a href="@Model.RelativeObjectUrl" target="_blank">@Model.RelativeObjectName</a>被管理员在整站中置顶了
+  </notice>
+  <notice templateName="ContributeFolderStickied">
+    您的文章<a href="@Model.RelativeObjectUrl" target="_blank">@Model.RelativeObjectName</a>被管理员在栏目中置顶了
+  </notice>
+</notices>

@@ -1,0 +1,86 @@
+﻿@model IEnumerable<ContentItem>
+
+@{
+    ContentItemSortBy sortBy = ViewData.Get<ContentItemSortBy>("sortBy", ContentItemSortBy.StageHitTimes);
+}
+@if (Model != null && Model.Count() > 0)
+{    
+    
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all spb-story-hot">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">
+                @switch (sortBy)
+                {
+                    case ContentItemSortBy.ReleaseDate_Desc:
+                    @:最新资讯
+                    break;
+                    case ContentItemSortBy.HitTimes:
+                    @:热点资讯
+                    break;
+                    case ContentItemSortBy.StageHitTimes:
+                    @:本周热点
+                    break;
+                    case ContentItemSortBy.CommentCount:
+                    @:热评资讯
+                    break;
+                    case ContentItemSortBy.StageCommentCount:
+                    @:本周热评
+                    break;
+                    case ContentItemSortBy.DisplayOrder:
+                    @:最新资讯
+                    break;
+                    default:
+                    @:最新资讯
+                    break;
+                }
+            </h3>
+        </div>
+        <div class="tn-box-content tn-widget-content tn-corner-bottom">
+            <ul class="tn-list">
+                @foreach (var item in Model)
+                { 
+                    <li class="tn-list-item tn-helper-clearfix">
+                        @if (!string.IsNullOrEmpty(item.FeaturedImage))
+                        {
+                            <div class="tn-list-item-area-left">
+                                <a href="@SiteUrls.Instance().ContentItemDetail(item.ContentItemId)">
+                                    <img src="@SiteUrls.Instance().ImageUrl(item.FeaturedImage, TenantTypeIds.Instance().ContentItem(), ImageSizeTypeKeys.Instance().Small())" alt="@item.Title" width="100"/>
+                                </a>
+                            </div>
+                        }
+                        <div class="tn-list-item-area-main">
+                            <div class="tn-list-item-row tn-list-item-heading">
+                                <h5><a href="@SiteUrls.Instance().ContentItemDetail(item.ContentItemId)" title="@item.Title">@StringUtility.Trim(item.Title, 28)</a></h5>
+                            </div>
+                            <div class="tn-list-item-row tn-list-info"><a class="tn-user-name" href="@SiteUrls.Instance().CmsUser(item.UserId)" target="_blank">@item.Author</a></div>
+
+                            <div class="tn-list-item-row tn-list-info">
+                                <em class="tn-date tn-text-note">@item.ReleaseDate.ToFriendlyDate()</em>
+                                <span class="tn-explain-icon">
+                                    @switch (sortBy)
+                                    {
+                                        case ContentItemSortBy.HitTimes:
+                                        <span class="tn-icon tn-icon-view"></span><span class="tn-icon-text tn-text-note"><a href="@SiteUrls.Instance().ContentItemDetail(item.ContentItemId)" title="总浏览数">@item.HitTimes</a></span>
+                                            break;
+                                        case ContentItemSortBy.StageHitTimes:
+                                        <span class="tn-icon tn-icon-view"></span><span class="tn-icon-text tn-text-note"><a href="@SiteUrls.Instance().ContentItemDetail(item.ContentItemId)" title="近7天浏览数">@item.StageHitTimes</a></span>
+                                            break;
+                                        case ContentItemSortBy.CommentCount:
+                                        <span class="tn-icon tn-icon-bubble"></span><span class="tn-icon-text tn-text-note"><a href="@SiteUrls.Instance().Comments(item.ContentItemId)" title="总评论数">@item.CommentCount</a></span>
+                                            break;
+                                        case ContentItemSortBy.StageCommentCount:
+                                        <span class="tn-icon tn-icon-bubble"></span><span class="tn-icon-text tn-text-note"><a href="@SiteUrls.Instance().Comments(item.ContentItemId)" title="近7天评论数">@item.StageCommentCount</a></span>
+                                            break;
+                                        default:
+                                        <span class="tn-icon tn-icon-view"></span><span class="tn-icon-text tn-text-note"><a href="@SiteUrls.Instance().ContentItemDetail(item.ContentItemId)" title="近7天浏览数">@item.StageHitTimes</a></span>
+                                            break;
+                                    }
+                                </span>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}

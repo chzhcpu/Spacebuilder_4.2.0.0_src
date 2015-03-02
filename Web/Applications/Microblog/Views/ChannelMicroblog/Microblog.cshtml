@@ -1,0 +1,74 @@
+﻿@{
+    Layout = "app-home-3cols";
+    Html.Style("~/Applications/Microblog/Styles/app.css");
+    IEnumerable<TagGroup> tagGroups = ViewData.Get<IEnumerable<TagGroup>>("tagGroup", null);
+    SortBy_Microblog sortBy = ViewData.Get<SortBy_Microblog>("sortBy", SortBy_Microblog.DateCreated);
+    long tagGroupId = ViewData.Get<long>("tagGroupId", 0);
+}
+@section ContentHeader{
+    @Html.Action("_Header", "ChannelMicroblog", new RouteValueDictionary { { "tab", "Square" }, { "mode", "List" } })
+}
+@section Aside{
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all spb-side-nav">
+        <div class="tn-box-content tn-widget-content tn-corner-all">
+            <ul>
+                @{
+                    string selectedNew = "";
+                    string selectedForward = "";
+                    string selectedReply = "";
+                    if (tagGroupId == 0)
+                    {
+                        if (sortBy == SortBy_Microblog.DateCreated)
+                        {
+                            selectedNew = "tn-bg-gray tn-selected";
+                        }
+                        if (sortBy == SortBy_Microblog.ForwardedCount)
+                        {
+                            selectedForward = "tn-bg-gray tn-selected";
+                        }
+                        if (sortBy == SortBy_Microblog.ReplyCount)
+                        {
+                            selectedReply = "tn-bg-gray tn-selected";
+                        }
+                    }
+                    <li class="tn-border-gray tn-border-bottom @selectedNew"><a id="lastest-microblog" href="@(SiteUrls.Instance().Microblog(SortBy_Microblog.DateCreated, 0))" class="tn-action tn-action-text-icon">
+                        <span class="tn-icon tn-icon-microblog"></span><span class="tn-action-text">最新微博</span></a>
+                    </li>
+                    <li class="tn-border-gray tn-border-bottom @selectedForward"><a id="hot-forwardedcount-microblog" href="@(SiteUrls.Instance().Microblog(SortBy_Microblog.ForwardedCount, 0))" class="tn-action tn-action-text-icon">
+                        <span class="tn-icon tn-icon-forwardc"></span><span class="tn-action-text">热门转发</span></a>
+                    </li>
+                    <li class="tn-border-gray tn-border-bottom @selectedReply"><a id="hot-replycount-microblog" href="@(SiteUrls.Instance().Microblog(SortBy_Microblog.ReplyCount, 0))" class="tn-action tn-action-text-icon">
+                        <span class="tn-icon tn-icon-bubble"></span><span class="tn-action-text">热门评论</span></a>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all spb-microblog-interested">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">可能感兴趣的</h3>
+        </div>
+        <div class="tn-box-content tn-widget-content tn-corner-bottom">
+            <div class="tn-tags">
+                @foreach (TagGroup tagGroup in tagGroups)
+                {
+                    <span><a class="interest-taggroup" href="@(SiteUrls.Instance().Microblog(tagGroupId: tagGroup.GroupId))">@Tunynet.Utilities.HtmlUtility.TrimHtml(tagGroup.GroupName, 12)</a></span> 
+                }
+            </div>
+        </div>
+    </div>
+}
+@section AsideSecond{
+    @Html.Action("_RecommendTopic", "ChannelMicroblog", new { topNum = 10, recommendTypeId = "10010101" })
+    @Html.Action("_TopTopics", "ChannelMicroblog", new { topNum = 10 })
+    @Html.Action("_HotFollower", "ChannelMicroblog", new { topNum = 10 })
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-microblog-list ">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <ul id="tnc-dynamic" class="tn-list tnc-dynamic">
+            <li class="tnc-dynamic-new" style="display: none;"><a id="new-microblog" href="javascript:void(0)"
+                class="tn-instant-note tn-corner-all">有<span id="new-microblog-count">0</span>条新微博，点击查看</a></li>
+            @Html.Action("_List", "ChannelMicroblog")
+        </ul>
+    </div>
+</div>

@@ -1,0 +1,148 @@
+﻿@model  Tag
+@{
+    Layout = "app-list-2cols";
+    Html.Style("~/Applications/Microblog/Styles/app.css");
+    Authorizer authorizer = DIContainer.Resolve<Authorizer>();
+}
+@section ContentHeader{
+    @Html.Action("_Header", "ChannelMicroblog")
+}
+@section Aside{
+    @Html.Action("_RelevantMicroblog", "ChannelMicroblog", new { topNum = 9, tagName = Model.TagName })
+    @Html.Action("_RecommendTopic", "ChannelMicroblog", new { topNum = 10, recommendTypeId = "10010101" })
+    @Html.Action("_TopTopics", "ChannelMicroblog", new { topNum = 10 })
+    @Html.Action("_HotFollower", "ChannelMicroblog", new { topNum = 10 })
+}
+@{
+    bool isFavorited = ViewData.Get<bool>("isFavorited", false);
+    IUser currentUser = UserContext.CurrentUser;    
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-microblog-hotdetail">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        @if (Model.IsFeatured)
+        {
+            <div class="tn-bg-light tn-border-light tn-corner-all spb-microtopic-intro">
+                <div class="tn-inner tn-helper-clearfix">
+                    <div class="tn-figure">
+                        @if (!string.IsNullOrEmpty(Model.FeaturedImage))
+                        {
+                            <img alt="@Model.TagName" title="@Model.TagName" src="@SiteUrls.Instance().LogoUrl(Model.FeaturedImage, TenantTypeIds.Instance().Tag(), ImageSizeTypeKeys.Instance().Medium())" />
+                        }
+                    </div>
+                    <div class="tn-info">
+                        <div class="tn-title">
+                            <div class="tn-actions">
+                                @if (authorizer.RecommendItem_Manage(Model.TenantTypeId))
+                                { 
+                                    <a class="tn-action tn-action-text-icon" plugin="dialog" href="@SiteUrls.Instance()._RecommendItem(Model.TenantTypeId, Model.TagId, Model.TagName, userId: Model.OwnerId)">
+                                        <span class="tn-icon tn-icon-flag"></span><span class="tn-action-text">推荐</span></a>
+                                }
+                                @if (authorizer.Tag_Edit(Model))
+                                {
+                                    <a class="tn-action tn-action-text-icon" plugin="dialog" href="@SiteUrls.Instance()._EditTag(Model.TagId)">
+                                        @Html.Icon(IconTypes.SmallWrite)<span class="tn-action-text">编辑</span></a>
+                                }
+                                @if (currentUser != null)
+                                {                    
+                                    <a id="add-follow-topic" class="tn-action tn-action-text-icon" href="@SiteUrls.Instance()._CancelFollowedTopic(currentUser.UserName, Model.TagId)" style="@(isFavorited ? "" : "display:none")">
+                                        <span class="tn-icon tn-icon-topic"></span><span class="tn-action-text">取消关注</span>
+                                    </a>
+                                    <a id="cancel-follow-topic" class="tn-action tn-action-text-icon" href="@SiteUrls.Instance()._AddFollowedTopic(currentUser.UserName, Model.TagId)"  style="@(isFavorited ? "display:none" : "")">
+                                        <span class="tn-icon tn-icon-topic"></span><span class="tn-action-text">关注话题</span>
+                                    </a>
+                                }
+                            </div>
+                            <h2>@Model.TagName</h2>
+                        </div>
+                        <div class="tn-brief">@Html.Raw(Model.Description)</div>
+                    </div>
+                </div>
+            </div>
+            <div class="tn-content-heading">
+                <h4>参与讨论</h4>
+            </div>
+        }
+        else
+        { 
+            <div class="tn-main-heading tn-border-gray tn-border-bottom">
+                <div class="tn-option">
+                    @if (authorizer.RecommendItem_Manage(Model.TenantTypeId))
+                    {
+                        <a class="tn-action tn-action-text-icon" plugin="dialog" href="@SiteUrls.Instance()._RecommendItem(Model.TenantTypeId, Model.TagId, Model.TagName, userId: Model.OwnerId)">
+                            <span class="tn-icon tn-icon-flag"></span><span class="tn-action-text">推荐</span></a>
+                    }
+                    @if (authorizer.Tag_Edit(Model))
+                    {
+                        <a class="tn-action tn-action-text-icon" plugin="dialog" href="@SiteUrls.Instance()._EditTag(Model.TagId)">
+                            @Html.Icon(IconTypes.Write)<span class="tn-action-text">编辑</span></a>
+                    }
+
+                    @if (currentUser != null)
+                    {                    
+                        <a id="add-follow-topic" class="tn-action tn-action-text-icon" href="@SiteUrls.Instance()._CancelFollowedTopic(currentUser.UserName, Model.TagId)" style="@(isFavorited ? "" : "display:none")">
+                            <span class="tn-icon tn-icon-topic"></span><span class="tn-action-text">取消关注</span>
+                        </a>
+                        <a id="cancel-follow-topic" class="tn-action tn-action-text-icon" href="@SiteUrls.Instance()._AddFollowedTopic(currentUser.UserName, Model.TagId)" style="@(isFavorited ? "display:none" : "")">
+                            <span class="tn-icon tn-icon-topic"></span><span class="tn-action-text">关注话题</span>
+                        </a>
+                    }
+                </div>
+                <h2>@Model.TagName</h2>
+            </div>
+        }
+        @if (currentUser != null)
+        { 
+            @Html.Action("_Create", "Microblog", new RouteValueDictionary { { "spaceKey", UserContext.CurrentUser.UserName } })
+        }
+        <div class="tn-content-heading tn-border-gray tn-border-bottom">
+            <h4>网友热议</h4>
+        </div>
+        <ul id="microblog-list-container" class="tn-list tnc-dynamic">
+            @Html.Action("_TopicMicroblogs", "ChannelMicroblog", new { tagId = Model.TagId })
+        </ul>
+    </div>
+</div>
+@Html.ScriptBlock(@<script type="text/javascript">
+                       //发布微博 表单提交成功 调用函数
+                       var microblogCreateSuccess = function (data) {
+                           $.PointMessage("@SiteUrls.Instance().UserLastestRecord()");
+        showMicroblogCreateMessage(data);
+        if (data.MessageType == 1) {
+            $.get('@SiteUrls.Instance()._Microblog()', { microblogId: data.id }, function (microblog) {
+                $("ul#microblog-list-container").prepend(microblog);
+            });
+            $("#microblogBody").val("#" + "@Model.TagName" + "#");
+        }
+    }
+</script>)
+
+@Html.ScriptBlock(@<script type="text/javascript">
+                       $(function () {
+                           //添加关注
+                           $("#add-follow-topic").click(function (e) {
+                               e.preventDefault();
+
+                               var url = $(this).attr('href');
+
+                               $.getJSON(url, function () {
+                                   $("#add-follow-topic").hide();
+                                   $("#cancel-follow-topic").show();
+                               });
+                           });
+
+                           //取消关注
+                           $("#cancel-follow-topic").click(function (e) {
+                               e.preventDefault();
+
+                               var url = $(this).attr('href');
+
+                               $.getJSON(url, function () {
+                                   $("#cancel-follow-topic").hide();
+                                   $("#add-follow-topic").show();
+                               });
+                           });
+
+                           //页面加载时初始化微博录入框
+                           $('#microblogBody').val("#@(Model.TagName)#");
+    });
+</script>)

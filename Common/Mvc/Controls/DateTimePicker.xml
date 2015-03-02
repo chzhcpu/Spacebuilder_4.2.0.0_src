@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<doc>
+    <members>
+        <member name="P:Tunynet.Mvc.DateTimePicker.MinDate">
+            <remarks>
+                <para>
+                    可为其设置以下情况的数值：
+                </para>
+                <list type="number">
+                    <item>
+                        <term>静态日期</term>
+                        <description>需要符合当前日期格式，比如："2012-12-12"</description>
+                    </item>
+                    <item>
+                        <term>整数</term>
+                        <description>是指相对于当前日期加多少天，比如：其值为"-2"，当前日期为"2012-01-05",则其对应日期为"2012-01-03"</description>
+                    </item>
+                    <item>
+                        <term>空</term>
+                        <description>表示无限制</description>
+                    </item>
+                    <item>
+                        <term>日期表达式</term>
+                        <description>
+                            <para>
+                                是指基于当前日期进行计算的表达式，使用表达式我们可以很方便的控制日期范围。其有以下特点：
+                            </para>
+                            <list type="bullet">
+                                <item>表达式可以看作是由多个子项拼接在一起的，允许子项之间有空格</item>
+                                <item>每个子项的形式为[符号位][数字位][日期单位]，其中符号位可选值为"+"或"-"，并可以省略符号位</item>
+                                <item>日期单位不区分大小写</item>
+                                <item>不填日期单位，默认为天</item>
+                            </list>
+                            <para>
+                                允许使用的日期单位说明如下：
+                            </para>
+                            <list type="bullet">
+                                <item>
+                                    <term>Y/y</term>
+                                    <description>在当前年份的基础上增加多少年，比如："+12Y"，当前日期为"2012-01-05",表示"2024-01-05"</description>
+                                </item>
+                                <item>
+                                    <term>M/m</term>
+                                    <description>在当前月份的基础上增加几个月，比如："+2M"，当前日期为"2012-01-05",表示"2012-03-05"</description>
+                                </item>
+                                <item>
+                                    <term>W/w</term>
+                                    <description>在当前日期的基础上增加多少个周，比如："+1W"，当前日期为"2012-01-05",表示"2012-01-12"</description>
+                                </item>
+                                <item>
+                                    <term>D/d</term>
+                                    <description>在当前年份的基础上增加多少天，比如："-2D"，当前日期为"2012-01-05",表示"2012-01-03"</description>
+                                </item>
+                            </list>
+                        </description>
+                    </item>
+                </list>
+            </remarks>
+        </member>
+    </members>
+</doc>

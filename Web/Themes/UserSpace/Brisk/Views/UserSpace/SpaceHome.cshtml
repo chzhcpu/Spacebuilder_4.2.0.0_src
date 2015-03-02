@@ -1,0 +1,55 @@
+﻿@{
+    TempData["ShowManage"] = true;
+}
+<!DOCTYPE html>
+<html>
+@using (Html.BeginHead())
+{
+    @Styles.Render("~/Bundle/Styles/Site")
+    @Html.RenderStyles() 
+    @Scripts.Render("~/Bundle/Scripts/jQuery")
+}
+<script src="@Tunynet.Utilities.WebUtility.ResolveUrl("~/Applications/Microblog/Scripts/tunynet/jquery.spb.microblog.List.js")" type="text/javascript"></script>
+<body id="@Html.GenerateBodyId()" class="tn-page-bg spb-space-home">
+    <div id="tn-doc" class="tn-doc-bg">
+        <div id="tn-header" class="tn-header-bg">
+            <div class="tn-wrapper">
+                @Html.Action("_Header", "UserSpace", new { spaceKey = Url.SpaceKey(), area = "Common" })
+            </div>
+        </div>
+        <div id="tn-content" class="tn-content-bg">
+            <div class="tn-wrapper">
+                <div class="tn-grid-19-5">
+                    <div class="tn-unit tn-first">
+                        <div class="tnc-main">
+                            <div class="tn-box tn-widget tn-widget-content tn-corner-all">
+                                <div class="tn-box-content tn-widget-content tn-corner-all">
+                                    @Html.Action("_UserActivities", new { spaceKey = Url.SpaceKey() })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tn-unit">
+                        <div class="tnc-aside">
+                            <div class="tn-box tn-widget tn-widget-content tn-corner-all tnc-user-profile">
+                                <div class="tn-box-content tn-widget-content tn-corner-bottom">
+                                    @Html.Action("_UserInfo", new { spaceKey = Url.SpaceKey(), area = "Common" })
+                                    @Html.Action("_SelectMenu", new { spaceKey = Url.SpaceKey(), area = "Common" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tn-footer" class="tn-footer-bg">
+            <div class="tn-wrapper">
+                @Html.Action("_Footer", "UserSpace", new { spaceKey = Url.SpaceKey(), area = "Common" })
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/Bundle/Scripts/Site")
+    @Html.RenderScripts()
+    @Html.RenderScriptBlocks()
+</body>
+</html>

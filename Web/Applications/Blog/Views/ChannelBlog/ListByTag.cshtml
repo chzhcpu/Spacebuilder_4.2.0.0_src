@@ -1,0 +1,56 @@
+﻿@model PagingDataSet<BlogThread>
+@{
+    Layout = "app-home-2cols";
+    Html.Style("~/Applications/Blog/Styles/app.css");
+    Html.Script("~/Applications/Blog/Scripts/jquery.spb.blog.js");
+
+    var tag = ViewData.Get<Tag>("tag", Tag.New());
+}
+@section Aside{
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">日志标签</h3>
+        </div>
+        <p class="tn-tags-hot">
+            @Html.Action("_TagCloud", "Channel", new { tenantTypeId = TenantTypeIds.Instance().BlogThread(), Area = "Common" })
+        </p>
+    </div>
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="tn-main-heading">
+            <h2>标签：@tag.TagName</h2>
+            @if (DIContainer.Resolve<Authorizer>().Tag_Edit(tag))
+            {
+                <div class="tn-option">
+                    <a href="@SiteUrls.Instance()._EditTag(tag.TagId)" plugin="dialog" title="编辑标签">编辑</a>
+                </div>
+            }
+
+        </div>
+        <div class="spb-bar-headlines">
+            <div class="tn-tabs">
+                @if (Model != null && Model.Count() > 0)
+                { 
+                    <div class="tn-tabs-panel">
+                        <ul class="tn-list">
+                            @foreach (var blogTag in Model)
+                            {        
+                                @Html.Partial("_BlogItemChannel", blogTag)
+                            }
+
+                        </ul>
+                        <div class="tn-pagination">
+                            @Html.PagingButton(Model, PaginationMode.NumericNextPrevious)
+                        </div>
+                    </div>
+                }
+                else
+                { 
+                    <div class="tn-no-data">暂无数据</div>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>

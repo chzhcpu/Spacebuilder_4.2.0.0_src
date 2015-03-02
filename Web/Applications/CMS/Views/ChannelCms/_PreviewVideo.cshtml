@@ -1,0 +1,43 @@
+﻿@model ContentAttachment
+@{
+    ContentAttachment attachment = Model;
+    string renderHtml;}
+@if (attachment.MediaType == MediaType.Flash)
+{
+    renderHtml = string.Format("<object width=\"400\" height=\"400\" data=\"{0}\" type=\"application/x-shockwave-flash\"><param name=\"allowFullScreen\" value=\"true\"><param name=\"src\" value=\"{0}\" /></object>", SiteUrls.Instance().ContentAttachmentDirectUrl(attachment));
+}
+else
+{
+    renderHtml = string.Format("<img src=\"{3}\" id=\"media_{0}\" data-url=\"{1}\" title=\"{2}\"/>", attachment.AttachmentId, SiteUrls.Instance().ContentAttachmentDirectUrl(attachment), attachment.FriendlyFileName, Tunynet.Utilities.WebUtility.ResolveUrl("~/Themes/Shared/Styles/images/" + (attachment.MediaType == MediaType.Video ? "video.png" : "music.png")));
+}
+@Html.Script("~/Scripts/jquery/jquery.media.js")
+<div class="tnc-dailog-pd">
+    @Html.Raw(renderHtml)
+</div>
+<div class="tnc-artdilog-btn tn-border-gray tn-border-top tn-bg-gray">
+    @Html.Button("关闭", ButtonTypes.Button, HighlightStyles.Primary, htmlAttributes: new { dialogoperation = "close" })
+</div>
+
+<script type="text/dialog">
+    this.title("@(attachment.MediaType == MediaType.Audio ? "音乐试听" : "视频预览")");
+</script>
+@Html.ScriptBlock(@<script type="text/javascript">
+    $(document).ready(function () {
+        $.fn.media.defaults.mp3Player = $.fn.media.defaults.flvPlayer = '@(Tunynet.Utilities.WebUtility.ResolveUrl("~/Scripts/mediaplayer.swf"))';
+        $("img[id^='media']").each(function () {
+            var url = $(this).data("url");
+            var height = 270;
+            //如果是音乐
+            if ($(this).attr("src").indexOf("music.png") > 0)
+                height = 20;
+            $(this).media({
+                width: 500,
+                height: height,
+                autoplay: true,
+                src: url,
+                params: { allowFullScreen: true },
+                caption: false
+            });
+        });
+    });
+</script>)

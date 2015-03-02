@@ -1,0 +1,192 @@
+﻿@model PagingDataSet<ContentAttachment>
+@{
+    Layout = "_ControlPanel";
+
+    var userId = ViewData.Get<long?>("userId", null);
+
+    int count = Model.Count();
+}
+
+
+<div class="tn-block tnc-ctnborder">
+    <div class="tnc-main">
+        <div class="tnc-rightvar tn-open">
+            <div class="tnc-settings-icon" plugin="ShortcutMenu">
+                <a href="#"></a>
+            </div>
+            <div id="ManageUserRightMenu">
+                <div class="tnc-settings">
+                    @Html.AjaxAction("_ManageableDataDetail", "ControlPanel", new { area = "Common", applicationKey = CmsConfig.Instance().ApplicationKey })
+                    @Html.Partial("_ManageRightMenu")
+                    @Html.AjaxAction("_StatisticDataDetail", "ControlPanel", new { area = "Common", applicationKey = CmsConfig.Instance().ApplicationKey })
+                </div>
+            </div>
+        </div>
+
+        <div class="tnc-ctn-center">
+            <h1>
+                <span>附件管理</span></h1>
+            <div class="tnc-ctnright-list">
+                <div class="tn-manager-search tn-helper-clearfix">
+                    <div class="tnc-search-adminform">
+                        @using (Html.BeginForm("ManageContentAttachments", "ControlPanelCms", FormMethod.Get))
+                        { 
+                           
+                            <div class="tn-form-row">
+                                <label class="tn-form-label">
+                                    附件名：</label>
+                                @Html.TextBox("keyword", Request.QueryString.Get<string>("keyword", string.Empty), InputWidthTypes.Medium)
+                            </div>
+                            <div class="tn-form-row">
+                                <label class="tn-form-label">
+                                    上传人：</label>
+                                @Html.UserSelector("userId", userId)
+                            </div>
+                            <div class="tn-form-row">
+                                <label class="tn-form-label">
+                                    上传时间：
+                                </label>
+                                @Html.DateTimePicker("startDate", new DateTimePicker().SetDateFormat("yyyy-MM-dd").SetMaxDate("0").SetMinDate("-10Y"))
+                                到
+                                @Html.DateTimePicker("endDate", new DateTimePicker().SetDateFormat("yyyy-MM-dd").SetMaxDate("0").SetMinDate("-10Y"))
+                            </div>
+                            <div class="tn-form-row">
+                                <label class="tn-form-label">类型：</label>
+                                @Html.EnumDropDownList("mediaType", Request.QueryString.Get<MediaType?>("mediaType"), MediaType.Image, "请选择", new { @class = "tn-dropdownlist" })
+                            </div>
+                            <div class="tn-form-row">
+                                <label class="tn-form-label">
+                                </label>
+                                @Html.Button("搜索", ButtonTypes.Submit, HighlightStyles.Primary, htmlAttributes: new { @class = "tn-button-text", id = "searchContentItems" })
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="tnc-content-manage">
+                    <div class="tn-list-header">
+                        <div class="tn-toolbar-area">
+                            @Html.LinkButton("删除", SiteUrls.Instance()._DeleteContentAttachments(), iconType: IconTypes.SmallCross, htmlAttributes: new { id = "contentitem-delete" })
+                        </div>
+                    </div>
+                    <form id="form-contentitem" method="post" action="#" novalidate="novalidate">
+                        <table class="tn-table-grid">
+                            <tbody>
+                                <tr class="tn-table-grid-header">
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">
+                                        <input type="checkbox" name="checkbox" id="select-all" class="tn-checkbox">
+                                    </th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">附件名称
+                                    </th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">发布人
+                                    </th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">附件大小
+                                    </th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">上传时间
+                                    </th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">操作
+                                    </th>
+                                </tr>
+                                @foreach (var item in Model)
+                                {
+                                    <tr class="tn-table-grid-row" id="contentitem-@item.AttachmentId">
+                                        <td class="tn-border-gray tn-border-bottom tn-width-check">
+                                            @Html.SipmleCheckBox("AttachmentIds", item.AttachmentId, false, new { @class = "tnui-blog-id" })
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-width-auto">
+                                            <em>@item.FriendlyFileName</em>
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-nowrap">
+                                            @Html.Link(item.UserDisplayName, SiteUrls.Instance().CmsUser(item.UserId), item.UserDisplayName, htmlAttributes: new { @class = "tn-user-name" }, navigateTarget: HyperLinkTarget._blank)
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-nowrap">
+                                            <em>@(item.FileLength / 1024)M</em>
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-nowrap">
+                                            <em>@item.DateCreated</em>
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-nowrap">
+                                            @Html.Link("下载", SiteUrls.Instance().ContentAttachmentUrl(item.AttachmentId), "下载")
+                                            @Html.AjaxDeleteButton(new AjaxDeleteButton().SetConfirm("你确定删除此附件吗？").SetDeleteTarget("#contentitem-" + item.AttachmentId).SetText("删除").SetUrl(SiteUrls.Instance()._DeleteContentAttachments(item.AttachmentId)))
+                                        </td>
+                                    </tr>                                    
+                                }
+                            </tbody>
+                        </table>
+                    </form>
+                    @if (Model == null || Model.Count == 0)
+                    {
+                        <div class="tn-no-data">
+                            暂无附件
+                        </div>
+                    }
+                    <div class="tn-pagination">
+                        @Html.PageSizeDropdownList("PageSize")
+                        @Html.PagingButton(Model, PaginationMode.NumericNextPrevious)
+                        @Html.PagingResults(Model)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.ScriptBlock(@<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+
+        //不可逆操作的脚本
+        $("#contentitem-delete").click(function (e) {
+            e.preventDefault();
+            if (!$("input[name='AttachmentIds']:checked").length) {
+                alert("至少选择一条数据");
+                return;
+            }
+
+            var _this = $(this);
+            art.dialog.confirm('您确认要删除吗？', function () {
+                $("#form-contentitem").ajaxSubmit({
+                    success: function (data) {
+                        art.dialog.tips(data.MessageContent, 1.5, data.MessageType, function () {
+                            window.location.reload();
+                        });
+                    },
+                    url: _this.attr("href")
+                });
+            });
+        });
+        //点通过审核
+        $("a[id^='audit-']").click(function (e) {
+            e.preventDefault();
+
+            if (!$("input[name='AttachmentIds']:checked").length) {
+                alert("请至少选择一条！");
+                return false;
+            }
+
+            var url = $(this).attr("href");
+            $.post(url, $("form#form-contentitem").serialize(), function (data) {
+                art.dialog.tips(data.MessageContent, 1.5, data.MessageType, function () {
+                    window.location.reload(true);
+                });
+            })
+        });
+        //全选按钮
+        $("#select-all").click(function (e) {
+            $("input[name='AttachmentIds']").attr("checked", this.checked);
+        });
+
+        //模式框显示
+        $("a[id^='art_dialog_']").click(function () {
+            $link = $(this);
+            if (!$("input[name='AttachmentIds']:checked").length) {
+                alert("至少选择一条资讯操作");
+                return false;
+            }
+            $.get($link.attr("href"),
+                 $("form#form-contentitem").serialize(),
+                 function (data) {
+                     art.dialog(data);
+                 });
+            return false;
+        });
+    });
+</script>)
+

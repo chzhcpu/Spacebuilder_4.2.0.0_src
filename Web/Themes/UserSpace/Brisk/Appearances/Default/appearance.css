@@ -1,0 +1,154 @@
+/* 
+Offical Style for Spacebuilder
+(c) 2007-2012 Tunynet Inc.
+*/ 
+
+/* Theme
+----------------------------------*/
+html { overflow-x: hidden; }
+body { color:#888 }
+a { color: #555; }
+a:hover { color: #555; }
+.tn-secondary-text,tn-secondary-text a,a.tn-secondary-text{ color: #bbb; }
+tn-secondary-text a:hover,a.tn-secondary-text:hover{ color: #555; }
+.tn-page-bg{ background: url(Images/spb-bg.png); }
+.tn-content-bg .tn-wrapper { background: #fff; box-shadow: 0 0 2px rgba(0, 0, 0, 0.25); }
+.spb-layout-3-13 .tn-content-bg .tn-wrapper  { background-image: url(Images/spb-side-bg.png); background-repeat: repeat-y; }
+.spb-layout-3-13 .tn-content-bg .tn-wrapper { background-position: -510px 0; }
+.spb-app-page .tn-wrapper { background: none; box-shadow: none; }
+.spb-app-page .tnc-main,
+.spb-app-page .tnc-aside .tn-box { background: #fff; box-shadow: 0 0 2px rgba(0, 0, 0, 0.25); }
+
+/* Component containers
+----------------------------------*/
+.tn-widget-content,
+.ui-widget-content { border-color: #c5c5c5; background: #fff; }
+.tn-widget-bubble,
+.tn-widget-same { border-color: #fff; }
+.tn-widget-header,
+.ui-widget-header { border-color: #c5c5c5; background: #e5e5e5; }
+
+/* Background 
+----------------------------------*/
+.tn-bg-light { background-color: #fff; }
+.tn-bg-gray { background-color: #e5e5e5; }
+.tn-bubble-gray { border-color: #e5e5e5; }
+.tn-bg-deep { background-color: #c75f5f;}
+.tn-bubble-deep { border-color: #c75f5f; }
+
+/* Line Color
+----------------------------------*/
+.tn-border-light { border-color: #a4dbb1; }
+.tn-border-gray { border-color: #ddd; }
+.tn-border-deep { border-color: #ad4242; }
+
+/* Interaction states
+----------------------------------*/
+.tn-state-hover, .tn-widget-content .tn-state-hover, .tn-state-focus, .tn-widget-content .tn-state-focus,  
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus { background: #e5e5e5; }
+
+/* Button
+----------------------------------*/
+.tn-button-default { background: #fff; border:none;border:1px solid #ddd; }
+.tn-button-default:hover { background: #eee; border:none;border:1px solid #ddd; }
+.tn-button-primary,
+.uploadify-button { background: #c75f5f; border-color: #ad4242; box-shadow: 0 1px 0 #e18383 inset; }
+.tn-button-primary:hover,
+.uploadify:hover .uploadify-button { background: #ad4242; border-color: #942929; box-shadow: 0 1px 0 #e09999 inset; }
+.tn-button-secondary { background: #eee; border-color: #ddd; box-shadow: 0 1px 0 #fff inset; }
+.tn-button-secondary:hover { background: #e8e8e8; border-color: #ddd; box-shadow: 0 1px 0 #fff inset; }
+.tn-button-secondary .tn-button-text,
+.tn-button-secondary:hover .tn-button-text { font-weight: normal; color: #999; }
+.tn-button-lite { background: none; border:1px solid #ddd; box-shadow: none; }
+.tn-button-hollow { background: none; box-shadow:none; border:1px solid #ddd; }
+.tn-button-lite:hover,
+.tn-button-hollow:hover { box-shadow: none;border:1px solid #ddd; }
+.tn-button-disabled,
+.tn-button-disabled:hover { background: #f8f8f8; border-color: #eee; cursor: default; box-shadow: 0 1px 0 #fff inset; }
+.tn-button-disabled .tn-button-text, 
+.tn-button-disabled:hover .tn-button-text { color: #ccc; }
+
+/* header
+----------------------------------*/
+.tn-header-bg{ background-color: #444; border-bottom:1px solid #df5555; }
+.spb-top-menubar .spb-logo { background-image: url(../../../../../Images/logo-light.png); }
+.spb-top-menubar a.tn-user-name,
+.spb-top-menubar a.tn-user-name:hover,
+.spb-top-menubar .spb-sign-menu a,
+.spb-top-menubar .spb-sign-menu a:hover { color: #e5e5e5; }
+
+/* Box
+----------------------------------*/
+.tn-box,
+.tn-box .tn-box-content{ background: none; }
+.tn-box .tn-box-header { background: none; }
+
+/* content
+----------------------------------*/
+.tn-main-heading h2 { font-size: 24px; }
+.tn-content-heading h4 { font-size: 16px; font-weight: normal; }
+
+/* My Home */
+.spb-br-post-box,
+.spb-my-following .tn-list-item-area-main,
+.spb-my-home .tnc-aside .tn-box { background: #fff; box-shadow: 0 0 2px rgba(0, 0, 0, 0.25); }
+.spb-br-box-arrow,
+.spb-my-following .tnc-dynamic-title { background: url(Images/spb-box-arrow.png) no-repeat; }
+
+.spb-my-home .tn-content-bg .tn-wrapper { background: none; box-shadow: none; }
+.spb-my-home .tnc-main .tn-avatar { background: #fff; box-shadow: 0 0 2px rgba(0, 0, 0, 0.25); }
+.spb-my-home .tnc-main .tn-bubble .tn-avatar { box-shadow: none; }
+.spb-my-home .tn-side-menu a:hover { background: #e5e5e5; text-decoration: none; }
+
+.spb-my-following .tn-directory { background: #fff; }
+
+/* Space Home */
+.spb-space-home .tn-content-bg .tn-wrapper { background: none; box-shadow: none; }
+.spb-space-home .tnc-dynamic .tn-list-item-area-main,
+.spb-space-home .tnc-user-profile .tn-avatar-wrap { background: #fff; box-shadow: 0 0 2px rgba(0, 0, 0, 0.25); }
+.spb-space-home .tnc-user-profile .tn-button{box-shadow: 0 0 2px rgba(0, 0, 0, 0.25); padding:5px; border:none;}
+.spb-space-home .tnc-dynamic-title,
+.spb-space-home .tnc-user-menu .tn-icon { background: url(Images/spb-icon.png) no-repeat -110px 0; }
+.spb-space-home .spb-microblog-item .tnc-dynamic-title { background-position: -110px -200px; }
+.spb-space-home .spb-bar-item .tnc-dynamic-title { background-position: -110px -400px; }
+.spb-space-home .spb-blog-item .tnc-dynamic-title { background-position: -110px -600px; }
+.spb-space-home .spb-photo-item .tnc-dynamic-title { background-position: -110px -800px; }
+.spb-space-home .spb-pointmall-item .tnc-dynamic-title { background-position: -110px -1000px; }
+.spb-space-home .spb-group-item .tnc-dynamic-title { background-position: -110px -1200px; }
+
+.spb-space-home .spb-user-atten { border-bottom: 1px dashed #bbb;border-top: 1px dashed #bbb; }
+.spb-space-home .spb-user-atten a { background: #bbb; border-top-right-radius: 5px; color: #fff; }
+.spb-space-home .spb-user-atten a:hover { background: #555555; color: #fff; }
+.spb-space-home .spb-user-atten a:hover span { text-decoration: none; }
+.spb-space-home .tn-side-menu li { border-width: 0; }
+.spb-space-home .tn-side-menu .tn-icon-home { background-position: -50px 0; }
+.spb-space-home .tn-side-menu .tn-icon-microblog { background-position: 0 -50px; }
+.spb-space-home .tn-side-menu .tn-icon-bar { background-position: 0 -100px; }
+.spb-space-home .tn-side-menu .tn-icon-blog { background-position: 0 -150px; }
+.spb-space-home .tn-side-menu .tn-icon-album { background-position: 0 -200px; }
+.spb-space-home .tn-side-menu .tn-icon-archive { background-position: 0 -250px; }
+.spb-space-home .tn-side-menu .tn-icon-gift { background-position: 0 -300px; }
+.spb-space-home .tn-side-menu .tn-icon-group { background-position: 0 -350px; }
+.spb-space-home .tn-side-menu .tn-icon-ask { background-position: 0 -400px; }
+.spb-space-home .tn-side-menu li:hover .tn-icon-microblog { background-position: -50px -50px; }
+.spb-space-home .tn-side-menu li:hover .tn-icon-bar { background-position: -50px -100px; }
+.spb-space-home .tn-side-menu li:hover .tn-icon-blog { background-position: -50px -150px; }
+.spb-space-home .tn-side-menu li:hover .tn-icon-album { background-position: -50px -200px; }
+.spb-space-home .tn-side-menu li:hover .tn-icon-archive { background-position: -50px -250px; }
+.spb-space-home .tn-side-menu li:hover .tn-icon-gift { background-position: -50px -300px; }
+.spb-space-home .tn-side-menu li:hover .tn-icon-group { background-position: -50px -350px; }
+.spb-space-home .tn-side-menu li:hover .tn-icon-ask { background-position: -50px -400px; }
+
+/*  */
+
+.spb-brish-box{_border:1px solid #ddd;}
+.spb-photo-size{ border:10px solid #fff;box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);}
+.spb-brisk-side .tn-button-default{ border-color:#bbb; background: url(Images/spb-btnbg.png) repeat-x 0 0; }
+.spb-briskside-line{ background: url(Images/spb-line.png) repeat-x left bottom; }
+.spb-briskside-menu li a .tnc-briskmenu-over{ padding:3px; display:inline-block;}
+.spb-briskside-menu li a:hover .tnc-briskmenu-over{ background-color: #FFF;border-radius:16px; padding:3px; display:inline-block; }
+.spb-menu-journal a:hover{ color:#e67c7c;}
+.spb-menu-album a:hover{ color:#c69833;}
+.spb-menu-info a:hover{ color:#3e519a;}
+.spb-menu-friend a:hover{ color:#bc4192;}
+.spb-menu-app a:hover{ color:#33a04c;};

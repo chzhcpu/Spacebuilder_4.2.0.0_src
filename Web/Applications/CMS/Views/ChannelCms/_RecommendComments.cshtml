@@ -1,0 +1,61 @@
+﻿@model IEnumerable<RecommendItem>
+@{
+    string recommendTypeId = ViewData.Get<string>("recommendTypeId", string.Empty);
+}
+
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-story-fine-comments">
+    <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+        <div class="tn-option">
+            @if (DIContainer.Resolve<Authorizer>().RecommendItem_Manage(TenantTypeIds.Instance().Comment()))
+            {
+                <a href="@SiteUrls.Instance()._ManageRecommendItems(recommendTypeId, false)" plugin="dialog">管理</a>
+            }
+        </div>
+        <h3 class="tn-helper-reset">精彩点评 </h3>
+    </div>
+    <div class="tn-box-content tn-widget-content tn-corner-bottom">
+        @if (Model.Count() > 0)
+        { 
+            <ul class="tn-list">
+                @foreach (var item in Model)
+                {
+                    var comment = item.GetComment();
+                    if (comment == null)
+                    {
+                        continue;
+                    }
+                    var commentedObject = comment.GetCommentedObject();
+                    if (commentedObject == null)
+                    {
+                        continue;
+                    }
+                    <li class="tn-list-item tn-border-gray tn-border-bottom">
+                        <div class="tn-list-item-row tn-list-item-heading">
+                            <h5><a href="@commentedObject.DetailUrl">@commentedObject.Name</a></h5>
+                        </div>
+                        <div class="tn-list-item-row tn-helper-clearfix tn-list-info">
+                            @Html.ShowUserAvatar(comment.User(), AvatarSizeType.Micro)
+                            <a class="tn-user-name" href="@SiteUrls.Instance().SpaceHome(comment.UserId)" target="_blank">@comment.Author</a><em class="tn-date tn-text-note">
+                                <a href="@SiteUrls.Instance().Comments(comment.CommentedObjectId, comment.Id)" title="查看该评论">@comment.DateCreated.ToFriendlyDate()</a>
+                            </em>
+                        </div>
+                        <div class="tn-list-item-row tn-list-item-summary">
+                            <div class="tn-widget tn-bubble tn-bubble-arrow-top">
+                                <div class="tn-bubble-arrow"><b class="tn-arrow-b1 tn-border-gray"></b><b class="tn-arrow-b2 tn-bubble-gray"></b></div>
+                                <div class="tn-bubble-content tn-border-gray tn-bg-gray tn-corner-all">
+                                    <p>@Html.Raw(comment.Body)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+        else
+        { 
+            <div class="tn-no-data">
+                暂无评论推荐
+            </div>
+        }
+    </div>
+</div>

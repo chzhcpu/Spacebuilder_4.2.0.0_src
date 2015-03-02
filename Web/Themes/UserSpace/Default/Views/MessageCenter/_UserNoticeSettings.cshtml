@@ -1,0 +1,44 @@
+﻿@model Dictionary<int, bool> 
+@using (Html.BeginAjaxForm("UserNoticeSettings", "MessageCenter", FormMethod.Post, new AjaxFormOptions { OnSuccessCallBack = "invitationSettingSuccess", OnErrorCallBack = "invitationSettingError" }))
+{
+    <div class="tnc-dailog-pd tnc-notice-set-mod">
+		<div class="tn-form">
+			<div class="tn-text-heading tn-border-gray tn-border-bottom"><strong>接收通知的类型：</strong></div>
+			<div class="tn-form-row">
+				<ul class="tn-checkbox-list">
+					@if (Model != null)
+					{
+						foreach (var item in Model)
+						{
+						<li>
+							@Html.CheckBox("noticeType", item.Value, new { @class = "tn-radiobutton", value = item.Key })
+							@{
+							NoticeType noticeType = NoticeType.Get(item.Key);
+							if (noticeType == null)
+							{ continue; }
+							}
+							@(noticeType.TypeName)
+							<span class="tn-text-note">@(noticeType.Description)</span>
+						</li>
+						}
+					}
+				</ul>
+			</div>
+		</div>
+    </div>
+    <div class="tnc-artdilog-btn tn-bg-gray tn-border-gray tn-border-top">
+        @Html.Button("提交", ButtonTypes.Submit, HighlightStyles.Primary)
+    </div>
+}
+<script type="text/dialog">
+    this.title("通知设置");
+</script>
+
+@Html.ScriptBlock(@<script type="text/javascript" language="javascript">
+    function invitationSettingSuccess(data) {
+        art.dialog.tips(data.MessageContent, 1.5, data.MessageType);
+    }
+    function invitationSettingError(data) {
+        art.dialog.tips(data.MessageContent, 1.5, data.MessageType);
+    }
+</script>)

@@ -1,0 +1,66 @@
+﻿@model List<long>
+@{
+    var contentItem = ViewData.Get<ContentItem>("contentItem", new ContentItem());
+}
+<div id="stickyDateDialog">
+    @using (Html.BeginAjaxForm("CmsSetSticky", "ChannelCms", null, FormMethod.Post, new AjaxFormOptions { OnSuccessCallBack = "success", OnErrorCallBack = "error" }, new { id = "CmsSetStickyForm" }))
+    {
+        List<long> contentItemIds = ViewData.Get<List<long>>("contentItemId", new List<long> { });
+        foreach (var itemId in Model)
+        {
+        <input type="hidden" value="@itemId" name="contentItemIds" id="contentItemIds" />
+        } 
+        <div class="tnc-dailog-pd">
+            <div class="tn-form-box">
+                <table>
+                    <tbody>
+                        <tr data-issticky="@contentItem.IsGlobalSticky.ToString().ToLower()">
+                            <th>置顶设置：</th>
+                            <td>
+                                @Html.CheckBox("IsGlobalSticky", contentItem.IsGlobalSticky, new { @class = "tn-checkbox", id = "IsGlobalSticky" })
+                                <label for="IsGlobalSticky">整站置顶</label>
+                                @Html.DateTimePicker("GlobalStickyDate", new DateTimePicker().SetDateFormat("yyyy-MM-dd").SetMinDate("0").SetMaxDate("+10Y").MergeHtmlAttribute("style", contentItem.IsGlobalSticky ? "inline" : "display:none").SetSelectedDate(contentItem.IsGlobalSticky ? contentItem.GlobalStickyDate : DateTime.Today.AddDays(3)))
+                            </td>
+                        </tr>
+                        <tr data-issticky="@contentItem.IsFolderSticky.ToString().ToLower()">
+                            <th></th>
+                            <td>
+                                @Html.CheckBox("IsFolderSticky", contentItem.IsFolderSticky, new { @class = "tn-checkbox", id = "IsFolderSticky" })
+                                <label for="IsFolderSticky">栏目置顶</label>
+                                @Html.DateTimePicker("FolderStickyDate", new DateTimePicker().SetDateFormat("yyyy-MM-dd").SetMinDate("0").SetMaxDate("+10Y").MergeHtmlAttribute("style", contentItem.IsFolderSticky ? "inline" : "display:none").SetSelectedDate(contentItem.IsFolderSticky ? contentItem.FolderStickyDate : DateTime.Today.AddDays(3)))
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tnc-artdilog-btn tn-bg-gray tn-border-gray tn-border-top">
+            @Html.Button("确定", ButtonTypes.Submit, HighlightStyles.Primary)
+            @Html.Button("取消", ButtonTypes.Button, HighlightStyles.Secondary, htmlAttributes: new { dialogoperation = "close" })
+        </div>
+    }
+</div>
+<script type="text/dialog">
+    this.title("置顶设置");
+    this.lock();
+</script>
+@Html.ScriptBlock(@<script type="text/javascript">
+    function success(data) {
+        if (data.MessageType == 1) {
+            art.dialog.tips(data.MessageContent, 1.5, data.MessageType, function () { window.location.reload(true) });
+        } else {
+            art.dialog.tips(data.MessageContent, 1.5, data.MessageType);
+        }
+    }
+    function error(reponse) {
+        $("#CmsSetStickyForm").replaceWith(reponse);
+    }
+    $(document).ready(function () {
+        $("input[id='IsGlobalSticky'][type='checkbox']").click(function () {
+            $("input[id='GlobalStickyDate']").toggle();
+        });
+        $("input[id='IsFolderSticky'][type='checkbox']").click(function () {
+            $("input[id='FolderStickyDate']").toggle();
+        });
+    });
+</script>)

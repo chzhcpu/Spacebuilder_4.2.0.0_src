@@ -1,0 +1,42 @@
+﻿@{
+    AttachmentSettings attachmentSettings = DIContainer.Resolve<ISettingsManager<AttachmentSettings>>().Get();
+    string allowedFileExtensions = attachmentSettings.AllowedFileExtensions.Replace("gif,", "").Replace("jpg,", "").Replace("jpeg,", "").Replace("png,", "").Replace("bmp,", "");   
+
+}
+<div class="tnc-dailog-pd" style="width: 560px; height: 358px;">
+    <div class="tnc-upload-btn">
+        <div class="tn-helper-clearfix">
+            @Html.Uploadify("uploadContentAttachmentManage", allowedFileExtensions, attachmentSettings.MaxAttachmentLength, new UploadFileOptions()
+                 .MergeUploadifyCallBack("onQueueComplete", "OnQueueComplete")
+                 .SetAutoUpload(true)
+                 .SetMultiple(true)
+                 .SetPreventCaching(true)
+                 .SetQueueId("queueManage")
+                 .SetQueueSizeLimit(attachmentSettings.BatchUploadLimit)
+                 .SetRemoveCompleted(true)
+                 .SetUploaderUrl(SiteUrls.Instance().UploadContentAttachment(UserContext.CurrentUser.UserId))
+                 .MergeUploadifyFormData("CurrentUserIdToken", Utility.EncryptTokenForUploadfile(0.1, UserContext.CurrentUser.UserId))
+                 .MergeUploadifyFormData("resize", true), new ButtonOptions().SetText("上传文件"))
+
+            <span class="tn-text-note">限制文件大小：@(attachmentSettings.MaxAttachmentLength / 1024)M;</span>
+        </div>
+        <div id="queueManage">
+        </div>
+    </div>
+    @Html.Action("_ListContentAttachments", "ChannelCms")
+</div>
+<div class="tnc-artdilog-btn tn-bg-gray tn-border-gray tn-border-top">
+    @Html.Button("全部插入", ButtonTypes.Submit, HighlightStyles.Primary, htmlAttributes: new { id = "insertEditAttachment", dialogOperation = "close" })
+    @Html.Button("关闭", ButtonTypes.Cancel, HighlightStyles.Secondary, htmlAttributes: new { id = "cancelEditAttachment", dialogOperation = "close" })
+</div>
+<script type="text/javascript">
+
+    function OnQueueComplete(queueData) {
+        $("#_ListAttachments").load('@Html.Raw(SiteUrls.Instance()._ListContentAttachments())');
+    }
+    $(document).ready(function () {
+        $("#insertEditAttachment").click(function () {
+            selectAttachments();
+        });
+    });
+</script>

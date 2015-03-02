@@ -1,0 +1,33 @@
+﻿@model IEnumerable<WorkExperience> 
+@if (Model != null && Model.Count() > 0)
+{
+    <table class="tn-table-grid tn-border-gray tn-border-trl">
+        @foreach (var work in Model)
+        {
+            <tr id="work_@(work.Id)" >
+                <td class="tn-bg-gray tn-border-gray tn-border-bottom"><strong>@(work.CompanyName)</strong></td>
+                <td class="tn-bg-gray tn-border-gray tn-border-bottom">@(work.JobDescription)</td>
+                <td class="tn-bg-gray tn-border-gray tn-border-bottom tn-nowrap">
+                    @if (!string.IsNullOrEmpty(work.CompanyAreaCode))
+                    {
+                        @Html.Raw("(")
+                        @Formatter.FormatArea(work.CompanyAreaCode, true) 
+                        @Html.Raw(")")
+                    }
+                    @{
+                        string endDate = string.Empty;
+                        if (work.EndDate.Year == DateTime.Now.Year)
+                        { endDate = "至今"; }
+                        else
+                        { endDate = work.EndDate.Year.ToString(); }
+                    }                
+                </td>
+                <td class="tn-bg-gray tn-border-gray tn-border-bottom tn-nowrap">@(work.StartDate.Year)-@(endDate)</td>
+                <td class="tn-bg-gray tn-border-gray tn-border-bottom tn-nowrap">
+                    @Html.Link("修改", "javascript:;", "修改", htmlAttributes: new { @class = "tn-action", id = "UpdateWork", onclick = "UserWorkInfoCallback(" + work.Id + ")" })
+                    @Html.AjaxDeleteButton(new AjaxDeleteButton().SetConfirm("确认要删除工作经历吗 ? &nbsp;&nbsp;").SetText("删除").SetTooltip("删除工作经历").SetDeleteTarget("#work_" + work.Id).SetUrl(SiteUrls.Instance().DeleteUserWork(Url.SpaceKey(), work.Id)))               
+                </td>
+            </tr>
+        }
+    </table>
+}

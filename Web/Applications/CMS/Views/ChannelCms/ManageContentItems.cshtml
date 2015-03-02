@@ -1,0 +1,241 @@
+﻿@model PagingDataSet<ContentItem>
+@{
+    Layout = "app-1col";
+    Html.Style("~/Applications/CMS/Styles/app.css");
+
+
+    int? folderId = Request.QueryString.Get<int?>("folderId", null);
+    AuditStatus? auditStatus = Request.QueryString.Get<AuditStatus?>("auditStatus", null);
+    var userId = ViewData.Get<long?>("userId", null);
+
+    var contentTypes = ViewData.Get<IEnumerable<ContentTypeDefinition>>("ContentTypes", new List<ContentTypeDefinition>());
+    var menuItems = new List<MenuItem>();
+    foreach (var contentType in contentTypes)
+    {
+        menuItems.Add(new MenuItem { Text = "发布" + contentType.ContentTypeName, Url = SiteUrls.Instance().EditContentItem(null, contentType.ContentTypeId) });
+    }
+    int count = Model.Count();
+}
+
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-cms-manage-box">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="spb-cms-manage">
+            <div class="tn-main-heading tn-border-gray tn-border-bottom">
+                <h2>资讯管理</h2>
+            </div>
+            <div class="tn-form-box">
+                @using (Html.BeginForm("ManageContentItems", "ChannelCms", FormMethod.Get))
+                { 
+                    <table>
+                        <tr>
+                            <th>标题关键字：</th>
+                            <td>@Html.TextBox("subjectKeyWord", Request.QueryString.Get<string>("subjectKeyWord", string.Empty), InputWidthTypes.Medium)</td>
+                            <th>发布人：</th>
+                            <td>@Html.UserSelector("userId", userId)</td>
+                            <th>发布时间：</th>
+                            <td>
+                                @Html.DateTimePicker("minDate", new DateTimePicker().SetDateFormat("yyyy-MM-dd").SetMaxDate("0").SetMinDate("-10Y"))
+                                到
+                                @Html.DateTimePicker("maxDate", new DateTimePicker().SetDateFormat("yyyy-MM-dd").SetMaxDate("0").SetMinDate("-10Y"))</td>
+                        </tr>
+                        <tr>
+                            <th>标签：</th>
+                            <td>@Html.TextBox("tagNameKeyword", Request.QueryString.Get<string>("tagNameKeyword", string.Empty), InputWidthTypes.Medium)</td>
+                            <th>审核状态：</th>
+                            <td>@(Html.EnumDropDownList<AuditStatus?>("auditStatus", auditStatus, "全部", new { @class = "tn-dropdownlist" }))</td>
+                            <th>栏目：</th>
+                            <td>@Html.FolderDropDownList("folderId", Request.QueryString.Get<int>("folderId", 0), onlyModerated: true)</td>
+                        </tr>
+                        <tr>
+                            <th></th>
+                            <td>@Html.Button("搜索", ButtonTypes.Submit, HighlightStyles.Primary, htmlAttributes: new { @class = "tn-button-text", id = "searchContentItems" })</td>
+                            <th></th>
+                            <td></td>
+                            <th></th>
+                            <td></td>
+                        </tr>
+                    </table>
+                }
+            </div>
+            <div class="tn-list-header">
+                <div class="tn-toolbar-area tn-helper-clearfix tn-border-gray tn-border-bottom">
+                    @Html.LinkButton("通过审核", SiteUrls.Instance().CmsUpdateAuditStatus(true), iconType: IconTypes.SmallAccept, htmlAttributes: new { id = "audit-success" })
+                    @Html.LinkButton("不通过审核", SiteUrls.Instance().CmsUpdateAuditStatus(false), iconType: IconTypes.SmallStop, htmlAttributes: new { id = "audit-fail" })
+                    @Html.LinkButton("置顶", SiteUrls.Instance()._SetStickyDate(), iconType: IconTypes.SmallTop, htmlAttributes: new { id = "art_dialog_SetSticky" })
+                    @Html.LinkButton("设置栏目", SiteUrls.Instance()._SetContentFolder(), iconType: IconTypes.SmallSet, htmlAttributes: new { id = "art_dialog_setFolder" })
+                    @Html.LinkButton("删除", SiteUrls.Instance()._DeleteContentItems(), iconType: IconTypes.SmallCross, htmlAttributes: new { id = "contentitem-delete" })
+                </div>
+            </div>
+            <form id="form-contentitem" method="post" action="#" novalidate>
+                <table class="tn-table-grid">
+                    <tbody>
+                        <tr class="tn-table-grid-header">
+                            <th class="tn-border-gray tn-border-bottom tn-text-note">
+                                <input type="checkbox" name="checkbox" id="select-all" class="tn-checkbox">
+                            </th>
+                            <th class="tn-border-gray tn-border-bottom tn-text-note">标题
+                            </th>
+                            <th class="tn-border-gray tn-border-bottom tn-text-note">状态
+                            </th>
+                            <th class="tn-border-gray tn-border-bottom tn-text-note">栏目
+                            </th>
+                            <th class="tn-border-gray tn-border-bottom tn-text-note">标签
+                            </th>
+                            <th class="tn-border-gray tn-border-bottom tn-text-note">发布者
+                            </th>
+                            <th class="tn-border-gray tn-border-bottom tn-text-note">发布时间
+                            </th>
+                            <th class="tn-border-gray tn-border-bottom tn-text-note">操作
+                            </th>
+                        </tr>
+                        @foreach (var item in Model)
+                        {
+                            <tr class="tn-table-grid-row" id="contentitem-@item.ContentItemId">
+                                <td class="tn-border-gray tn-border-bottom tn-width-check">
+                                    @Html.SipmleCheckBox("contentItemIds", item.ContentItemId, false, new { @class = "tnui-blog-id" })
+                                </td>
+                                <td class="tn-border-gray tn-border-bottom tn-width-auto">
+                                    @Html.Link(item.Title, SiteUrls.Instance().ContentItemDetail(item.ContentItemId), item.Title, null, HyperLinkTarget._blank)
+                                    @if (item.IsGlobalSticky || item.IsFolderSticky)
+                                    {
+                                        <span title="置顶" class="tn-icon-colorful tn-icon-colorful-top tn-icon-inline"></span>
+                                    }
+                                    @if (item.IsEssential)
+                                    {
+                                        <span title="精华" class="tn-icon-colorful tn-icon-colorful-fine tn-icon-inline"></span>
+                                    }
+                                </td>
+                                <td class="tn-border-gray tn-border-bottom tn-nowrap">
+                                    @Html.AuditStatusIcon(item.AuditStatus)
+                                </td>
+                                <td class="tn-border-gray tn-border-bottom tn-nowrap">
+                                    @if (item.ContentFolder != null)
+                                    {
+                                        @Html.Link(item.ContentFolder.FolderName, SiteUrls.Instance().FolderDetail(item.ContentFolderId), item.ContentFolder.FolderName, null, HyperLinkTarget._blank)
+                                    }
+                                    else
+                                    {
+                                        @:尚未设置
+                                            }
+                                </td>
+                                <td class="tn-border-gray tn-border-bottom tn-nowrap">
+                                    @if (item.TagNames != null && item.TagNames.Count() > 0)
+                                    {
+                                        string tagNames = string.Empty;
+                                        for (int i = 0; i < Math.Min(item.TagNames.Count(), 2); i++)
+                                        {
+                                            tagNames += item.TagNames.ElementAt(i) + "，";
+                                        }
+                                        tagNames = tagNames.TrimEnd('，');
+                                        <span @if (item.TagNames != null && item.TagNames.Count() > 2)
+                                              { <text>menu="#more-tag-@item.ContentItemId"</text> }>@tagNames</span>
+                                              if (item.TagNames.Count() > 2)
+                                              {
+                                                  tagNames = string.Empty;
+                                        <div class="tn-widget tn-bubble tn-bubble-arrow-top" id="more-tag-@item.ContentItemId" style="display:none">
+                                            <div class="tn-bubble-arrow">
+                                                <b class="tn-arrow-b1 tn-border-gray"></b><b class="tn-arrow-b2 tn-widget-bubble"></b>
+                                            </div>
+                                            <div class="tn-bubble-content tn-widget-content tn-border-gray tn-corner-all">
+                                                @{
+                                                  for (int i = 2; i < item.TagNames.Count(); i++)
+                                                  {
+                                                      tagNames += item.TagNames.ElementAt(i) + "，";
+                                                  }
+                                                  tagNames = tagNames.TrimEnd('，');
+                                                }
+                                                @tagNames
+                                            </div>
+                                        </div>
+                                              }
+                                    }
+                                </td>
+                                <td class="tn-border-gray tn-border-bottom tn-nowrap">
+                                    @Html.Link(item.Author, SiteUrls.Instance().CmsUser(item.UserId), item.Author, htmlAttributes: new { @class = "tn-user-name" }, navigateTarget: HyperLinkTarget._blank)
+                                </td>
+                                <td class="tn-border-gray tn-border-bottom tn-nowrap">
+                                    @item.ReleaseDate.ToFriendlyDate()
+                                </td>
+                                <td class="tn-border-gray tn-border-bottom tn-nowrap">
+                                    @Html.Link("编辑", SiteUrls.Instance().Contribute(item.ContentItemId), "编辑", null, HyperLinkTarget._blank)
+                                    @Html.AjaxDeleteButton(new AjaxDeleteButton().SetConfirm("你确定删除此篇资讯吗？").SetDeleteTarget("#contentitem-" + item.ContentItemId).SetText("删除").SetUrl(SiteUrls.Instance()._DeleteContentItems(item.ContentItemId)))
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </form>
+            @if (Model == null || Model.Count == 0)
+            {
+                <div class="tn-no-data">
+                    暂无资讯
+                </div>
+            }
+            <div class="tn-pagination">
+                @Html.PageSizeDropdownList("PageSize")
+                @Html.PagingButton(Model, PaginationMode.NumericNextPrevious)
+                @Html.PagingResults(Model)
+            </div>
+        </div>
+    </div>
+</div>
+@Html.ScriptBlock(@<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+
+        //不可逆操作的脚本
+        $("#contentitem-delete").click(function (e) {
+            e.preventDefault();
+            if (!$("input[name='contentItemIds']:checked").length) {
+                alert("至少选择一条数据");
+                return;
+            }
+
+            var _this = $(this);
+            art.dialog.confirm('您确认要删除吗？', function () {
+                $("#form-contentitem").ajaxSubmit({
+                    success: function (data) {
+                        art.dialog.tips(data.MessageContent, 1.5, data.MessageType, function () {
+                            window.location.reload();
+                        });
+                    },
+                    url: _this.attr("href")
+                });
+            });
+        });
+        //点通过审核
+        $("a[id^='audit-']").click(function (e) {
+            e.preventDefault();
+
+            if (!$("input[name='contentItemIds']:checked").length) {
+                alert("请至少选择一条！");
+                return false;
+            }
+
+            var url = $(this).attr("href");
+            $.post(url, $("form#form-contentitem").serialize(), function (data) {
+                art.dialog.tips(data.MessageContent, 1.5, data.MessageType, function () {
+                    window.location.reload(true);
+                });
+            })
+        });
+        //全选按钮
+        $("#select-all").click(function (e) {
+            $("input[name='contentItemIds']").attr("checked", this.checked);
+        });
+
+        //模式框显示
+        $("a[id^='art_dialog_']").click(function () {
+            $link = $(this);
+            if (!$("input[name='contentItemIds']:checked").length) {
+                alert("至少选择一条资讯操作");
+                return false;
+            }
+            $.get($link.attr("href"),
+                 $("form#form-contentitem").serialize(),
+                 function (data) {
+                     art.dialog(data);
+                 });
+            return false;
+        });
+    });
+</script>)

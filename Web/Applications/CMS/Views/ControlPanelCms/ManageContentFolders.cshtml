@@ -1,0 +1,217 @@
+﻿@model IEnumerable<ContentFolder>
+@{
+    Layout = "_ControlPanel";
+}
+
+<div class="tn-block tnc-ctnborder">
+    <div class="tnc-main">
+        <div class="tnc-rightvar tn-open">
+            <div class="tnc-settings-icon" plugin="ShortcutMenu">
+                <a href="#"></a>
+            </div>
+            <div id="ManageUserRightMenu">
+                <div class="tnc-settings">
+                    @Html.AjaxAction("_ManageableDataDetail", "ControlPanel", new { area = "Common", applicationKey = CmsConfig.Instance().ApplicationKey })
+                    @Html.Partial("_ManageRightMenu")
+                    @Html.AjaxAction("_StatisticDataDetail", "ControlPanel", new { area = "Common", applicationKey = CmsConfig.Instance().ApplicationKey })
+                </div>
+            </div>
+        </div>
+        <div class="tnc-ctn-center">
+            <h1>
+                <span>栏目管理</span></h1>
+            <div class="tnc-ctnright-list">
+                <div class="tnc-content-manage">
+                    <div class="tn-list-header">
+                        <div class="tn-toolbar-area tn-helper-clearfix">
+                            @Html.LinkButton("添加栏目", SiteUrls.Instance().EditContentFolder(), iconType: IconTypes.SmallAdd)
+                            @Html.LinkButton("添加链接", SiteUrls.Instance()._EditContentFolderLink(), iconType: IconTypes.SmallAdd, htmlAttributes: new { plugin = "dialog" })
+                        </div>
+                    </div>
+                    @if (Model.Count() == 0)
+                    { 
+                        <div class="tn-no-data">
+                            没有查询到数据！
+                        </div>
+                    }
+                    else
+                    {
+                        int count = Model.Count();
+
+                        <table class="tn-table-grid">
+                            <tbody>
+                                <tr class="tn-table-grid-header">
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">栏目名
+                                    </th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">内容数
+                                    </th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">内容模型
+                                    </th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">是否启用
+                                    </th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note">操作
+                                    </th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note"></th>
+                                    <th class="tn-border-gray tn-border-bottom tn-text-note"></th>
+                                </tr>
+                                @for (int i = 0; i < count; i++)
+                                {
+                                    ContentFolder folder = Model.ElementAt(i);
+                                    <tr class="tn-table-grid-row @folder.ParentId-@folder.Depth" name="@folder.ParentId-@folder.Depth" id="@folder.ContentFolderId">
+                                        <td class="tn-border-gray tn-border-bottom tn-width-auto ">
+                                            @if (folder.Depth > 0)
+                                            {
+                                                for (int j = 0; j < folder.Depth; j++)
+                                                {
+                                                <span class="tnc-empty-c"></span>
+                                                }
+                                                if (i + 1 < count)
+                                                {
+                                                    if (folder.Depth > Model.ElementAt(i + 1).Depth)
+                                                    { 
+                                                <span class="tn-text-note">└─</span>
+                                                    }
+
+                                                    else
+                                                    {
+                                                <span class="tn-text-note">├─</span>  
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                <span class="tn-text-note">└─</span>
+                                                }
+                                            }
+                                            <label title ="@folder.FolderName">@folder.FolderName</label>
+                                            @if (!folder.IsLink)
+                                            {
+                                                @Html.LinkButton("", SiteUrls.Instance().EditContentFolder(0, folder.ContentFolderId), highlightStyle: HighlightStyles.Lite, iconType: IconTypes.SmallAdd, htmlAttributes: new { title = "添加子栏目" })
+                                            }
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-width-number tn-nowrap">
+                                            @folder.CumulateItemCount
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-width-category tn-nowrap">
+                                            @string.Join("、", folder.ContentTypes.Select(n => n.ContentTypeName))
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-width-icon1">
+                                            <span class="tn-icon-colorful tn-icon-colorful-@(folder.IsEnabled ? "pass" : "stop")"></span>
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-width-icon1">
+                                            @if (i > 0 && folder.Depth <= Model.ElementAt(i - 1).Depth)
+                                            { 
+                                                @Html.Link("上移", SiteUrls.Instance().ChangeContentFolderOrder(), "上移", new { @class = "tn-icon tn-smallicon-upload" })
+                                            }
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-width-icon1">
+                                            @if (Model.Where(n => n.ParentId == folder.ParentId && n.Depth == folder.Depth && folder.DisplayOrder < n.DisplayOrder).Count() > 0)
+                                            {
+                                                @Html.Link("下移", SiteUrls.Instance().ChangeContentFolderOrder(), "下移", new { @class = "tn-icon tn-smallicon-download" })
+                                            }
+                                        </td>
+                                        <td class="tn-border-gray tn-border-bottom tn-width-action2 tn-nowrap">
+                                            @if (folder.IsLink)
+                                            {
+                                                @Html.Link("编辑", SiteUrls.Instance()._EditContentFolderLink(folder.ContentFolderId), "编辑链接", htmlAttributes: new { @class = "tn-item-link", plugin = "dialog" })
+                                            }
+                                            else
+                                            {
+                                                @Html.Link("编辑", SiteUrls.Instance().EditContentFolder(folder.ContentFolderId), "编辑栏目", htmlAttributes: new { @class = "tn-item-link" })
+                                            }
+                                            <span class="tn-action tn-action-text-icon-right tn-action-has-drop-menu tn-border-trl" menu="#moreOptions@(folder.ContentFolderId)">
+                                                <span class="tn-icon tn-smallicon-triangle-down"></span><a href="javascript:;" class="tn-action-text">更多</a> </span>
+                                            <div id="moreOptions@(folder.ContentFolderId)" class="tn-more-options tn-widget-content tn-border-gray" style="display:none">
+                                                <ul class="tn-more-list">
+                                                    <li>@Html.Link("删除", SiteUrls.Instance().DeleteContentFolder(folder.ContentFolderId), "删除栏目", new { @class = "tn-item-link delete-folder" })</li>
+                                                    @if (!folder.IsLink)
+                                                    {
+                                                        <li>@Html.Link("添加子栏目", SiteUrls.Instance().EditContentFolder(0, folder.ContentFolderId), "添加子栏目", htmlAttributes: new { @class = "tn-item-link" })</li>
+                                                        <li>@Html.Link("合并", SiteUrls.Instance()._MoveContentFolder(folder.ContentFolderId, "merge"), "合并栏目", htmlAttributes: new { plugin = "dialog", @class = "tn-item-link" })</li>
+                                                    }
+                                                    <li>@Html.Link("移动", SiteUrls.Instance()._MoveContentFolder(folder.ContentFolderId, "move"), "移动栏目", htmlAttributes: new { plugin = "dialog", @class = "tn-item-link" })</li>
+
+                                                </ul>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@Html.ScriptBlock(@<script type="text/javascript">
+    $(function () {
+        var manageUrl = '@(SiteUrls.Instance().ManageContentFolders())';
+        //点击删除
+        $('.delete-folder').click(function (e) {
+            e.preventDefault();
+
+            var self = $(this);
+            art.dialog.confirm('删除栏目，会同时删除栏目下的资讯，你确认要删除吗？', function () {
+                $.ajax({
+                    type: "POST",
+                    url: self.attr("href"),
+                    success: function (msg) {
+                        art.dialog.tips("删除成功！", 1.5, 1);
+                        setTimeout(function () { window.location.reload(true); }, 500);
+                    },
+                    error: function () {
+                        alert("删除失败！");
+                    }
+                });
+            });
+        });
+        //点击上移按钮
+        $(".tn-smallicon-upload").click(function (e) {
+            e.preventDefault();
+
+            var tr = $(this).closest('tr');
+            var name = tr.attr("name");
+            var fromContentFolderId = tr.attr("id");
+            var toContentFolderId;
+            var trs = $('.' + name);
+            for (var i = 0; i < trs.length; i++) {
+                if ($(trs[i]).attr("id") === fromContentFolderId) {
+                    toContentFolderId = $(trs[i - 1]).attr("id")
+                    break;
+                }
+            }
+            $.ajax({
+                type: "GET",
+                url: $(this).attr("href"),
+                data: { fromContentFolderId: fromContentFolderId, toContentFolderId: toContentFolderId },
+                success: function () {
+                    window.location.reload(true);
+                }
+            })
+        });
+        //点击下移按钮
+        $(".tn-smallicon-download").click(function (e) {
+            e.preventDefault();
+
+            var tr = $(this).closest('tr');
+            var name = tr.attr("name");
+            var fromContentFolderId = tr.attr("id");
+            var toContentFolderId;
+            var trs = $('.' + name);
+            for (var i = 0; i < trs.length; i++) {
+                if ($(trs[i]).attr("id") == fromContentFolderId) {
+                    toContentFolderId = $(trs[i + 1]).attr("id")
+                    break;
+                }
+            }
+            $.ajax({
+                type: "GET",
+                url: $(this).attr("href"),
+                data: { fromContentFolderId: fromContentFolderId, toContentFolderId: toContentFolderId },
+                success: function () {
+                    window.location.reload(true);
+                }
+            });
+        });
+    })
+</script>)

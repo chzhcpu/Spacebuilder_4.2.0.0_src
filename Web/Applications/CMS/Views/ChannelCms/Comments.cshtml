@@ -1,0 +1,29 @@
+﻿@model ContentItem
+@{
+    Layout = "~/Applications/CMS/Layouts/cms-2cols.cshtml";
+    Html.Style("~/Applications/CMS/Styles/app.css");
+    IUser currentUser = UserContext.CurrentUser;
+}
+@section Aside{
+     @if (UserContext.CurrentUser != null)
+    { 
+        @Html.Action("_UserComment", "ChannelCms")
+    }
+    @Html.Action("_Tops", "ChannelCms", new { topNumber = 5, sortBy = ContentItemSortBy.StageCommentCount })
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-story-detail">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="tn-detail">
+            <div class="tn-text-heading">
+                <h1 class="tn-title">@Model.Title</h1>
+            </div>
+            <div class="tn-detail-text"> 
+                  @Model.Summary 
+                <span><a href="@SiteUrls.Instance().ContentItemDetail(Model.ContentItemId)">[查看详情]</a></span>
+            </div>
+            <div class="tn-comment-area">
+               @Html.Action("_Comment", "Channel", new { area = "Common", commentedObjectId = Model.ContentItemId, toUserId = Model.UserId, ownerId = Model.UserId, tenantTypeId = TenantTypeIds.Instance().ContentItem(), enableComment = !Model.IsLocked, subject = Model.Title })
+            </div>
+        </div>
+    </div>
+</div>

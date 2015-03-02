@@ -1,0 +1,49 @@
+﻿@model ContentItem
+@{
+    string highlightStyle = string.Empty;
+    string color = Model.AdditionalProperties.Get<string>("Color", string.Empty);
+    bool isBold = Model.AdditionalProperties.Get<bool>("IsBold", false);
+    if (!string.IsNullOrEmpty(color))
+    {
+        highlightStyle = string.Format("color:{0};", color);
+    }
+    if (isBold)
+    {
+        highlightStyle += "font-weight:bold;";
+    }
+}
+<li class="tn-list-item tn-helper-clearfix tn-border-gray tn-border-bottom">
+    @if (!string.IsNullOrEmpty(Model.FeaturedImage))
+    {
+        <div class="tn-list-item-area-left" style="width:220px">
+            <a href="@SiteUrls.Instance().ContentItemDetail(Model.ContentItemId)" target="_blank">
+                <img src="@SiteUrls.Instance().ImageUrl(Model.FeaturedImage, TenantTypeIds.Instance().ContentItem(), ImageSizeTypeKeys.Instance().Medium())" width="220" alt="@Model.Title"/>
+            </a>
+        </div>
+    }
+    <div class="tn-list-item-area-main">
+        <div class="tn-list-item-row tn-list-item-heading">
+            <h5><a href="@SiteUrls.Instance().ContentItemDetail(Model.ContentItemId)" style="@highlightStyle"  target="_blank">@Model.Title</a></h5>
+        </div>
+        <div class="tn-list-item-row tn-list-info">
+            <a class="tn-user-name" href="@SiteUrls.Instance().CmsUser(Model.UserId)" target="_blank">@Model.Author</a><em class="tn-date tn-text-note">@Model.ReleaseDate.ToFriendlyDate()</em>
+            @if (Model.ContentFolder != null && Model.ContentFolder.IsEnabled)
+            {
+                <a class="tn-category" href="@SiteUrls.Instance().FolderDetail(Model.ContentFolderId)">@Model.ContentFolder.FolderName</a>
+            }
+            <span class="tn-explain-icon"><span class="tn-icon tn-icon-bubble"></span><span class="tn-icon-text tn-text-note"><a href="@SiteUrls.Instance().Comments(Model.ContentItemId)" title="总评论数">@Model.CommentCount</a></span></span>
+        </div>
+        <div class="tn-list-item-row tn-list-item-summary">
+            <p>@HtmlUtility.TrimHtml(Model.Summary, 85)</p>
+        </div>
+
+        <div class="tn-list-item-row">
+            <p class="tn-tags">
+                @foreach (var tagName in Model.TagNames)
+                {                         
+                    <span><a href="@SiteUrls.Instance().CmsTagDetail(tagName)">@tagName</a></span>
+                }
+            </p>
+        </div>
+    </div>
+</li>

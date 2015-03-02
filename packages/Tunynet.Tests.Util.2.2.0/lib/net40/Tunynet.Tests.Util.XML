@@ -1,0 +1,287 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Tunynet.Tests.Util</name>
+    </assembly>
+    <members>
+        <member name="T:Tunynet.Tests.NoCacheServiceStub">
+            <summary>
+            禁用缓存
+            </summary>
+        </member>
+        <member name="T:Tunynet.Tests.EmailSettingsManager">
+            <summary>
+            生成EmailSettings - todo:{yangmj}20120310 Email设置
+            </summary>
+        </member>
+        <member name="T:Tunynet.Tests.EnvironmentUtility">
+            <summary>
+            环境初始化工具类
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.EnvironmentUtility.Initialize(System.Boolean)">
+            <summary>
+            环境初始化
+            </summary>
+            <remarks>用于设置缓存是否启用和是否使用分布式缓存</remarks>
+            <param name="enableCache">是否启用缓存</param>
+        </member>
+        <member name="M:Tunynet.Tests.EnvironmentUtility.Initialize(System.Boolean,System.Boolean)">
+            <summary>
+            环境初始化
+            </summary>
+            <param name="enableCache">是否启用缓存</param>
+            <param name="enableDistributedCache">是否启用分布式缓存</param>
+        </member>
+        <member name="M:Tunynet.Tests.EnvironmentUtility.Initialize(System.Boolean,Autofac.ContainerBuilder)">
+            <summary>
+            环境初始化
+            </summary>
+            <remarks>用于设置缓存是否启用和是否使用分布式缓存</remarks>
+            <param name="enableCache">是否启用缓存</param>
+            <param name="containerBuilder">DI容器生成器(用于在外部添加DI容器注册对象)</param>
+        </member>
+        <member name="M:Tunynet.Tests.EnvironmentUtility.Initialize(System.Boolean,System.Boolean,Autofac.ContainerBuilder)">
+            <summary>
+            环境初始化
+            </summary>
+            <param name="enableCache">是否启用缓存</param>
+            <param name="enableDistributedCache">是否启用分布式缓存</param>
+            <param name="containerBuilder">DI容器生成器(用于在外部添加DI容器注册对象)</param>
+        </member>
+        <member name="T:Tunynet.Tests.MockHelper">
+            <summary>
+            所有模拟对象的工厂
+            </summary>
+            <remarks>
+            
+            </remarks>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.Repository``1">
+            <summary>
+            模拟IRepository&lt;TEntity&gt;
+            </summary>
+            <typeparam name="TEntity"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.HttpContext">
+            <summary>
+            模拟HttpContextBase
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetHttpContext">
+            <summary>
+            模拟HttpContextBase
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetRequestContext">
+            <summary>
+            模拟RequestContext
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetViewContext(System.Web.Mvc.ViewDataDictionary)">
+            <summary>
+            模拟ViewContext
+            </summary>
+            <param name="viewData">viewData</param>
+            <returns>ViewContext</returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetViewDataContainer(System.Web.Mvc.ViewDataDictionary)">
+            <summary>
+            模拟IViewDataContainer
+            </summary>
+            <param name="viewData">ViewData</param>
+            <returns>IViewDataContainer</returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.HttpContextCurrent(System.String,System.String,System.String,System.String)">
+            <summary>
+            构造虚拟的
+            </summary>
+            <param name="url">虚拟的Url只用于构造HttpContext，例如http://www.abc.com</param>
+            <param name="fileName">HttpRequest中与请求关联的文件名</param>
+            <param name="querySting">HttpRequest中的查询字符串</param>
+            <param name="appVPath">应用程序域中的应用程序虚拟路径，需要带/例如，/app</param>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetHtmlHelper">
+            <summary>
+            模拟HtmlHelper&lt;object&gt;
+            </summary>
+            <returns>HtmlHelper&lt;object&gt;</returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetHtmlHelper(System.Web.Mvc.ViewDataDictionary)">
+            <summary>
+            模拟需要ViewData参数的HtmlHelper
+            </summary>
+            <param name="viewData">ViewData</param>
+            <returns>HtmlHelper</returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetHtmlHelper``1(System.Web.Mvc.ViewDataDictionary{``0})">
+            <summary>
+            模拟HtmlHelper
+            </summary>
+            <typeparam name="TModel">TModel</typeparam>
+            <param name="viewData">viewData</param>
+            <returns>HtmlHelper&lt;TModel&gt;</returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetUrlHelper">
+            <summary>
+            模拟UrlHelper
+            </summary>
+            <returns>UrlHelper</returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetUrlHelper(System.Web.Routing.RouteData,System.Web.Routing.RouteCollection)">
+            <summary>
+            模拟UrlHelper
+            </summary>
+            <param name="routeData">routeData</param>
+            <param name="routeCollection">routeCollection</param>
+            <returns>UrlHelper</returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetUrlHelperForIsLocalUrl">
+            <summary>
+            模拟获取完整路径的UrlHelper<br/>
+            主机名为：http://www.mysite.com/
+            </summary>
+            <returns>UrlHelper</returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetRequestContext(System.Web.Routing.RouteData)">
+            <summary>
+            模拟RequestContext
+            </summary>
+            <param name="routeData">routeData</param>
+            <returns>RequestContext</returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetRouteCollection">
+            <summary>
+            模拟RouteCollection
+            </summary>
+            <returns>RouteCollection</returns>
+        </member>
+        <member name="M:Tunynet.Tests.MockHelper.GetRouteData">
+            <summary>
+            模拟RouteData
+            </summary>
+            <returns>RouteData</returns>
+        </member>
+        <member name="T:Tunynet.Tests.MemoryRepository`1">
+            <summary>
+            在内存中模拟的Repository（用于隔离数据访问）
+            </summary>
+            <remarks>
+            缓存处理未模拟
+            </remarks>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.Insert(`0)">
+            <summary>
+            把实体entity添加到数据库
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.Update(`0)">
+            <summary>
+            把实体entiy更新到数据库
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.DeleteByEntityId(System.Object)">
+            <summary>
+            从数据库删除实体(by 主键)
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.Delete(`0)">
+            <summary>
+            从数据库删除实体
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.Exists(System.Object)">
+            <summary>
+            依据主键检查实体是否存在于数据库
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.Get(System.Object)">
+            <summary>
+            依据主键获取单个实体
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.GetAll">
+            <summary>
+            获取所有实体
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.GetAll(System.String)">
+            <summary>
+            获取所有实体（排序未能模拟）
+            </summary>
+            <param name="orderBy"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.Clear">
+            <summary>
+            清除内存中所有数据
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.PopulateEntitiesByEntityIds``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            依据EntityId集合组装成实体集合（自动缓存）
+            </summary>
+            <param name="entityIds">主键集合</param>
+        </member>
+        <member name="M:Tunynet.Tests.MemoryRepository`1.SetIdentity(`0)">
+            <summary>
+            设置虚拟表中自增列值
+            </summary>
+            <param name="entity">需要插入表中的实体</param>
+            <param name="index">在列表中的索引</param>
+        </member>
+        <member name="T:Tunynet.Tests.RepositoryTest">
+            <summary>
+            实现Repository单元测试事务机制的基类
+            </summary>
+        </member>
+        <member name="F:Tunynet.Tests.RepositoryTest.database">
+            <summary>
+            因为SqlCe不支持跨连接事务，因此定义一个共享数据库连接
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.RepositoryTest.AssemblyInitialize(Microsoft.VisualStudio.TestTools.UnitTesting.TestContext)">
+            <summary>
+            测试框架启动时执行初始化任务
+            </summary>
+            <param name="context"></param>
+        </member>
+        <member name="M:Tunynet.Tests.RepositoryTest.AssemblyCleanup">
+            <summary>
+            测试框架中的所有测试完成后执行清理任务
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.RepositoryTest.TestInitialize">
+            <summary>
+            测试方法执行前开启数据库事务
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.RepositoryTest.TestCleanup">
+            <summary>
+            测试方法执行后回滚数据库事务
+            </summary>
+        </member>
+        <member name="M:Tunynet.Tests.RepositoryTest.ExecuteSQL(System.String)">
+            <summary>
+            执行一个SQL文件
+            </summary>
+            <param name="sqlScriptPath">SQL文件的相对物理路径</param>
+        </member>
+        <member name="M:Tunynet.Tests.RepositoryTest.ExecuteSQL(System.String,PetaPoco.Database)">
+            <summary>
+            在指定数据库连接内执行一个SQL文件
+            </summary>
+            <param name="sqlScriptPath">SQL文件的相对物理路径</param>
+            <param name="database">指定数据库连接</param>
+        </member>
+        <member name="M:Tunynet.Tests.RepositoryTest.GetPhysicalFilePath(System.String)">
+            <summary>
+            根据一个文件的相对物理路径获取一个文件的绝对物理路径
+            </summary>
+            <param name="filePath">文件的相对物理路径</param>
+            <returns>文件的绝对物理路径</returns>
+        </member>
+    </members>
+</doc>

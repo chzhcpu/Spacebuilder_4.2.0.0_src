@@ -1,0 +1,5 @@
+﻿@model  IEnumerable<MicroblogEntity>
+@foreach (var microblog in Model)
+{
+    @Html.Partial("~/Applications/Microblog/Views/MicroblogActivity/_Microblog.cshtml", microblog)
+}

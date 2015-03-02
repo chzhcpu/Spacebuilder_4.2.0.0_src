@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Navigation>
+@{
+    User user = ViewData.Get<User>("user", new User());
+    int currentNavigationId = Html.ViewContext.RouteData.Values.Get<int>("CurrentNavigationId", 0);
+    bool isOwner = UserContext.CurrentUser != null && user.UserId == UserContext.CurrentUser.UserId;
+}
+<div class="tnc-user-menu">
+    <ul class="tn-side-menu tn-border-top tn-border-gray">
+        <li class="@if (currentNavigationId.Equals(11000102))
+                   { @("tn-bg-gray tn-selected ") }tn-border-bottom tn-border-gray">
+            <span class="tn-icon tn-icon-home"></span>
+            <a class="tn-menu-text" href="@SiteUrls.Instance().SpaceHome(Url.SpaceKey())">
+                @if (isOwner)
+                {
+                    @("个人主页")
+                }
+                else
+                {
+                    @(user.Profile.ThirdPerson() + "的主页")
+                }
+            </a>
+        </li>
+        <li class="@if (currentNavigationId == 11000103)
+                   { @("tn-bg-gray tn-selected ") }tn-border-bottom tn-border-gray">
+            <span class="tn-icon tn-icon-archive"></span>
+            <a class="tn-menu-text" href="@SiteUrls.Instance().PersonalInformation(Url.SpaceKey())">
+                @if (isOwner)
+                {
+                    @("个人资料")
+                }
+                else
+                {
+                    @(user.Profile.ThirdPerson() + "的资料")
+                }
+            </a>
+        </li>
+        @if (Model != null)
+        {
+            foreach (var navigation in Model)
+            {
+                if (!navigation.IsVisible(UserContext.CurrentUser))
+                {
+                    continue;
+                }
+            <li class="@if (navigation.IsCurrent(currentNavigationId))
+                       {@("tn-selected ")}tn-border-bottom tn-border-gray">
+                @if (!string.IsNullOrEmpty(navigation.IconName))
+                {
+                    @Html.Icon((IconTypes)Enum.Parse(typeof(IconTypes), navigation.IconName, false))
+                }
+                else if (!string.IsNullOrEmpty(navigation.ImageUrl))
+                {
+                    string imageUrl = navigation.ImageUrl;
+                    if (!navigation.ImageUrl.Trim().ToLower().StartsWith("http"))
+                    {
+                        imageUrl = SiteUrls.Instance().LogoUrl(navigation.ImageUrl, TenantTypeIds.Instance().User(), ImageSizeTypeKeys.Instance().Small());
+                    }   
+                    <span class="tn-icon-wrap">
+                        <img src="@imageUrl" width="16" height="16" alt="@HtmlUtility.TrimHtml(navigation.Text, 12)"/></span>
+                }
+                <a class="tn-menu-text" href="@navigation.GetUrl(Url.SpaceKey())" target="@navigation.NavigationTarget">@(user.Profile.ThirdPerson() + "的" + navigation.Text)</a>
+            </li>
+            }
+        }
+    </ul>
+</div>

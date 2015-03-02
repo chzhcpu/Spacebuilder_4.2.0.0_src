@@ -1,0 +1,62 @@
+/* 
+Offical Style for Spacebuilder
+(c) Tunynet Inc.
+*/
+
+/* Photo Slider */
+.spb-story-photo-slider { height: 300px; width: 100%; }
+.spb-story-photo-slider .spb-slider-nav { right: 5px; bottom: 4px; }
+.spb-story-photo-slider .spb-slider-nav-clip { margin: 0; }
+.spb-story-photo-slider .spb-slider-panel { height: 300px; width: 100%; }
+.spb-story-photo-slider .spb-slider-panel .spb-slider-panel-textbox { width: 100%; height: 24px;  bottom: 0; _bottom: -1px; left: 0; right: 0; }
+.spb-story-photo-slider .spb-slider-panel .spb-slider-panel-text { width: 100%; height: 24px; }
+.spb-story-photo-slider .spb-slider-panel .spb-slider-panel-text p { padding: 0 200px 0 10px; line-height: 24px; text-align: left; }
+.spb-story-photo-slider .spb-slider-panel .spb-slider-panel-overlay { width: 100%; height: 24px; }
+
+/* Sort */
+.spb-story-sort .tn-breadcrumb { padding: 0 0 0 10px; margin-bottom: 15px; }
+.spb-story-sort .tn-sort-nav { margin-bottom: 15px; }
+.spb-story-sort .tn-sort-nav li { padding: 0 10px; position:relative; }
+.spb-story-sort .tn-sort-nav li .tn-sub-container{ left:0;}
+.spb-story-sort .tn-sort-nav .tn-submenu a { line-height: 30px; }
+.spb-story-sort .tn-sort-nav .tn-drop-menu li .tn-sub-container li a { line-height: 20px }
+
+/* Story List */
+.spb-story-list .tn-list .spb-story-headlines .tn-list-item-heading h5 { margin: 0 0 10px; font-size: 20px; font-weight: normal; }
+.spb-story-list .tn-list .spb-story-headlines .tn-list-item-summary { font-size: 14px; line-height: 1.8; }
+.spb-story-list .tn-list .spb-story-headlines .tn-title-image { padding: 10px 0; overflow: hidden; }
+.spb-story-list .tn-list .spb-story-headlines .tn-list-info .tn-user-name,
+.spb-story-list .tn-list .spb-story-headlines .tn-list-info .tn-date,
+.spb-story-list .tn-list .spb-story-headlines .tn-list-info .tn-category,
+.spb-story-list .tn-list .spb-story-headlines .tn-list-info .tn-explain-icon { float: left; line-height: 30px; }
+.spb-story-list .tn-list .spb-story-headlines .tn-list-info .tn-tags { float: right; }
+.spb-story-list .tn-list .tn-list-item-heading h5 { font-size: 16px; font-weight: normal; }
+
+/* Hot Story */
+.spb-story-hot .tn-list .tn-list-item-area-left { max-width: 100px; _width: 100px; overflow: hidden; word-wrap: break-word; }
+
+/* Fine Comments */
+.spb-story-fine-comments .tn-list .tn-list-item-heading { margin-bottom: 5px; }
+.spb-story-fine-comments .tn-list .tn-list-item-heading h5 { font-size: 14px; font-weight: normal; }
+.spb-story-fine-comments .tn-list .tn-list-info .tn-avatar-mini { float: left; margin: 0 10px 0 14px; _display: inline; }
+.spb-story-fine-comments .tn-list .tn-list-info .tn-user-name { float: left; padding: 5px 0 0 0; line-height: 15px; }
+.spb-story-fine-comments .tn-list .tn-list-info .tn-date { float: right; padding: 5px 0 0 0; line-height: 15px; }
+.spb-story-fine-comments .tn-list .tn-list-item:last-child { border-bottom-width: 0; }
+
+/* Story Detail */
+.spb-story-detail .tn-detail .tn-breadcrumb { padding: 0; margin-bottom: 20px; }
+.spb-story-detail .tn-detail .tn-detail-info { margin: 20px 0; padding: 5px 0; }
+.spb-story-detail .tn-detail .tn-detail-info .tn-row { padding: 5px 0; }
+.spb-story-detail .tn-detail .tn-detail-info .tn-tags { float: left; }
+.spb-story-detail .tn-detail .tn-editor { margin: 10px 0; text-align: right; } 
+.spb-story-detail .tn-detail .tn-feedback .tn-share-to { float: right; }
+.spb-story-detail .tn-detail .tn-feedback .tn-actions { float: left; margin-right: 20px; }
+.spb-story-detail .tn-detail .tn-feedback .tn-thumb-rate { float: left; }
+
+/* Story User Panel */
+.spb-story-user-panel .tn-card { margin-bottom: 10px; }
+
+/* My Story */
+.spb-story-i .tn-card { margin-bottom: 10px; }
+.spb-story-i .tn-card .tn-info .tn-user-name { font-size: 16px; margin-bottom: 10px; }
+.spb-story-i .tn-card .tn-info .tn-user-data { margin-bottom: 10px; }

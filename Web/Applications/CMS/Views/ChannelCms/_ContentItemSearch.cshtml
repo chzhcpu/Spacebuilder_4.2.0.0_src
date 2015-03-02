@@ -1,0 +1,41 @@
+﻿@model ContentItem
+@{
+    string keyword = Request.QueryString.GetString("keyword", string.Empty);
+}
+@if (Model != null)
+{
+    <li class="tn-list-item tn-helper-clearfix tn-border-gray tn-border-bottom">
+        <div class="tn-list-item-area-main">
+            <div class="tn-list-item-row tn-list-item-heading">
+                <h5 class="tn-helper-reset">
+                    <a target="_blank" href="@SiteUrls.Instance().ContentItemDetail(Model.ContentItemId)">
+                        @Html.Raw(SearchEngine.Highlight(keyword, Model.Title, 100))
+                    </a>
+                    @if (Model.IsEssential)
+                    {
+                        <span title="精华" class="tn-icon-colorful tn-icon-colorful-fine tn-icon-inline"></span>
+                    }
+                </h5>
+            </div>
+            <div class="tn-list-item-row tn-list-item-summary">
+                <p>
+                    @Html.Raw(SearchEngine.Highlight(keyword, HtmlUtility.TrimHtml(Model.Summary, 100), 100))
+                </p>
+            </div>
+            <div class="tn-list-item-row">
+                <p class="tn-tags">
+                    @foreach (var tagName in Model.TagNames)
+                    {
+                        <span><a href="@SiteUrls.Instance().CmsTagDetail(tagName)">@Html.Raw(SearchEngine.Highlight(keyword, tagName, 100))</a></span>
+                    }
+                </p>
+            </div>
+            <div class="tn-list-item-row tn-list-info">
+                <a target="_blank" class="tn-user-name" href="@SiteUrls.Instance().CmsUser(Model.UserId)">@Html.Raw(SearchEngine.Highlight(keyword, Model.Author, 100))</a>
+                <em class="tn-date tn-text-note">@Model.DateCreated.ToFriendlyDate()</em>
+                <a class="tn-category" href="@SiteUrls.Instance().FolderDetail(Model.ContentFolderId)">@Model.ContentFolder.FolderName</a>
+                <span class="tn-explain-icon"><span class="tn-icon tn-icon-bubble"></span><span class="tn-icon-text tn-text-note">@Model.CommentCount</span></span>
+            </div>
+        </div>
+    </li>
+}

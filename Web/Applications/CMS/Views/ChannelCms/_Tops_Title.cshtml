@@ -1,0 +1,47 @@
+﻿@model IEnumerable<ContentItem>
+
+@{
+    ContentItemSortBy sortBy = ViewData.Get<ContentItemSortBy>("sortBy", ContentItemSortBy.StageHitTimes);
+}
+@if (Model != null && Model.Count() > 0)
+{    
+    
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all spb-story-hot">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">
+                @switch (sortBy)
+                {
+                    case ContentItemSortBy.ReleaseDate_Desc:
+                    @:最新资讯
+                    break;
+                    case ContentItemSortBy.HitTimes:
+                    @:热点资讯
+                    break;
+                    case ContentItemSortBy.StageHitTimes:
+                    @:本周热点
+                    break;
+                    case ContentItemSortBy.CommentCount:
+                    @:热评资讯
+                    break;
+                    case ContentItemSortBy.StageCommentCount:
+                    @:本周热评
+                    break;
+                    case ContentItemSortBy.DisplayOrder:
+                    @:最新资讯
+                    break;
+                    default:
+                    @:最新资讯
+                    break;
+                }
+            </h3>
+        </div>
+        <div class="tn-box-content tn-widget-content tn-corner-bottom">
+            <ul class="tn-list">
+                @foreach (var item in Model)
+                { 
+                    <li class="tn-img-sprite tn-list-bullet"><a href="@SiteUrls.Instance().ContentItemDetail(item.ContentItemId)" title="@item.Title">@StringUtility.Trim(item.Title, 16)</a> </li>
+                }
+            </ul>
+        </div>
+    </div>
+}

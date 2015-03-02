@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "我的主页";
+    Layout = "_UserSpace_Common";
+    IEnumerable<ApplicationBase> applications = ViewData.Get<IEnumerable<ApplicationBase>>("applications", null);
+}
+@section Aside{
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all tnc-user-profile">
+        <div class="tn-box-content tn-widget-content tn-corner-all">
+            @Html.Action("_UserInfo", new { spaceKey = Url.SpaceKey(), area = "Common" })
+            @Html.Action("_SelectMenu", new { spaceKey = Url.SpaceKey(), area = "Common" })
+            <div class="tn-info-part">
+                @Html.Action("_UserStatus", new { spaceKey = Url.SpaceKey(), area = "Common" })
+            </div>
+        </div>
+    </div>
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all tnc-user-tags">
+        @Html.Action("_TopUserTags", new { spaceKey = Url.SpaceKey(), area = "Common" })
+    </div>
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all tnc-user-followed">
+        @Html.Action("_FollowedUserList", new { spaceKey = Url.SpaceKey(), area = "Common" })
+    </div>
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all tnc-user-fans">
+        @Html.Action("_FollowerList", new { spaceKey = Url.SpaceKey(), area = "Common" })
+    </div>
+}
+<div class="tn-grid tnc-user-intro-area">
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all tnc-user-intro">
+        <div class="tn-box-content tn-widget-content tn-corner-all">
+            @Html.Action("UserInfo", new { spaceKey = Url.SpaceKey(), area = "Common" })
+        </div>
+    </div>
+</div>
+<div class="tn-grid">
+    <div class="tn-unit tn-first">
+        <div class="tn-box tn-widget tn-widget-content tn-corner-all spb-new-activities">
+            <div class="tn-box-content tn-widget-content tn-corner-all">
+                @{
+                    var tabControl = new TabControl()
+                                    .SetIsSimple(true)
+                                    .AddTabItem(new TabItem("全部").SetSelected().SetContent(Html.Action("_UserActivities", new { spaceKey = Url.SpaceKey() })));
+                    if (applications != null)
+                    {
+                        foreach (var app in applications)
+                        {
+                            tabControl.AddTabItem(new TabItem(app.Config.ApplicationName) { Url = SiteUrls.Instance()._UserActivities(Url.SpaceKey(), app.ApplicationId) });
+                        }
+                    }
+                }
+                @Html.Tabs(tabControl)
+            </div>
+        </div>
+    </div>
+    @Html.Action("_SpaceHomeAside", new { spaceKey = Url.SpaceKey(), area = "Common" })
+</div>

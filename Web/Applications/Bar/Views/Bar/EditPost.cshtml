@@ -1,0 +1,15 @@
+﻿@model BarPostEditModel
+@{
+    Layout = "app-1col";
+    string title = Model.PostId.HasValue ? "编辑回帖" : "回复";
+    Html.Style("~/Applications/Bar/Styles/app.css");
+
+    int PostBodyMaxLength = ViewData.Get<int>("PostBodyMaxLength", 5000);
+}
+
+@section ContentHeader{
+    @Html.Action("_BarSubmenu", "Bar", new { SectionId = Model.SectionId })
+}
+
+@Html.Partial("~/Applications/Bar/Views/Bar/_EditPost.cshtml", Model)
+

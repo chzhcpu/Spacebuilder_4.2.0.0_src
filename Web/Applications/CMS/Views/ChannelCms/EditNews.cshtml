@@ -1,0 +1,175 @@
+﻿@model ContentItemEditModel
+@{
+    Layout = "app-1col";
+    Html.Style("~/Applications/CMS/Styles/app.css");
+    bool HaveAdditional = Model != null && Model.AdditionalProperties != null;
+    int summaryCount = Model.Summary == null ? 0 : HtmlUtility.StripHtml(Model.Summary, true, false).TrimEnd('.').Length;
+    if (summaryCount > 200)
+    {
+        summaryCount = 200;
+    }
+    int TitleCount = Model.Title == null ? 0 : Model.Title.Length;
+    IUser currentUser = UserContext.CurrentUser;
+}
+
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-story-edit">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        @using (Html.BeginForm("Contribute", "ChannelCms", FormMethod.Post, new { id = "form-News-edit" }))
+        {
+            @Html.HiddenFor(n => n.ContentItemId)
+            @Html.HiddenFor(n => n.ContentTypeId)
+            @Html.Hidden("EnableComment", true)
+            <div class="tn-publish">
+                @Html.StatusMessage()
+                <div class="tn-write-title">
+                    <div class="tnc-formbtn-box">
+                        @Html.TextBoxFor(n => n.Title, InputWidthTypes.Longest, new RouteValueDictionary { { "class", "tn-textbox tn-border-gray tn-input-longest tn-input-ruler" }, { "id", "Title" } })
+                        <span id="TitleCount" class="tn-count tn-text-note">@TitleCount/@TextLengthSettings.TEXT_SUBJECT_MAXLENGTH</span>
+                        @Html.ValidationMessageFor(n => n.Title)
+                    </div>
+                </div>
+                <div class="tn-editor">
+                    @Html.UEditor("Body", TenantTypeIds.Instance().ContentItem(), Model.ContentItemId, HaveAdditional ? Model.AdditionalProperties.Get<string>("Body", string.Empty) : "", new Dictionary<string, object> { { "style", "height:400px;" }, { "maximumWords", TextLengthSettings.TEXT_BODY_MAXLENGTH }, { "required", TextLengthSettings.TEXT_BODY_MAXLENGTH }, { "messages", "{required:'请填写内容' }" } })
+                    @*                    @Html.HtmlEditor("Body", HaveAdditional ? Model.AdditionalProperties.Get<string>("Body", string.Empty) : "", new HtmlEditorOptions(HtmlEditorMode.Enhanced)
+                                                .MergeHtmlAttribute("style", "height:400px;")
+                                                .MergeHtmlAttribute("class", "{required:true,maxlength:" + TextLengthSettings.TEXT_BODY_MAXLENGTH + ", messages:{required:'请填写内容',maxlength:'最长不能超过" + TextLengthSettings.TEXT_BODY_MAXLENGTH + "个字符'}}")
+                                                .AddPhotoButton(TenantTypeIds.Instance().ContentItem(), Model.ContentItemId).SetShowPagebreak(true)
+                                                .AddUploadFileButton())*@
+                    @Html.ValidationMessage("Body")
+                </div>
+                <div class="tn-form-box">
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>栏目：
+                                </th>
+                                <td>
+                                    @Html.FolderDropDownListFor(m => m.ContentFolderId, ContentTypeKeys.Instance().News())
+                                    @Html.ValidationMessageFor(n => n.ContentFolderId)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>标签：
+                                </th>
+                                <td>
+                                    @Html.Action("_TagSelector", "ChannelCms", new { contentItemId = Model.ContentItemId, contentFolderId = Model.ContentFolderId })
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>来源：
+                                </th>
+                                <td>
+                                    @Html.TextBox("CopyFrom", HaveAdditional ? Model.AdditionalProperties.Get<string>("CopyFrom", string.Empty) : "", InputWidthTypes.Medium, new RouteValueDictionary { { "watermark", "名称" } })
+                                    @Html.ValidationMessage("CopyFrom")
+
+                                    @Html.TextBox("CopyFromUrl", HaveAdditional ? Model.AdditionalProperties.Get<string>("CopyFromUrl", string.Empty) : "", InputWidthTypes.Long, new RouteValueDictionary { { "watermark", "http://www.example.com" }, { "class", "url" } })
+                                    @Html.ValidationMessage("CopyFromUrl")
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>摘要：
+                                </th>
+                                <td>
+                                    @Html.TextAreaFor(n => n.Summary, InputWidthTypes.Longest, 2, 2, new RouteValueDictionary { { "id", "Summary" } })
+                                    <span id="SummaryCount" class="tn-count tn-text-note">@summaryCount/@TextLengthSettings.TEXT_DESCRIPTION_MAXLENGTH</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td>
+                                    @Html.SipmleCheckBox("TrimBodyAsSummary", true, !HaveAdditional || Model.AdditionalProperties.Get<bool>("TrimBodyAsSummary", true), new { id = "TrimBodyAsSummary" })
+                                    @Html.LabelFor(n => n.TrimBodyAsSummary, "截取内容前200字作为摘要")
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>标题图：
+                                </th>
+                                <td>
+                                    @Html.SetTitleImageFor(n => n.FeaturedImageAttachmentId, TenantTypeIds.Instance().ContentItem(), Model.ContentItemId)
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td>
+                                    @Html.SipmleCheckBox("FirstAsTitleImage", true, HaveAdditional && Model.AdditionalProperties.Get<bool>("FirstAsTitleImage", false), new { id = "FirstAsTitleImage" })
+                                    @Html.LabelFor(n => n.FirstAsTitleImage, "设置上次的第一张图为标题图")
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>分页方式：
+                                </th>
+                                <td>
+                                    <ul class="tn-checkbox-list" style="vertical-align: top">
+                                        <li class="tn-inline-list">
+                                            @Html.SipmleCheckBox("AutoPage", true, HaveAdditional && Model.AdditionalProperties.Get<bool>("AutoPage", false), new { id = "AutoPage" })
+                                            @Html.LabelFor(n => n.AutoPage, "自动分页")
+                                        </li>
+                                    </ul>
+                                    <span id="pageL">
+                                        @Html.TextBox("PageLength", HaveAdditional ? Model.AdditionalProperties.Get<string>("PageLength", string.Empty) : "1000", InputWidthTypes.Short, new RouteValueDictionary { { "class", "digits" } })
+                                        @Html.ValidationMessage("PageLength")
+                                        <span class="tn-text-note">字符数（包含HTML标记）</span>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th></th>
+                                <td>@Html.Button("投稿", ButtonTypes.Submit, HighlightStyles.Primary, ButtonSizes.Large, null, TextIconLayout.IconText, null, new { id = "submit-publish" })</td>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@Html.ScriptBlock(@<script language="javascript" type="text/javascript">
+                       $(document).ready(function () {     
+                           $("#pageL").hide();
+                           $("#AutoPage").click(function () {
+                               if (!!$("#AutoPage").attr("checked")){
+                                   $("#pageL").show();                 
+                                   var value= $("#PageLength").data("currentValue");
+                                   if(!value)
+                                       value=500;
+                                   $("#pageLength").val(value);
+                               }
+                               else {
+                                   $("#pageL").hide();                
+                                   $("#pageLength").data("currentValue",$("#pageLength").val());
+                                   $("#pageLength").val("");
+                               }
+                           });
+                           var form = $('form#form-News-edit');
+                           //截字
+                           $("#Title", form).GetTextCount('TitleCount', @(TextLengthSettings.TEXT_SUBJECT_MAXLENGTH), true);
+                           $("#Summary", form).GetTextCount('SummaryCount', @(TextLengthSettings.TEXT_DESCRIPTION_MAXLENGTH), true, true)
+                           //截取内容前200字为摘要
+                           var ue = UE.getEditor('Body');
+                           function trimBodyAsSummaryClicked() {
+                               if($("#TrimBodyAsSummary:checked").length)
+                               { 
+                                   var txt=ue.getContentTxt();
+                                   $("#Summary").val(txt.substr(0,parseInt('@TextLengthSettings.TEXT_DESCRIPTION_MAXLENGTH')));
+                                   var length=$("#Summary").val().length;
+                                   var summaryCount = $("#SummaryCount").text();
+                                   var index = summaryCount.indexOf("/")
+                                   $("#SummaryCount").text(length+summaryCount.substr(index,summaryCount.length-index));
+                           
+                                   $("#Summary").attr("disabled",true);
+                               }
+                               else
+                                   $("#Summary").attr("disabled",false);
+                           }
+
+                           //编辑器
+                           ue.addListener('blur',function(editor){
+                               ue.ready(function(){
+                                   trimBodyAsSummaryClicked();
+                               })});
+
+                           $("#TrimBodyAsSummary").click(trimBodyAsSummaryClicked);
+                           //表单有录入内容但未保存时，用户离开页面提示
+                           $("form").enable_changed_form_confirm("");
+                       });
+</script>)

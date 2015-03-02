@@ -1,0 +1,49 @@
+﻿@model PagingDataSet<Activity>
+@{
+    int pageIndex = ViewData.Get<int>("pageIndex", 1);
+    int? applicationId = ViewData.Get<int?>("applicationId", null);
+    int pageCount = Model.PageCount;
+    var applicationService = new ApplicationService();
+}
+<ul class="tn-list tnc-dynamic">
+    @if (Model != null)
+    {
+        Html.ViewContext.RouteData.Values["isOwnerActivity"] = true;
+        foreach (var item in Model)
+        {
+            string areaName = "Common";
+            if (item.ApplicationId > 0)
+            {
+                var application = applicationService.Get(item.ApplicationId);
+                if (application == null || !application.IsEnabled)
+                {
+                    continue;
+                }
+                areaName = application.ApplicationKey;
+            }
+            string tenantTypeIdPart = "";
+            if (!string.IsNullOrEmpty(item.TenantTypeId))
+            {
+                tenantTypeIdPart = "_" + item.TenantTypeId;
+            }
+            string spaceKey = UserIdToUserNameDictionary.GetUserName(item.UserId);
+
+            string routeName = string.Format("ActivityDetail{0}_{1}", tenantTypeIdPart, item.ActivityItemKey);
+            var route = RouteTable.Routes[routeName] as Route;
+            if (route == null)
+            {
+                continue;
+            }
+            string controllerName = route.Defaults["controller"].ToString();
+            string actionName = route.Defaults["action"].ToString();
+            
+        @Html.Action(actionName, controllerName, new { ActivityId = item.ActivityId, spaceKey = spaceKey, area = areaName })
+        }
+    }
+</ul>
+@if (Model.PageCount > Model.PageIndex)
+{
+    <div class="tn-load-more tn-bg-gray tn-border-gray" plugin="GetMore">
+        <a href="@Html.Raw(SiteUrls.Instance()._UserActivities(Url.SpaceKey(), applicationId, Model.PageIndex + 1))" class="tn-action tn-action-text-icon-right">@Html.Icon(IconTypes.SmallCollapseOpen)<span class="tn-action-text">更多信息</span> </a>
+    </div>
+}

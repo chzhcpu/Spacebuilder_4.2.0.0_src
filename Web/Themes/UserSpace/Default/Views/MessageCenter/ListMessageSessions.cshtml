@@ -1,0 +1,173 @@
+﻿@model PagingDataSet<Tunynet.Common.MessageSession>
+@{
+    Layout = "_MessageCenter";
+
+    IUserService userService = DIContainer.Resolve<IUserService>();
+}
+@section Aside{
+    @Html.Action("_MessageCenter_Menu", "MessageCenter", new { subMenu = MessageCenterMenu.Message })
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all tnc-letter-box">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="tnc-letter-wrap">
+            @Html.StatusMessage()
+            <div class="tn-main-heading tn-border-gray tn-border-bottom">
+                <div class="tn-option">
+                    @Html.LinkButton("发私信", SiteUrls.Instance()._CreateMessage(Url.SpaceKey()), HighlightStyles.Primary, htmlAttributes: new { id = "messageUserIdLink", plugin = "dialog" })
+                </div>
+                <h2>
+                    我的私信
+                </h2>
+                @if (Model != null && Model.TotalRecords > 0)
+                {
+                    <span class="tn-count tn-text-note">
+                        @Html.Raw("（已有<span id=\"messagesCount\">" + Model.TotalRecords + "</span>个联系人)")
+                    </span>
+                }
+            </div>
+            @if (Model != null && Model.Count != 0)
+            {
+                <ul class="tn-list">
+                    @{long currentUserId = ViewData.Get<long>("UserId", 0);
+                      Dictionary<long, Tunynet.Common.Message> messageDict = ViewData["messageDict"] as Dictionary<long, Tunynet.Common.Message>;
+                      Dictionary<long, string> noteNames = ViewData["NoteNames"] as Dictionary<long, string>;
+                      foreach (var session in Model)
+                      {
+                          Tunynet.Common.Message message = null;
+                          messageDict.TryGetValue(session.SessionId, out message);
+                          if (message == null)
+                          {
+                              continue;
+                          }
+
+                        <li id="msg_session_@(session.SessionId)" class="tn-list-item tn-helper-clearfix tn-border-gray tn-border-bottom @(session.UnreadMessageCount > 0 ? "tnc-unread tn-bg-gray" : "tnui-read")">
+                            <div class="tn-list-item-area-left">
+                                @Html.ShowUserAvatar(session.OtherUserId, AvatarSizeType.Small, true)
+                            </div>
+                            <div class="tn-list-item-area-main">
+                                <div class="tn-list-item-row tn-list-item-summary" style="cursor: pointer;">
+								    <p>
+										@if (message.SenderUserId == currentUserId)
+										{
+											@Html.Raw("发给")
+											<strong class="tn-user-name">
+												@{
+											IUser user = userService.GetUser(@message.ReceiverUserId);
+	
+											if (user != null)
+											{
+													<a href="@SiteUrls.Instance().SpaceHome(message.ReceiverUserId)">@message.Receiver</a>
+											}
+											else
+											{
+													@message.Receiver
+											}
+												}
+											</strong>
+											if (noteNames.ContainsKey(message.ReceiverUserId) && !string.IsNullOrEmpty(noteNames[message.ReceiverUserId]))
+											{
+											@Html.Raw("(" + noteNames[message.ReceiverUserId] + ")");
+											}
+	
+											@Html.Raw(":")
+										}
+										else
+										{
+											IUser user = userService.GetUser(@message.SenderUserId);
+	
+											<strong class="tn-user-name">
+												@if (user != null)
+												{ 
+													<a href="@SiteUrls.Instance().SpaceHome(message.SenderUserId)">@message.Sender</a>
+												}
+												else
+												{
+													@message.Sender
+												}
+											</strong>
+											@Html.Raw(":")
+										}
+										@Html.Raw(message.FormatResolveBody.Replace("<br />", ""))
+									</p>
+                                </div>
+                                <div class="tn-list-item-row tn-helper-clearfix">
+                                    <div class="tn-helper-right">
+										
+										@{
+											if (session.UnreadMessageCount > 0)
+												{
+													<span class="tn-secondary-text">未读私信（<strong>@session.UnreadMessageCount</strong>）</span>
+												}
+											}
+										<span class="tn-action"><a id="enter_@session.SessionId" href="@(SiteUrls.Instance().ListMessages(Url.SpaceKey(), session.SessionId))" title="私信列表">共有@(session.MessageCount)条私信</a></span>
+										<span class="tn-action">
+											@{
+												long toUserId = 0;
+												if (message.SenderUserId == currentUserId)
+												{
+													toUserId = message.ReceiverUserId;
+												}
+												else
+												{
+													toUserId = message.SenderUserId;
+												}
+											}
+											@Html.Link("回复", SiteUrls.Instance()._CreateMessage(Url.SpaceKey(), toUserId), "回复", new { id = "ReplyLink" + message.MessageId, plugin = "dialog" })
+										</span>
+									</div>
+									<em class="tn-date tn-text-note">@session.LastModified.ToFriendlyDate()</em>
+									<span class="tn-action">@Html.AjaxDeleteButton(new AjaxDeleteButton()
+										.SetConfirm("确认要删除会话内容吗")
+										.SetText("删除")
+										.SetTooltip("删除")
+										.SetDeleteTarget("#msg_session_" + session.SessionId)
+										.SetUrl(Url.Action("DeleteMessageSessionAsyn", new { sessionId = session.SessionId }))
+										.MergeHtmlAttribute("name", "operate_" + (session.SessionId))
+										.MergeHtmlAttribute("style", "display:none")
+										.SetOnSuccessCallBack("DeleteSuccess"))
+									</span>
+									<span class="tn-action"><a name="operate_@(session.SessionId)" href="@SiteUrls.Instance()._ImpeachReport(session.UserId, SiteUrls.FullUrl(SiteUrls.Instance().ListMessages(Url.SpaceKey(), session.SessionId)), StringUtility.Trim(message.FormatResolveBody, 50))" plugin="dialog" style="display: none;">举报</a></span>
+                                </div>
+                            </div>
+                        </li>
+                      }
+                    }
+                </ul>
+                <div id="updateTargetId" class="tn-pagination tn-helper-align-center">
+                    @Html.PagingButton(Model, PaginationMode.NumericNextPrevious, 5)
+                </div>
+            }
+            else
+            {
+                <div class="tn-no-data">
+                    还没有发过私信。
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@Html.ScriptBlock(@<script type="text/javascript">
+    $(document).ready(function () {
+        $("li[id^='msg_session']", $("ul.tn-list")).hover(function () {
+            $("a[name='operate_" + $(this).attr("id").replace(/[^0-9]/ig, "") + "']").show();
+        }, function () {
+            $("a[name='operate_" + $(this).attr("id").replace(/[^0-9]/ig, "") + "']").hide();
+        });
+
+        $('li[id^="msg_session_"] p.tnc-info-content').click(function (event) {
+            if ($(this).is('a')) {
+                return false;
+            }
+
+            location.href = $(this).parents("li[id^='msg_session']").find('a[id^="enter_"]').attr('href');
+        });
+
+    });
+    function DeleteSuccess() {
+        if ($("li.tn-list-item").length == 0) {
+            window.location = '@Html.Raw(Url.Action("ListMessageSessions", new { pageIndex = Model.PageIndex - 1 }))';
+        }
+        var count = $("#messagesCount").html();
+        $("#messagesCount").html(count - 1);
+    }
+</script>)

@@ -1,0 +1,108 @@
+﻿@model PagingDataSet<Activity>
+@{
+    int? applicationId = ViewData.Get<int?>("applicationId", null);
+    long lastActivityId = ViewData.Get<long>("lastActivityId", 0);
+    MediaType? mediaType = ViewData.Get<MediaType?>("mediaType", null);
+    bool? isOriginal = ViewData.Get<bool?>("isOriginal", null);
+    long? userId = ViewData.Get<long?>("userId", null);
+    string countUrl = SiteUrls.Instance().GetNewerGroupActivityCount(Url.SpaceKey(), applicationId);
+    int pageIndex = ViewData.Get<int>("pageIndex", 1);
+    int pageCount = Model.PageCount;
+}
+@Html.Hidden("lastActivityId", lastActivityId)
+<ul class="tn-list tnc-dynamic">
+    @if (mediaType == null)
+    { 
+        <li class="tnc-dynamic-new" id="newerActivitiesLi" style="display: none;"><a href="@SiteUrls.Instance()._GetNewerGroupActivities(Url.SpaceKey(), applicationId)" class="tn-instant-note tn-corner-all" ></a></li>
+    }
+    @if (Model != null && Model.Count > 0)
+    {
+        Html.ViewContext.RouteData.Values["isOwnerActivity"] = true;
+        var applicationService = new ApplicationService();
+        foreach (var item in Model)
+        {
+            string areaName = "Common";
+            if (item.ApplicationId > 0)
+            {
+                var application = applicationService.Get(item.ApplicationId);
+                if (application == null || !application.IsEnabled)
+                {
+                    continue;
+                }
+                areaName = application.ApplicationKey;
+            }
+            string tenantTypeIdPart = "";
+            if (!string.IsNullOrEmpty(item.TenantTypeId))
+            {
+                tenantTypeIdPart = "_" + item.TenantTypeId;
+            }
+            string routeName = string.Format("ActivityDetail{0}_{1}", tenantTypeIdPart, item.ActivityItemKey);
+            var route = RouteTable.Routes[routeName] as Route;
+            if (route == null)
+            {
+                continue;
+            }
+            string controllerName = route.Defaults["controller"].ToString();
+            string actionName = route.Defaults["action"].ToString();
+        @Html.Action(actionName, controllerName, new { ActivityId = item.ActivityId, area = areaName })
+        }
+    }
+    else
+    {
+        <div class="tn-no-data">
+            暂无动态
+        </div>
+    }
+</ul>
+@if (Model.PageCount > Model.PageIndex)
+{
+    <div class="tn-load-more tn-bg-gray tn-border-gray" plugin="GetMore">
+        <a href="@Html.Raw(SiteUrls.Instance()._ListActivities(Url.SpaceKey(), Model.PageIndex + 1, applicationId, mediaType, isOriginal, userId))" class="tn-action tn-action-text-icon-right">@Html.Icon(IconTypes.SmallCollapseOpen)<span
+            class="tn-action-text">更多信息</span> </a>
+    </div>
+}
+@Html.ScriptBlock(@<script type="text/javascript">
+
+    $(document).ready(function () {
+        //新动态
+        if ($("#newerActivitiesLi").length == 0)
+            return;
+        function GetNewerActivities() {
+            $.ajax({
+                type: "POST",
+                url: "@countUrl",
+                data: { lastActivityId: $("#lastActivityId").val() },
+                success: function (data) {
+                    if (data.hasNew) {
+                        $("#newerActivitiesLi").show();
+                        $("#newerActivitiesLi a").text(data.showName);
+                    }
+                    clearTimeout(t);
+                    t = setTimeout(GetNewerActivities, 60000);
+                }
+            });
+        }
+        if (typeof t != "undefined")
+            clearTimeout(t);
+        t = setTimeout(GetNewerActivities, 60000);
+
+        $("#newerActivitiesLi").click(function (e) {
+            var lastAddress = "<li class=\"tn-mark\" id=\"lastAddress\"><div class=\"tn-cue-highlight tn-mark\"><div class=\"tn-widget-content\">上次浏览到这里</div></div></li>";
+            e.preventDefault();
+            var url = $("a", this).attr("href");
+            $this = $(this);
+            $.ajax({
+                type: "GET",
+                cache: false,
+                url: url,
+                data: { lastActivityId: $("#lastActivityId").val() },
+                success: function (data) {
+                    $this.hide();
+                    $("li#lastAddress").remove();
+                    $this.after(lastAddress);
+                    $this.after(data);
+                }
+            });
+        });
+    })
+</script>)

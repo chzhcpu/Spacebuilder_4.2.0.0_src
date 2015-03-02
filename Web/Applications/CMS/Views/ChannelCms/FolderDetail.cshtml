@@ -1,0 +1,114 @@
+﻿@model PagingDataSet<ContentItem>
+@{
+    Layout = "~/Applications/CMS/Layouts/cms-2cols.cshtml";
+    Html.Style("~/Applications/CMS/Styles/app.css");
+    var currentFolder = ViewData.Get<ContentFolder>("currentFolder", new ContentFolder());
+    var allParentContentFolders = ViewData.Get<List<ContentFolder>>("allParentContentFolders", new List<ContentFolder>());
+    var folders = currentFolder.Children ?? new List<ContentFolder>();
+    if (currentFolder != null && currentFolder.Parent != null && currentFolder.ChildCount == 0) //若是叶子节点，则取同辈分类
+    {
+        folders = currentFolder.Parent.Children;
+    }
+}
+
+<div class="tn-box tn-widget tn-widget-content tn-corner-all">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="spb-story-sort">
+            @if (DIContainer.Resolve<Authorizer>().CMS_ManageContentFolder(currentFolder))
+            {
+                <span class="tn-helper-right">@Html.Link("管理", SiteUrls.Instance().ChannelManageContentItems(null, currentFolder.ContentFolderId), "管理")</span>
+            }
+            @if (currentFolder != null)
+            {
+                if (allParentContentFolders.Count > 0)
+                {
+                <div class="tn-breadcrumb">
+                    <span class="tn-breadcrumb-item"><a href="@SiteUrls.Instance().CmsHome()">资讯</a></span>
+                    <span class="tn-seperator">&gt;</span>
+                    @foreach (var folder in allParentContentFolders)
+                    { 
+                        <span class="tn-breadcrumb-item"><a href="@SiteUrls.Instance().FolderDetail(folder.ContentFolderId)">@folder.FolderName</a></span>
+                        <span class="tn-seperator">&gt;</span>
+                    }
+                    <span class="tn-breadcrumb-item">@currentFolder.FolderName</span>
+                </div>
+                }
+                else
+                {
+                <div class="tn-pagename">
+                    <h1>@currentFolder.FolderName</h1>
+                </div>
+                }
+                if (folders.Count() > 0)
+                {
+                    int i = 0;
+                <div class="tn-sort-nav tn-border-gray tn-border-bottom">
+                    <ul class="tn-submenu tn-drop-menu tn-helper-clearfix" id="tnui-sort-menu">
+                        @foreach (var folder in folders)
+                        {
+                            string url = SiteUrls.Instance().FolderDetail(folder.ContentFolderId);
+                            if (folder.IsLink)
+                            {
+                                url = folder.LinkUrl;
+                            }
+                            <li class="tn-submenu-item @(folder.ContentFolderId == currentFolder.ContentFolderId ? "tn-selected" : "")"><a href="@url" target="@(folder.IsLink && folder.IsLinkToNewWindow ? "_blank" : "_self")" class="tn-submenu-link">@folder.FolderName</a></li>
+                            i++;
+                            if (i >= 8)
+                            {
+                                break;
+                            }
+                        }
+                        @if (folders.Count() > 8)
+                        {
+                            <li class="tn-submenu-item"><a href="javascript:void(0)" class="tn-submenu-link tn-drop-link">更多<span class="tn-icon tn-smallicon-triangle-down"></span></a>
+                                <div class="tn-sub-container tn-single">
+                                    <ul class="tn-widget-content tn-border-gray tn-sub" style="display: none">
+                                        @foreach (var folder in folders.Skip(8))
+                                        {
+                                            string url = SiteUrls.Instance().FolderDetail(folder.ContentFolderId);
+                                            if (folder.IsLink)
+                                            {
+                                                url = folder.LinkUrl;
+                                            }
+                                            <li class="tn-submenu-item "><a href="@url" target="@(folder.IsLink && folder.IsLinkToNewWindow ? "_blank" : "_self")">@folder.FolderName</a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
+                        }
+                    </ul>
+                </div>
+                }
+            }
+            @Html.Partial("_List", Model)
+        </div>
+    </div>
+</div>
+
+@section Aside{
+    @Html.Action("_Tops", "ChannelCms", new { topNumber = 5, sortBy = ContentItemSortBy.StageHitTimes, contentFolderId = currentFolder.ContentFolderId })
+    @Html.Action("_Tops", "ChannelCms", new { topNumber = 5, sortBy = ContentItemSortBy.StageCommentCount, contentFolderId = currentFolder.ContentFolderId })
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">热门标签</h3>
+        </div>
+        @Html.Action("_TagCloud", "Channel", new { tenantTypeId = TenantTypeIds.Instance().ContentItem(), Area = "Common" })
+    </div>
+}
+@Html.ScriptBlock(@<script type="text/javascript">
+    $(document).ready(function ($) {
+        $('#tnui-sort-menu').dcMegaMenu({
+            rowItems: '1',
+            speed: 'fast',
+            effect: 'fade'
+        });
+
+        $("#tnui-sort-menu li.tn-submenu-item").hover(
+        function () {
+            $(this).addClass("tn-bg-gray");
+        },
+        function () {
+            $(this).removeClass("tn-bg-gray");
+        });
+    });
+</script>)

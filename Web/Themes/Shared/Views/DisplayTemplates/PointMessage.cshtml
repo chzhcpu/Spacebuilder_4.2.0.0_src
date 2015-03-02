@@ -1,0 +1,41 @@
+﻿@{
+    PointRecord pointRecord = ViewData.Get<PointRecord>("PointRecord", null);
+
+    string tradePointsName = ViewData.Get<string>("TradePoints", "金币");
+    string experiencePointsName = ViewData.Get<string>("ExperiencePoints", "经验");
+    string reputationPointsName = ViewData.Get<string>("ReputationPoints", "威望");
+}
+@if (pointRecord != null && (pointRecord.ReputationPoints != 0 || pointRecord.TradePoints != 0 || pointRecord.ExperiencePoints != 0))
+{
+    <div id="PointRecord-@pointRecord.RecordId" style="display:none;">
+        <p class="tnc-tips-credit">
+            <span class="tn-button-text">
+                <span class="tn-title">@pointRecord.PointItemName</span>
+                @if (pointRecord.TradePoints != 0)
+                { 
+                    <span>@tradePointsName<em>@((pointRecord.TradePoints > 0 ? "+" : "") + pointRecord.TradePoints)</em></span>
+                }
+                @if (pointRecord.ExperiencePoints != 0)
+                { 
+                    <span>@experiencePointsName<em>@((pointRecord.ExperiencePoints > 0 ? "+" : "") + pointRecord.ExperiencePoints)</em></span>
+                }
+                @if (pointRecord.ReputationPoints != 0)
+                { 
+                    <span>@reputationPointsName<em>@((pointRecord.ReputationPoints > 0 ? "+" : "") + pointRecord.ReputationPoints)</em></span>
+                }
+            </span>
+        </p>
+    </div>
+    <text>
+    @Html.ScriptBlock(@<script type="text/javascript">
+        $(document).ready(function () {
+            var dialog = art.dialog.list['Tips'];
+            if (dialog != null)
+                dialog.close();
+            art.dialog.tips($("#PointRecord-@pointRecord.RecordId").html(), 2);
+        });
+    </script>)
+    </text>
+}
+
+

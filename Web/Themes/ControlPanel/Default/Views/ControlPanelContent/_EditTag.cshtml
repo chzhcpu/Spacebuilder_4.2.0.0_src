@@ -1,0 +1,165 @@
+﻿@model TagEditModel
+@{
+    SelectList tenants = ViewData.Get<SelectList>("tenants", null);
+    SelectList tagGroups = ViewData.Get<SelectList>("tagGroups", null);
+    bool isEdit = Model.TagId > 0;
+    IEnumerable<string> seletedTagNames = ViewData.Get<IEnumerable<string>>("seletedTagNames", null);
+}
+
+@using (Html.BeginAjaxForm("_EditTag", "ControlPanelContent", null, FormMethod.Post, new AjaxFormOptions { OnErrorCallBack = "OnErrorCallBack", OnSuccessCallBack = "OnSuccessCallBack", CloseDialog = false }, new { enctype = "MULTIPART/FORM-DATA", id = "editTagForm" }))
+{
+    @Html.HiddenFor(n => n.TagId)
+    @Html.HiddenFor(n => n.FeaturedImage)
+    <div class="tnc-dailog-pd">
+        <div class="tn-form-box">
+            <table>
+                <tbody>
+                    <tr>
+                        <th>标签名：
+                        </th>
+                        <td>
+                            @{RouteValueDictionary rvd = new RouteValueDictionary { { "maxlength", 64 }, { "class", "tn-textbox tn-input-medium tn-border-gray" } };}
+                            @if (isEdit)
+                            {
+                                rvd = new RouteValueDictionary { { "maxlength", 64 }, { "class", "tn-textbox tn-input-medium tn-border-gray" }, { "readonly", "true" } };
+                            }
+                            @Html.TextBoxFor(n => n.TagName, rvd)
+                            @Html.ValidationMessage("TagName")
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>所属：
+                        </th>
+                        <td>
+                            @if (isEdit)
+                            {
+                                @(ViewData.Get<string>("tenantTypeName", string.Empty))
+                                @Html.HiddenFor(n => n.TenantTypeId)
+                            }
+                            else
+                            {
+                                @Html.DropDownList("TenantTypeId", tenants, new { @class = "tn-dropdownlist tn-input-medium" })
+                               
+                            }
+                            @Html.ValidationMessage("TenantTypeId")
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>标签分组：
+                        </th>
+                        <td>@Html.DropDownList("GroupId", tagGroups, new { @class = "tn-dropdownlist tn-input-medium" })
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>相关标签：
+                        </th>
+                        <td>
+                            <div class="tn-expand-control tn-expand-has-icon">
+                                @Html.TagSelector("RelatedTags", ViewData.Get<IEnumerable<string>>("seletedTagNames", null), Model.TenantTypeId, Model.TagId)
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>特色标签：
+                        </th>
+                        <td>
+                            @Html.RadioButton("IsFeatured", true, Model.IsFeatured, new { id = "IsFeatured-true", @class = "IsFeatured" })<label for="IsFeatured-true">是</label>&nbsp;&nbsp;
+                                        @Html.RadioButton("IsFeatured", false, !Model.IsFeatured, new { id = "IsFeatured-false", @class = "IsFeatured" })<label for="IsFeatured-false">否</label>
+                        </td>
+                    </tr>
+                    <tr class="special-tag-display" style="display: none">
+                        <th>标识图片：
+                        </th>
+                        <td>
+                            <input id="tagLogo" name="tagLogo" type="file" />
+                            @Html.ValidationMessage("tagLogo")
+                        </td>
+                    </tr>
+                    <tr class="special-tag-display" style="display: none">
+                        <th></th>
+                        <td>
+                            @if (!string.IsNullOrEmpty(Model.FeaturedImage))
+                            {
+                                <img src="@SiteUrls.Instance().LogoUrl(Model.FeaturedImage, TenantTypeIds.Instance().Tag(), ImageSizeTypeKeys.Instance().Medium())" />
+                            }
+                        </td>
+                    </tr>
+                    <tr class="special-tag-display" style="display: none">
+                        <th>标签描述：
+                        </th>
+                        <td>
+                            @Html.HtmlEditor("Description", Model.Description, new HtmlEditorOptions(HtmlEditorMode.Simple).SetShowSmileyButton(false))
+                            @Html.ValidationMessage("Description")
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tnc-artdilog-btn tn-bg-gray tn-border-gray tn-border-top">
+        @Html.Button("提交", ButtonTypes.Submit, HighlightStyles.Primary)
+        @Html.Button("取消", ButtonTypes.Cancel, HighlightStyles.Secondary, htmlAttributes: new { dialogOperation = "closeAll" })
+    </div>
+}
+<script type="text/dialog">
+    @if (isEdit)
+    {
+        @: this.title("编辑标签");
+    }
+    else
+    { 
+        @: this.title("添加标签");
+    }
+</script>
+
+<script id="template-tag-group" type="text/x-jquery-tmpl">
+    <option value='${value}'>${text}</option>
+</script>
+
+@Html.ScriptBlock(
+@<script type="text/javascript">
+     function OnSuccessCallBack(data) {
+         var newData = $.parseJSON(data);
+         if (newData.MessageType > 0) {
+             var list = art.dialog.list;
+             for (var i in list) {
+                 list[i].close();
+             };
+             art.dialog.tips(newData.MessageContent, 1.5, newData.MessageType,
+                 function () {
+                     window.location.reload(true);
+                 });
+         }
+         else
+             art.dialog.tips(newData.MessageContent, 2, newData.MessageType);
+         return false;
+     }
+     function OnErrorCallBack(data) {
+         $("#editTagForm").replaceWith(data);
+     }
+</script>)
+@Html.ScriptBlock(
+@<script type="text/javascript">
+     $(function () {
+         if ('@(Model.IsFeatured)' == 'True') {
+             $(".special-tag-display").show();
+         }
+         $(".IsFeatured").click(function () {
+             if ($(this).val() === "True") {
+                 $(".special-tag-display").show();
+             } else {
+                 $(".special-tag-display").hide();
+             }
+         });
+
+         $("#TenantTypeId").change(function () {
+             var tenantTypeId = $(this).val();
+             $.getJSON('@SiteUrls.Instance().GetTagGroupsByTenantTypeId()', { tenantTypeId: tenantTypeId }, function (data) {
+                 if (data) {
+                     $("#GroupId").empty();
+                     $("#template-tag-group").tmpl(data).appendTo("#GroupId");
+                 }
+             });
+         });
+     });
+</script>)

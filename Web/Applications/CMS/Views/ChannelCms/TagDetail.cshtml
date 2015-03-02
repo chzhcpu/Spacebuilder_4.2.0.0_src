@@ -1,0 +1,49 @@
+﻿@model PagingDataSet<ContentItem>
+@{
+    Layout = "~/Applications/CMS/Layouts/cms-2cols.cshtml";
+    Html.Style("~/Applications/CMS/Styles/app.css");
+    var tag = ViewData.Get<Tag>("tag", new Tag());
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-story-special-tag">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="tn-special-tag">
+            <div class="tn-details tn-helper-clearfix">
+                @if (!string.IsNullOrEmpty(tag.FeaturedImage) && tag.IsFeatured)
+                {
+                    <div class="tn-figure">
+                        <img alt="@tag.TagName" title="@tag.TagName" src="@SiteUrls.Instance().LogoUrl(tag.FeaturedImage, TenantTypeIds.Instance().Tag(), ImageSizeTypeKeys.Instance().Medium())" width="100" />
+                    </div>
+                }
+                <div class="tn-info">
+                    <div class="tn-title">
+                        <div class="tn-icon-area">@Html.Icon(IconTypes.Label)</div>
+                        @if (DIContainer.Resolve<Authorizer>().Tag_Edit(tag))
+                        {
+                            <div class="tn-actions">
+                                <a href="@SiteUrls.Instance()._EditTag(tag.TagId)" plugin="dialog" title="编辑标签">编辑</a>
+                            </div>
+                        }
+                        <h4>@tag.TagName</h4>
+                    </div>
+                    @if (tag.IsFeatured && !string.IsNullOrEmpty(tag.Description))
+                    {
+                        <div class="tn-descrip">
+                            <p>@Html.Raw(tag.Description)</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        @Html.Partial("_List", Model)
+    </div>
+</div>
+@section Aside{
+    @Html.Action("_Tops", "ChannelCms", new { topNumber = 5, sortBy = ContentItemSortBy.StageHitTimes })
+    @Html.Action("_Tops", "ChannelCms", new { topNumber = 5, sortBy = ContentItemSortBy.StageCommentCount })
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">热门标签</h3>
+        </div>
+        @Html.Action("_TagCloud", "Channel", new { tenantTypeId = TenantTypeIds.Instance().ContentItem(), Area = "Common" })
+    </div>
+}

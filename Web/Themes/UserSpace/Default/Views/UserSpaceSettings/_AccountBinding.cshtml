@@ -1,0 +1,66 @@
+﻿@model AccountType
+@{
+    ThirdAccountGetter getter = ThirdAccountGetterFactory.GetThirdAccountGetter(Model.AccountTypeKey);
+
+    AccountBinding accountBinding = ViewData.Get<AccountBinding>("AccountBinding", null);
+    
+}
+<tr class="tn-table-grid-row">
+    <td class="tn-border-gray tn-border-bottom tn-border-dashed tn-width-avatar">
+        <a href="@getter.AccountTypeUrl" target="_blank" title="@getter.AccountTypeName">
+            <img width="50" height="50" alt="@getter.AccountTypeName" src="@SiteUrls.Instance().ThirdLogoUrl(Model.AccountTypeKey)" /></a>
+    </td>
+    <td class="tn-border-gray tn-border-bottom tn-border-dashed tn-width-auto">
+        <p>
+            <em>@getter.AccountTypeName</em>
+        </p>
+        <p>
+            @if (accountBinding != null)
+            {
+                <a name="CancelAccountBinding_button" linktype="@Model.AccountTypeKey" href="@SiteUrls.Instance()._CancelAccountBinding(Url.SpaceKey(), Model.AccountTypeKey)">取消绑定</a>
+            }
+            else
+            {
+                <button type="submit" class="tn-button-primary tn-button-text-only tn-button tn-corner-all" onclick="window.open('@SiteUrls.Instance().LoginToThird(Model.AccountTypeKey)', 'ThirdLogin', 'width=600,height=500,menubar=0,scrollbars=0, status=1,titlebar=0,toolbar=0,location=1'); return false;">
+                    <span class="tn-button-text">立即绑定</span></button>
+            }
+        </p>
+    </td>
+    <td class="tn-border-gray tn-border-bottom tn-border-dashed tn-width-auto">
+        @if (accountBinding != null)
+        {
+            ThirdUser thirdUser = null;
+            try
+            {
+                thirdUser = getter.GetThirdUser(accountBinding.AccessToken, accountBinding.Identification, true);
+            }
+            catch { }
+            string siteName = DIContainer.Resolve<ISettingsManager<SiteSettings>>().Get().SiteName;
+            <p class="tn-helper-right">已授权<a href="@SiteUrls.Instance().SiteHome()">@siteName</a>，有效期至：@accountBinding.ExpiredDate.ToUserDateString() <a href="@SiteUrls.Instance().LoginToThird(accountBinding.AccountTypeKey)" onclick = "updateBind_@(accountBinding.AccountTypeKey)();return false;">更新授权</a></p>
+            @Html.ScriptBlock(@<script type="text/javascript">
+                function updateBind_@(accountBinding.AccountTypeKey)() {
+                    window.open('@SiteUrls.Instance().LoginToThird(accountBinding.AccountTypeKey)', 'ThirdLogin',
+                    'width=600,height=500,menubar=0,scrollbars=0, status=1,titlebar=0,toolbar=0,location=1');
+                    return false;
+                }
+            </script>)
+            <div class="tnc-bind-name">
+                @if (thirdUser != null)
+                { 
+                    <div class="tn-avatar-mini">
+                        <img src="@thirdUser.UserAvatarUrl" alt="@thirdUser.NickName" />
+                    </div>
+                    <a href="@thirdUser.SpaceHomeUrl" target="_blank" class="tn-user-name">@thirdUser.NickName</a>
+                }
+            </div>
+        }
+        <p class="tn-text-note">
+            可用 @getter.AccountTypeName @(getter.AccountTypeName.EndsWith("帐号") ? string.Empty : "帐号")登录
+            @if (Model.IsSync)
+            {
+                @:，发布微博时可同步到 @(getter.AccountTypeKey == AccountTypeKeys.Instance().QQ() ? "腾讯微博" : getter.AccountTypeName)
+                                                                                                            }
+        </p>
+    </td>
+</tr>
+

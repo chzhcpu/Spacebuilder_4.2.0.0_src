@@ -1,0 +1,19 @@
+﻿@{
+    Layout = "app-list-2cols";
+    Html.Style("~/Applications/Bar/Styles/app.css");
+    var topic = ViewData.Get<TopicEntity>("topic", null);
+}
+@section Aside{
+    @Html.Action("_BarThreadSearch", "TopicSpaceBar", new { spaceKey = Url.SpaceKey() })
+    @Html.Action("_TagCloud", "TopicSpaceBar", new { spaceKey = Url.SpaceKey() })
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-bar-crumbs">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="tn-breadcrumb tn-helper-clearfix">
+            <div class="tn-avatar-mini">
+                <a href="@SiteUrls.Instance().TopicHome(topic.TopicKey)" title="@topic.TopicName"><img width="25" src="@SiteUrls.Instance().LogoUrl(topic.Logo, TenantTypeIds.Instance().Topic(), ImageSizeTypeKeys.Instance().Small())"/></a>
+            </div>
+            <span class="tn-breadcrumb-item"><a title="@topic.TopicName" href="@SiteUrls.Instance().TopicHome(Url.SpaceKey())">@StringUtility.Trim(topic.TopicName, 10)</a></span><span class="tn-seperator">&gt;</span><span class="tn-breadcrumb-item"><a title="讨论" href="@SiteUrls.Instance().TopicSectionDetail(Url.SpaceKey())">讨论</a></span><span class="tn-seperator">&gt;</span><span class="tn-selected">标签云图</span></div>
+    </div>
+</div>
+@Html.Action("_TagCloud", "TopicSpace", new { area = "Topic", topNumber = 100,ownerId=TopicIdToTopicKeyDictionary.GetTopicId(Url.SpaceKey()), tenantTypeId = TenantTypeIds.Instance().BarThread() })

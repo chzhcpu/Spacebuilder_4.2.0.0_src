@@ -1,0 +1,163 @@
+/* 
+Offical Style for Spacebuilder
+(c) 2007-2012 Tunynet Inc.
+*/ 
+
+/* Page Layout
+----------------------------------*/
+#tn-header .tn-wrapper,
+#tn-content .tn-wrapper,
+#tn-footer .tn-wrapper { width: 950px; margin: 0 auto; }
+#tn-header { margin-bottom: 30px; }
+
+/* Global navigation */
+
+
+/* Content Layout
+----------------------------------*/
+.tnc-aside { padding: 30px 5px 30px 25px; }
+.tnc-main { padding: 30px; }
+.spb-app-page .tnc-aside { padding: 0 20px 0 0; }
+.spb-follow-page .tnc-aside { padding: 30px 0 30px 15px; }
+.spb-layout-5-19 .tnc-person-flow .tn-avatar-item { width: 80px; }
+
+/* Box
+----------------------------------*/
+.tn-box { border-width: 0; border-radius: 0; margin-bottom: 20px; }
+.tn-box .tn-box-content { padding: 10px 0 20px; }
+.tn-box .tn-box-header { padding: 10px 0; margin: 0; }
+.tn-box .tn-box-header h3 { font-size: 16px; font-weight: normal; }
+.tn-box .tn-box-header .tn-option { line-height: 21px }
+.spb-app-page .tnc-aside .tn-box { margin-bottom: 30px; }
+.spb-app-page .tnc-aside .tn-box .tn-box-header { padding: 10px; }
+.spb-app-page .tnc-aside .tn-box-content { padding: 20px 10px }
+
+/* User Panel */
+.spb-user-panel h1 { font-size: 18px; font-weight: normal; }
+
+/* My Home */
+.spb-my-home .tnc-main { padding: 0 20px 0 0; }
+.spb-my-home .tnc-main .tn-box-content { padding: 0; }
+.spb-my-home .tn-broadcast { display: none; }
+.spb-br-post-broad { margin-bottom: 20px; }
+.spb-br-post-broad .tn-avatar { float: left; }
+.spb-br-post-box { width: 570px; padding: 20px; float: right; position: relative; }
+.spb-br-box-arrow { width: 12px; height: 19px; position: absolute; top: 10px; left: -11px;}
+.spb-my-home .tnc-main .tn-avatar { padding: 5px; }
+.spb-my-home .tnc-main .tn-bubble .tn-avatar { padding: 0; }
+.spb-my-following .tn-tabs-nav,
+.spb-my-following .tn-directory { margin-left: 80px; }
+.spb-my-following .tnc-dynamic-new { margin: 20px 0 0 80px; }
+.spb-my-following .tn-list-item { border-width: 0; padding: 20px 0 0; }
+.spb-my-following .tn-list-item-area-main { margin-left: 80px; padding: 15px; }
+.spb-my-following .tnc-dynamic-title { margin-left: -27px; padding-left: 27px; position: relative; display: inline-block; }
+.spb-my-following .tn-load-more { margin: 20px 0 20px 80px; }
+
+.spb-my-home .tnc-aside { padding: 0; }
+.spb-my-home .tn-box-header { padding: 10px 20px; }
+.spb-my-home .tn-box-content { padding: 20px; }
+.spb-my-home .spb-user-panel .tn-box-content { padding: 0; }
+.spb-my-home .spb-user-panel .spb-profile-card { padding: 20px; margin: 0; }
+.spb-my-home .spb-user-panel .tn-info { margin: 0; }
+.spb-my-home .spb-user-atten { margin-bottom: 20px; }
+.spb-my-home .tn-side-menu { padding-top: 10px; }
+.spb-my-home .tn-side-menu li { padding: 0; float: none; }
+.spb-my-home .tn-side-menu a { padding: 10px 10px 10px 50px; display: block; float: none; }
+.spb-my-home .tn-side-menu .tn-icon,
+.spb-my-home .tn-side-menu .tn-icon-wrap { left: 25px; top: 10px; }
+.spb-my-home .tnc-user-menu .tn-actions { padding: 10px 20px; }
+
+.spb-my-home .tnc-aside .tn-avatar-item { width: 63px; }
+
+/* Space Home */
+.spb-space-home .tnc-main,
+.spb-space-home .tnc-aside { padding: 0; }
+
+.spb-space-home .tnc-dynamic .tn-list-item { padding: 0; margin-bottom: 20px; border-width: 0; }
+.spb-space-home .tnc-dynamic .tn-list-item-area-left { visibility: hidden; }
+.spb-space-home .tnc-dynamic .tn-list-item-area-main { padding: 20px; }
+
+.spb-space-home .tnc-dynamic-title { padding: 15px 0 15px 76px; margin-left: -76px; position: relative; display: inline-block; }
+
+.spb-space-home .tn-avatar-wrap { padding: 10px; width: 100px; height: 100px; }
+.spb-space-home .tn-avatar-big { width: 100px; height: 100px; }
+.spb-space-home .tn-avatar-big img { max-width: 100px; max-height: 100px; _width: 100px; }
+
+.spb-space-home .tnc-user-profile h1 { font-size: 16px; font-weight: normal; text-align: center; margin: 10px 0; }
+.spb-space-home .tnc-user-profile .tn-br-actions { padding: 10px 0 0 35px; height: 47px; }
+.spb-space-home .tnc-user-profile .tn-br-actions .tn-button { margin: 0 -1px 0 0; float: left; }
+.spb-space-home .tnc-user-profile .tn-br-actions .tn-button-text-only { border-radius: 3px 0 0 3px }
+.spb-space-home .tnc-user-profile .tn-br-actions .tn-button-icon-only { border-radius: 0 3px 3px 0; }
+
+.spb-space-home .spb-user-atten { width: 120px; margin: auto; padding: 15px 0 15px; }
+.spb-space-home .spb-user-atten li { float: none; width: auto; text-align: left; margin-bottom: 1px; padding: 0; overflow: hidden; zoom:1; }
+.spb-space-home .spb-user-atten a { display: block; padding: 5px; font-size: 12px; margin: 0; overflow: hidden; zoom:1; }
+.spb-space-home .spb-user-atten strong { display: inline; padding-left: 5px; font-size: 12px; }
+.spb-space-home .tnc-user-menu { padding-left: 35px; margin-top: 15px; }
+.spb-space-home .tn-side-menu { border-width: 0; }
+.spb-space-home .tn-side-menu li { padding: 12px 0; margin-bottom: 10px; }
+.spb-space-home .tnc-user-menu .tn-icon { width: 40px; height: 40px; left: 0; top: 0; }
+.spb-space-home .tn-side-menu .tn-menu-text { padding-left: 50px; }
+
+/* Main Content */
+.spb-layout-5-19 .tnc-main .spb-photo-waterfall .spb-photo-unit { width: 165px; }
+.spb-layout-5-19 .tnc-main .spb-photo-waterfall .spb-photo-unit .tn-img { width: 143px; }
+.spb-layout-5-19 .tnc-main .spb-thumbnail-falls .spb-photo-unit { width: 152px; }
+
+/* Side Content */
+.tnc-aside .tn-search-input { width: 95px; }
+.tnc-user-menu .tn-side-menu li .tn-action { display: none; }
+.tnc-user-profile .tn-info-part dl { overflow: hidden; zoom:1; }
+.tnc-user-profile .tn-info-part dt { float: left; display: block; }
+.tnc-user-profile .tn-info-part dd { overflow: hidden; zoom:1; display: block; }
+
+/*  */
+
+.spb-brish-ctn{ padding-top:40px;}
+.spb-brish-ctn li{ margin-bottom:11px;_margin-bottom:0px; position: relative; }
+.spb-brish-icon{ background-image: url(Appearances/Default/Images/spb-icon.png); background-repeat: no-repeat; width:60px; height:65px; position: absolute; top:5px; left:0;_left:-60px; }
+.spb-icon-article{ background-position: 0px 0px; }
+.spb-icon-share{ background-position: 0px -78px;}
+.spb-icon-picture{background-position: 0px -156px;}
+.spb-icon-music{background-position: 0px -224px;}
+.spb-brish-list{ padding:0px 0 14px 60px; background: url(Appearances/Default/Images/spb-ying.png) no-repeat center bottom; }
+.spb-brish-box{ box-shadow: 0 0 3px rgba(0, 0, 0, 0.25); padding-top:20px;}
+.spb-brish-box h1{ font-size: 20px; font-weight: normal; }
+.spb-brish-box p,.spb-brish-box h1{ padding:0px 20px 20px;}
+.spb-brish-box .spb-brish-info{ font-size: 12px; }
+.spb-brish-box .spb-brish-info a{ margin-right:5px;}
+.spb-brish-box .spb-brish-info .spb-date{ float:right;}
+.spb-brish-box .spb-brish-note{ padding:5px 20px; }
+.spb-brish-box .spb-note-icon{ float:right;  position: relative; margin-top:3px; }
+.spb-brish-box .spb-note-icon li{ float:left; margin-left:10px; font-size: 12px; line-height:16px;}
+.spb-brish-box .spb-note-icon li .tn-icon{ float:left; vertical-align: middle; margin-right:3px;}
+.spb-brish-box .spb-note-text{ display:inline-block; font-size: 13px; }
+
+/* right
+----------------------------------*/
+.spb-brisk-side{ padding-top:40px; width:120px; float:right;}
+.spb-photo{ text-align: center; padding-bottom:15px; }
+
+.spb-photo .spb-name{ font-size: 20px; font-weight: normal; margin:0; padding:10px 0; }
+
+.spb-brisk-side .tn-button{ width:90px; height:30px; box-shadow: 0 0 4px rgba(0, 0, 0, 0.25); text-align: center; margin:0; }
+.spb-brisk-side .tn-button-text-icon-primary .tn-icon{left: 15px;}
+
+.spb-briskside-user{ padding:10px 0;}
+.spb-briskside-user li{ margin-bottom:1px; padding:2px 0 2px 5px;border-radius: 0px 4px 0px 0px;}
+
+.spb-briskside-menu{ padding:15px 0 0 25px;}
+.spb-briskside-menu li{ display:block; margin-bottom:8px; clear:both; line-height:32px;}
+.spb-briskside-menu li a:hover{ font-weight: bold; text-decoration: none; }
+
+.spb-briskside-menu .tn-icon-special{float:left; vertical-align: middle;}
+
+.spb-briskside-menu li .tnc-briskmenu-over{ margin-right:5px; float:left; }
+.spb-brisk-more{ text-align: center; padding:5px; }
+.spb-brisk-more a{ }
+.spb-brisk-more .tn-icon{  }
+.spb-brisk-top{ border-radius: 3px 3px 3px 3px; position: fixed; right:20%; bottom:100px; padding:5px; }
+
+/* Footer
+----------------------------------*/
+#tn-footer{ text-align: center; padding:30px 0; }

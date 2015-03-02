@@ -1,0 +1,25 @@
+﻿@model SpecialTopic.Topic.TopicEntity
+@{
+    Layout = "home-2cols";
+}
+@section Aside{
+    @if (DIContainer.Resolve<Authorizer>().Topic_View(Model))
+    {
+        @Html.Action("_TopicProfile", "TopicSpace", new { spaceKey = Url.SpaceKey() })
+        @Html.Action("_ListMembers", "TopicSpace", new { spaceKey = Url.SpaceKey(), topNumber = 6 })
+        @Html.Action("_LastTopicVisitors", "TopicSpace", new { spaceKey = Url.SpaceKey() })
+        @Html.Action("_OnlineTopicMembers", "TopicSpace", new { spaceKey = Url.SpaceKey(), topNumber = 12 })
+        @Html.Action("_TopicMemberAlsoJoinedTopics", "TopicSpace", new { spaceKey = Url.SpaceKey() })
+        @Html.Action("_OwnerLinks", "Channel", new { ownerId = Model.TopicId, area = "Common", ownerType = OwnerTypes.Instance().Topic() })
+    }
+}
+@Html.PointMessage()
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-group-space">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        @Html.Action("_TopicHeader", "TopicSpaceTheme", new { spaceKey = Url.SpaceKey(), showManageButton = true })
+        @Html.Action("_Announcement", "TopicSpace", new { spaceKey = Url.SpaceKey() })
+        @Html.Action("_PapersOfTopic", "TopicSpace", new { spaceKey = Url.SpaceKey() })
+        Html.Action("_TopicActivities", "TopicSpace", new { spaceKey = Url.SpaceKey() })
+    </div>
+</div>
+

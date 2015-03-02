@@ -1,0 +1,12 @@
+﻿@model PagingDataSet<BarThread>
+@{
+    Layout = "app-list-2cols";
+    Html.Style("~/Applications/Bar/Styles/app.css");
+    ViewData["ShowFollowBar"] = false;
+    ViewData["TenantTypeId"] = TenantTypeIds.Instance().Topic();
+}
+@section Aside{
+    @Html.Action("_BarThreadSearch", "TopicSpaceBar", new { spaceKey = Url.SpaceKey() })
+    @Html.Action("_TagCloud", "TopicSpaceBar", new { spaceKey = Url.SpaceKey() })
+}
+@Html.Partial("~/Applications/Bar/Views/Bar/_UserThreads.cshtml", Model)

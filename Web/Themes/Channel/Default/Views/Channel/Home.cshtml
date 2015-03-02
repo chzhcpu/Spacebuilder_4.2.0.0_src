@@ -1,0 +1,31 @@
+﻿@{
+    Layout = "_Square";
+    IEnumerable<IUser> hotUsers = ViewData.Get<IEnumerable<IUser>>("hotUsers", null);
+    IEnumerable<Activity> activities = ViewData.Get<IEnumerable<Activity>>("activities", null);
+    Html.Script("~/Bundle/Scripts/SliderKit");
+}
+@section Aside
+{
+    @Html.Action("_TopTopics", "ChannelMicroblog", new { area = "Microblog", topNum = 10 })
+    @Html.Action("_RecommendTopic", "ChannelMicroblog", new { area = "Microblog", topNum = 10 })
+    @Html.AdvertisingPosition("10000000003")
+    @Html.Action("_RecommendUser", "FindUser", new { topNumber = 5 })
+    @Html.Action("_HotFollower", "ChannelMicroblog", new { area = "Microblog", topNum = 10 })
+    @Html.Action("_AnnouncementList", "Channel")
+    @Html.AdvertisingPosition("10000000004")
+}
+@Html.Action("_AnnouncementItem", "Channel", new { displayArea = Announcement_DisplayArea.Home })
+@Html.PointMessage()
+@Html.Action("_TopUsers", "FindUser", new { sortBy = SortBy_User.PreWeekHitTimes, topNumber = 20 })
+@Html.Action("_RecommendSections", "Bar", new { area = "Bar", topNumber = 12, recommendTypeId = "10120101", displayTemplate = "Slide", isLogin = UserContext.CurrentUser != null })
+@Html.AdvertisingPosition("10000000002")
+<div class="tn-box tn-widget tn-widget-content tn-corner-all">
+    <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+        <h3 class="tn-helper-reset">看看大家在做什么</h3>
+    </div>
+    <div class="tn-box-content tn-widget-content tn-corner-bottom">
+        <ul id="tnc-dynamic" class="tn-list tnc-dynamic">
+            @Html.Action("_SiteActivities", "Channel")
+        </ul>
+    </div>
+</div>

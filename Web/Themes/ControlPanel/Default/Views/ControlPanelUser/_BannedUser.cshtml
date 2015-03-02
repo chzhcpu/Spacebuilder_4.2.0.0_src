@@ -1,0 +1,74 @@
+﻿@model BannedUserEditModel
+@{
+    StatusMessageData statusMessageData = ViewData["statusMessageData"] as StatusMessageData;
+    List<SelectListItem> items = new List<SelectListItem>();
+    string[] reasonkist = { "亵渎", "广告", "发垃圾广告", "恶意攻击他人", "不雅的用户名", "恶意的链接或签名档", "其他" };
+    for (int i = 0; i < reasonkist.Count(); i++)
+    {
+        items.Add(new SelectListItem { Value = i.ToString(), Text = reasonkist.ElementAt(i) });
+    }
+    SelectList reasons = new SelectList(items, "Value", "Text");
+}
+<div id="bannedDialog">
+    @Html.StatusMessage(statusMessageData)
+    @using (Html.BeginAjaxForm("BannedUsers", "ControlPanelUser", FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success" }))
+    {
+        @Html.Hidden("UserIds")
+        <div class="tnc-dailog-pd">
+            <div class="tn-form tn-label-right tnc-label-short">
+                <div class="tn-form-row">
+                    <label class="tn-form-label">
+                        截止日期：</label>
+                    @Html.DatePicker("BanDeadline",minDate:"+1D")
+                    @Html.ValidationMessage("BanDeadline")
+                </div>
+                <div class="tn-form-row">
+                    <label class="tn-form-label">
+                        封禁原因：</label>
+                    @Html.DropDownList("reasons", reasons, "请选择")
+                </div>
+                <div class="tn-form-row">
+                    <label class="tn-form-label"></label>
+                    @Html.TextArea("BanReason", InputWidthTypes.Medium)
+                    @Html.ValidationMessage("BanReason")
+                </div>
+                <div class="tn-form-row" id="errorMsg">
+                </div>
+            </div>
+        </div>
+        <div class="tnc-artdilog-btn tn-bg-gray tn-border-gray tn-border-top">
+            @Html.Button("确认", ButtonTypes.Submit, HighlightStyles.Primary, htmlAttributes: new { id = "bannedUsers" })
+            @Html.Button("取消", ButtonTypes.Cancel, HighlightStyles.Secondary, htmlAttributes: new { dialogOperation = "close" })
+        </div>
+    }
+</div>
+@*todo:ful by libsh,不要起这样的变量名【已修复】*@
+<script type="text/dialog">
+    this.title("封禁设置");   
+</script>
+@Html.ScriptBlock(@<script type="text/javascript">
+
+                       function success(data) {
+                           art.dialog.tips(data.MessageContent, 1.5, data.MessageType, function () {
+                               window.location.reload();
+                           });
+                       }
+
+                       $(function () {
+
+                           var userId = 0;
+                           $("input[name='CheckBoxGroup']:checked").each(function () {
+                               userId += $(this).val() + ',';
+                           });
+                           $("#UserIds").val(userId);
+
+                           $("#reasons").livequery("change", function () {
+                               $('#BanReason').html(this.options[this.selectedIndex].text);
+                           });
+                       });
+
+                       function error(data) {
+                           $("#bannedDialog").replaceWith(data);
+                       }
+
+</script>)

@@ -1,0 +1,19 @@
+﻿@model  PagingDataSet<MicroblogEntity>
+@{
+    //long lastMicroblogId = ViewData.Get<long>("lastMicroblogId", 0);
+
+    long? tagGroupId = Request.QueryString.Get<long?>("tagGroupId", null);
+    SortBy_Microblog? sortBy = Request.QueryString.Get<SortBy_Microblog?>("sortBy", null);
+}
+@*<input type="hidden" class="lastMicroblogId" value="@(lastMicroblogId)" />*@
+@foreach (var microblog in Model)
+{
+    @Html.Partial("~/Applications/Microblog/Views/MicroblogActivity/_Microblog.cshtml", microblog)
+}
+
+@if (Model.PageCount > Model.PageIndex)
+{
+    <div class="tn-load-more tn-border-gray tn-corner-all" plugin="GetMore">
+        <a href="@SiteUrls.Instance()._List(sortBy, tagGroupId, Model.PageIndex + 1)">更多↓</a>
+    </div>
+}

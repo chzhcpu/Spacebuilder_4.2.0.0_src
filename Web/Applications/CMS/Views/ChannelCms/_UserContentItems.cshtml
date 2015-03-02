@@ -1,0 +1,63 @@
+﻿@model PagingDataSet<ContentItem>
+@{
+    bool hasManagePermission = ViewData.Get<bool>("hasManagePermission", false);
+    var authorizer = DIContainer.Resolve<Authorizer>();
+}
+
+<div class="spb-story-list" id="contentItemsContainer">
+    <table class="tn-table-grid">
+        <tbody>
+            <tr class="tn-table-grid-header">
+                <td class="tn-border-gray tn-border-bottom tn-text-note">标题 </td>
+                <th class="tn-border-gray tn-border-bottom tn-text-note">栏目</th>
+                <td class="tn-border-gray tn-border-bottom tn-text-note">评论数</td>
+                @if (hasManagePermission)
+                {
+                    <td class="tn-border-gray tn-border-bottom tn-text-note">审核状态 </td>
+                }
+                <td class="tn-border-gray tn-border-bottom tn-text-note">发布时间</td>
+                @if (hasManagePermission)
+                {
+                    <td class="tn-border-gray tn-border-bottom tn-text-note">操作 </td>
+                }
+            </tr>
+            @foreach (var item in Model)
+            {
+                <tr class="tn-table-grid-row" id="item-@item.ContentItemId">
+                    <td class="tn-border-gray tn-border-bottom tn-width-auto"><a href="@SiteUrls.Instance().ContentItemDetail(item.ContentItemId)" target="_blank">@item.Title</a></td>
+                    <td class="tn-border-gray tn-border-bottom tn-width-category tn-nowrap">
+                        @if (item.ContentFolder != null)
+                        {
+                            @Html.Link(item.ContentFolder.FolderName, SiteUrls.Instance().FolderDetail(item.ContentFolderId), item.ContentFolder.FolderName, null, HyperLinkTarget._blank)
+                        }
+                        else
+                        {
+                            @:尚未设置
+                                            }
+                    </td>
+                    <td class="tn-border-gray tn-border-bottom tn-width-number tn-nowrap"><a href="@SiteUrls.Instance().Comments(item.ContentItemId)" title="查看评论">@item.CommentCount</a></td>
+                    @if (hasManagePermission)
+                    {
+                        <td class="tn-border-gray tn-border-bottom tn-width-icon1 tn-nowrap">@Html.AuditStatusIcon(item.AuditStatus)</td>
+                    }
+                    <td class="tn-border-gray tn-border-bottom tn-width-datetime tn-nowrap">@item.ReleaseDate.ToUserDateString(true)</td>
+                    @if (hasManagePermission)
+                    {
+                        <td class="tn-border-gray tn-border-bottom tn-width-action1 tn-nowrap">
+                            @if (authorizer.CMS_DeleteContentItem(item))
+                            {
+                                @Html.AjaxDeleteButton(new AjaxDeleteButton()
+                                .SetText("删除").SetConfirm("确定要删除这篇投稿吗？").SetDeleteTarget("#item-" + item.ContentItemId)
+                                .SetUrl(SiteUrls.Instance()._DeleteContribute(item.ContentItemId)))
+                            }
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="tn-pagination">
+        @Html.AjaxPagingButton(Model, "contentItemsContainer")
+    </div>
+
+</div>

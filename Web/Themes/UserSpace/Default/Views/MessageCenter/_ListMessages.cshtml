@@ -1,0 +1,170 @@
+﻿@model IEnumerable<Message>
+@{
+    string musicPlayer = SiteUrls.FullUrl(Tunynet.Utilities.WebUtility.ResolveUrl("~/Scripts/jquery/jPlayer/Jplayer.swf"));
+    Html.Script("~/Scripts/jquery/jPlayer/jquery.jplayer.min.js");
+    Html.Script("~/Bundle/Scripts/FancyBox");
+    Html.Style("~/Bundle/Styles/FancyBox");
+    @Html.ScriptBlock(@<script type="text/javascript">
+        $(function () {
+            var i = -1;
+            var voice_player_btn = $(".voice_player_btn");
+            var timer;
+            $("#jPlayer1").jPlayer({
+                ready: function (event) {
+
+                },
+                ended: function () {
+                    //$("#jPlayer1").jPlayer("play");
+                    $(".voice_player_btn").removeClass("playing");
+                    clearInterval(timer);
+                    $(".speaker_animate").removeAttr("style");
+                },
+                swfPath: "@musicPlayer",
+                supplied: "mp3,mp4,wav",
+                wmode: "window"
+            });
+            //图片展示盒子
+            $("a[rel='fancybox']").fancybox({
+                'transitionIn': 'elastic',
+                'transitionOut': 'elastic',
+                'speedIn': 600,
+                'speedOut': 200
+            });
+
+            voice_player_btn.livequery("click", function () {
+
+                var $this = $(this);
+                var url = $this.data("url");
+                if ($this.hasClass("playing")) {
+                    $this.removeClass("playing");
+                    clearInterval(timer);
+                    //暂停
+                    $("#jPlayer1").jPlayer("pause");
+                    //加一个暂停的标记
+                    $this.data("pause", true);
+                } else {
+                    $this.addClass("playing");
+                    var speaker_animate = $this.find(".speaker_animate");
+                    clearInterval(timer);
+                    timer = setInterval(changeBgPosition, 300);
+                    //如果有暂停的标记就继续播放
+                    if ($(this).data("pause")) {
+                        $("#jPlayer1").jPlayer("play");
+                    }
+                    else {
+                        //从头播放
+                        $("#jPlayer1").jPlayer("setMedia",
+                         {
+                             mp3: url
+                         }).jPlayer("play");
+                    }
+                    //并移除暂停标记
+                    $this.removeData("pause");
+                }
+
+
+                //changeBgPosition
+                function changeBgPosition() {
+                    i = i - 19;
+                    if (i != -77) {
+                        speaker_animate.css("background-position", i + "px -202px")
+                    } else {
+                        i = -1;
+                    }
+
+                }
+            })
+        });
+    </script>)
+    
+
+    MessageSession session = ViewData["session"] as MessageSession;
+    long currentUserId = ViewData.Get<long>("userId", 0);
+    IUser otherUser = ViewData.Get<IUser>("otherUser", null);
+    long LastcurrentUserId = 0;
+    bool dllast = false, isCurrent = false;
+
+    if (Model != null)
+    {
+        foreach (var message in Model)
+        {
+            isCurrent = message.SenderUserId == currentUserId;
+
+            string arrowColor = isCurrent ? "tn-widget-bubble" : "tn-bubble-gray";
+            string areaClass = isCurrent ? "tnc-letter-to" : "tnc-letter-from";
+            string directionClass = "tn-widget tn-bubble tn-bubble-arrow-";
+            directionClass += isCurrent ? "right" : "left";
+
+            if (dllast && LastcurrentUserId != 0 && LastcurrentUserId != message.SenderUserId)
+            {
+    @Html.Raw("</div></div></dd></dl>")
+dllast = false;
+            }
+
+            if (message.SenderUserId != LastcurrentUserId)
+            {
+                dllast = true;
+    @Html.Raw("<dl class=\"" + areaClass + "\">")
+    <dt>
+        @Html.ShowUserAvatar(message.SenderUserId, AvatarSizeType.Small, true)
+    </dt>
+    @Html.Raw("<dd class=\"tnc-sender-content\">")
+    @Html.Raw("<div class=\"" + directionClass + "\">")
+    <div class="tn-bubble-arrow">
+        <b class="tn-arrow-b1 tn-border-gray"></b><b class="tn-arrow-b2  @(arrowColor)"></b>
+    </div>
+    @Html.Raw("<div class=\"tn-bubble-content tn-widget-content " + (isCurrent ? "" : "tn-bg-gray") + " tn-border-gray tn-corner-all\">")
+LastcurrentUserId = message.SenderUserId;
+            }
+
+    <div id="msg_message_@(message.MessageId)"  class="tnc-message-info tn-border-bottom tn-border-gray">
+        <p class="tnc-info-content" id="content">
+            <span class="tnc-sender-name">
+                @if (isCurrent)
+                {
+                    @:我
+                }
+                else
+                {
+                    if (otherUser != null)
+                    {
+                    <a href="@SiteUrls.Instance().SpaceHome(message.SenderUserId)" title="@message.Sender" target="_blank">
+                        @message.Sender</a>
+                    }
+                    else
+                    {
+                    @message.Sender
+                    }
+                }
+                :</span>
+            @Html.Raw(message.ResolveBody)
+        </p>
+        <em class="tn-date tn-text-note"><span class="tn-action">
+            @message.DateCreated.ToFriendlyDate()</span> <span name="operate_@(message.MessageId)" class="tn-action" style=" display:none">
+                @Html.AjaxDeleteButton(new AjaxDeleteButton()
+                     .SetConfirm("确认要删除私信内容吗")
+                     .SetText("删除")
+                     .SetTooltip("删除私信")
+                     .SetDeleteTarget("#msg_message_" + message.MessageId)
+                     .SetUrl(Url.Action("DeleteMessage", new { messageId = message.MessageId, session.SessionId }))
+                     .SetOnSuccessCallBack("DeleteMessageSuccess"))
+            </span>
+            @if (!isCurrent)
+            {
+                <span  name="operate_@(message.MessageId)" class="tn-action" style=" display:none"><a name="replay" href="#">回复</a> </span>
+            }
+        </em>
+    </div>
+
+        }
+
+        if (Model.Count() > 0)
+        {
+    @Html.Raw("</div>")
+    @Html.Raw("</div>")
+    @Html.Raw("</dd>")
+    @Html.Raw("</dl>")
+        }
+    }
+
+}

@@ -1,0 +1,38 @@
+﻿@model Dictionary<string, bool>
+@using (Html.BeginAjaxForm("_SetUserInvitationSettings", "MessageCenter", FormMethod.Post, new AjaxFormOptions { OnSuccessCallBack = "invitationSettingSuccess", OnErrorCallBack = "invitationSettingError" }))
+{
+	<div class="tnc-dailog-pd tnc-invite-set-mod">
+		<div class="tn-form">
+			<div class="tn-form-row">
+				<ul class="tn-checkbox-list">
+					@foreach (var item in Model)
+					{
+						Tunynet.Common.InvitationType invitationType = Tunynet.Common.InvitationType.Get(item.Key);
+						if (invitationType == null)
+						{
+							continue;
+						}
+						<li>
+							@Html.CheckBox(item.Key, item.Value, new { @class = "tn-radiobutton" })
+							<label for="@item.Key">@invitationType.Name</label>
+						</li>
+					}
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="tnc-artdilog-btn tn-bg-gray tn-border-gray tn-border-top">
+		@Html.Button("提交", ButtonTypes.Submit, HighlightStyles.Primary)
+	</div>
+}
+@Html.ScriptBlock(@<script type="text/javascript" language="javascript">
+    function invitationSettingSuccess(data) {
+        art.dialog.tips(data.MessageContent, 1.5, data.MessageType);
+    }
+    function invitationSettingError(data) {
+        art.dialog.tips(data.MessageContent, 1.5, data.MessageType);
+    }
+</script>)
+<script type="text/dialog">
+    this.title("接收请求的类型");
+</script>

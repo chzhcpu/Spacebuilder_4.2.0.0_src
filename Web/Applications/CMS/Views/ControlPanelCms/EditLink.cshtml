@@ -1,0 +1,197 @@
+﻿@model ContentItemEditModel
+@{
+    Layout = "_ControlPanel";
+    bool HaveAdditional = Model != null && Model.AdditionalProperties != null;
+    Html.Script("~/Scripts/tunynet/jquery.tn.textarea.js");
+    int summaryCount = Model.Summary == null ? 0 : Model.Summary.Length;
+    int TitleCount = Model.Title == null ? 0 : Model.Title.Length;
+}
+<div class="tn-block tnc-ctnborder">
+    <div class="tnc-main">
+        <div class="tnc-ctn-center">
+            <h1>
+                <span>发布链接</span>
+            </h1>
+            @using (Html.BeginForm("EditContentItem", "ControlPanelCms", FormMethod.Post, new { id = "form-News-edit" }))
+            {
+                @Html.HiddenFor(n => n.ContentItemId)
+                @Html.HiddenFor(n => n.ContentTypeId)
+                <div class="tnc-ctnright-list">
+                    <div class="tn-form-box">
+                        @Html.StatusMessage()
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <th>栏目：
+                                    </th>
+                                    <td>
+                                        @Html.FolderDropDownListFor(m => m.ContentFolderId, ContentTypeKeys.Instance().News())
+                                        @Html.ValidationMessageFor(n => n.ContentFolderId)
+                                    </td>
+                                </tr>
+                                <tr name="IsExternalLink-True">
+                                    <th>链接地址：
+                                    </th>
+                                    <td>
+                                        @Html.TextBox("LinkUrl", HaveAdditional ? Model.AdditionalProperties.Get<string>("LinkUrl", string.Empty) : string.Empty, InputWidthTypes.Longest, new RouteValueDictionary { { "class", "tnc-formbtn-box" } })
+                                        <br />
+                                        <span class="tn-text-note">必须以http://开头</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>标题：
+                                    </th>
+                                    <td>
+                                        <div class="tnc-formbtn-box">
+                                            @Html.TextBoxFor(n => n.Title, InputWidthTypes.Longest, new RouteValueDictionary { { "class", "tn-textbox tn-border-gray tn-input-longest tn-input-ruler" }, { "id", "Title" } })
+                                            <a id="TitleTextColor" href="#" class="tnc-formbtn-a"></a><a href="#" id="TitleTextWeight" class="tnc-formbtn-b"></a>
+                                            @Html.Hidden("Color", HaveAdditional ? Model.AdditionalProperties.Get<string>("Color", string.Empty) : string.Empty)
+                                            @Html.Hidden("IsBold", HaveAdditional && Model.AdditionalProperties.Get<bool>("IsBold", false))
+                                            <span id="TitleCount" class="tn-count tn-text-note">@TitleCount/@TextLengthSettings.TEXT_SUBJECT_MAXLENGTH</span>
+                                        </div>
+
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th>摘要：
+                                    </th>
+                                    <td>
+                                        @Html.TextAreaFor(n => n.Summary, InputWidthTypes.Longest, 2, 2, new RouteValueDictionary { { "id", "Summary" } })
+                                        <span id="SummaryCount" class="tn-count tn-text-note">@summaryCount/@TextLengthSettings.TEXT_DESCRIPTION_MAXLENGTH</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>标题图：
+                                    </th>
+                                    <td>
+                                        @Html.SetTitleImageFor(n => n.FeaturedImageAttachmentId, TenantTypeIds.Instance().ContentItem(), Model.ContentItemId)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>置顶设置：
+                                    </th>
+                                    <td>
+                                        @Html.CheckBoxFor(n => n.IsGlobalSticky, new { @class = "tn-checkbox" })
+                                        @Html.LabelFor(n => n.IsGlobalSticky, "整站置顶")
+                                        @SetStickyTime(Model.GlobalStickyDate)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <td>
+                                        @Html.CheckBoxFor(n => n.IsFolderSticky, new { @class = "tn-checkbox" })
+                                        @Html.LabelFor(n => n.IsFolderSticky, "栏目置顶")
+                                        @SetStickyTime2(Model.FolderStickyDate)
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>发布时间：
+                                    </th>
+                                    <td>
+                                        @Html.DateTimePicker("ReleaseDate", new DateTimePicker().SetShowTime(true).SetMinDate("-10Y")
+                                        .SetSelectedDate(Model.ReleaseDate))
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th></th>
+                                    <td>
+                                        @Html.Button("发布", ButtonTypes.Submit, HighlightStyles.Primary, ButtonSizes.Large, null, TextIconLayout.IconText, null, new { id = "submit-publish" })
+                                        @Html.Button("取消", ButtonTypes.Button, HighlightStyles.Secondary, ButtonSizes.Large, url: SiteUrls.Instance().CmsControlPanelManage())
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+@helper SetStickyTime(DateTime StickyTime)
+{
+    <text>
+    <div @(!Model.IsGlobalSticky ? "style=display:none" : "") id="settime-stickyTime">
+        <div id="time-stickyTime-show" @(StickyTime.CompareTo(DateTime.UtcNow) <= 0 ? "style=display:none" : "")>
+            置顶截止时间： @StickyTime.ToFriendlyDate(false, "yyyy-MM-dd") <a id="time-edit">编辑</a>
+        </div>
+        <div id="time-stickyTime-edit" @(StickyTime.CompareTo(DateTime.UtcNow) > 0 ? "style=display:none" : "")>
+            置顶截止时间： @Html.DatePicker("GlobalStickyDate", DateTime.Now, "0", null)
+        </div>
+    </div>
+    @Html.ScriptBlock(@<script type="text/javascript" language="javascript">
+        $("#time-edit").click(function (e) {
+            e.preventDefault();
+            $("#time-stickyTime-edit").show();
+            $("#time-stickyTime-show").hide();
+        });
+    </script>)
+    </text>
+}
+
+@helper SetStickyTime2(DateTime StickyTime2)
+{
+    <text>
+    <div @(!Model.IsFolderSticky ? "style=display:none" : "") id="settime-stickyTime2">
+        <div id="time-stickyTime-show2" @(StickyTime2.CompareTo(DateTime.UtcNow) <= 0 ? "style=display:none" : "")>
+            置顶截止时间： @StickyTime2.ToFriendlyDate(false, "yyyy-MM-dd") <a id="time-edit2">编辑</a>
+        </div>
+        <div id="time-stickyTime-edit2" @(StickyTime2.CompareTo(DateTime.UtcNow) > 0 ? "style=display:none" : "")>
+            置顶截止时间： @Html.DatePicker("FolderStickyDate", DateTime.Now, "0", null)
+        </div>
+    </div>
+    @Html.ScriptBlock(@<script type="text/javascript" language="javascript">
+        $("#time-edit2").click(function (e) {
+            e.preventDefault();
+            $("#time-stickyTime-edit2").show();
+            $("#time-stickyTime-show2").hide();
+        });
+    </script>)
+    </text>
+}
+@Html.Script("~/Bundle/Scripts/ColorPicker")
+@Html.ScriptBlock(@<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        //点击置顶
+        $("input[id='IsGlobalSticky'][type='checkbox']").click(function () {
+            $("#settime-stickyTime").toggle();
+        });
+        $("input[id='IsFolderSticky'][type='checkbox']").click(function () {
+            $("#settime-stickyTime2").toggle();
+        });
+        $("#pageLength").hide();
+        $("#selectPageType").change(function () {
+            if ($(this).val() == "Auto") {
+                $("#pageLength").show();
+            } else {
+                $("#pageLength").hide();
+            }
+        });
+       
+        //文字颜色
+        $("#TitleTextColor").bigColorpicker(function (el, color) {
+
+            $("#Title").css("color", color);
+            $("#Color").val(color);
+        });
+
+        //文字加粗
+        $('#TitleTextWeight').click(function () {
+            if ($(this).hasClass("tn-selected")) {
+                $(this).removeClass("tn-selected")
+                $('#Title').css('font-weight', 'normal');
+                $("#IsBold").val(false);
+            }
+            else {
+                $(this).addClass("tn-selected")
+                $('#Title').css('font-weight', 'bold');
+                $("#IsBold").val(true);
+            }
+        });
+        var form = $('form#form-News-edit');
+        //截字
+        $("#Title", form).GetTextCount('TitleCount', @(TextLengthSettings.TEXT_SUBJECT_MAXLENGTH), true);
+        $("#Summary", form).GetTextCount('SummaryCount', @(TextLengthSettings.TEXT_DESCRIPTION_MAXLENGTH), true, true);
+    });
+</script>)
+

@@ -1,0 +1,69 @@
+﻿@model IEnumerable<ContentItem>
+
+@{
+    ContentItemSortBy sortBy = ViewData.Get<ContentItemSortBy>("sortBy", ContentItemSortBy.StageHitTimes);
+}
+@if (Model != null && Model.Count() > 0)
+{
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all spb-story-hot">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+            <h3 class="tn-helper-reset">
+                @switch (sortBy)
+                {
+                    case ContentItemSortBy.ReleaseDate_Desc:
+                    @:最新资讯
+                    break;
+                    case ContentItemSortBy.HitTimes:
+                    @:热点资讯
+                    break;
+                    case ContentItemSortBy.StageHitTimes:
+                    @:本周热点
+                    break;
+                    case ContentItemSortBy.CommentCount:
+                    @:热评资讯
+                    break;
+                    case ContentItemSortBy.StageCommentCount:
+                    @:本周热评
+                    break;
+                    case ContentItemSortBy.DisplayOrder:
+                    @:最新资讯
+                    break;
+                    default:
+                    @:最新资讯
+                    break;
+                }
+            </h3>
+        </div>
+        <div class="tn-box-content tn-widget-content tn-corner-bottom">
+            <ul class="tn-list tn-list-level">
+                @foreach (var item in Model)
+                { 
+                    <li>
+                        <em class="tn-text-note tn-count tn-helper-right">
+                            @switch (sortBy)
+                            {
+                                case ContentItemSortBy.HitTimes:
+                                @item.HitTimes
+                                    break;
+                                case ContentItemSortBy.StageHitTimes:
+                                @item.StageHitTimes
+                                    break;
+                                case ContentItemSortBy.CommentCount:
+                                @item.CommentCount
+                                    break;
+                                case ContentItemSortBy.StageCommentCount:
+                                @item.StageCommentCount
+                                    break;
+                                case ContentItemSortBy.ReleaseDate_Desc:
+                                case ContentItemSortBy.DisplayOrder:
+                                default:
+                                @item.ReleaseDate.ToFriendlyDate()
+                                    break;
+                            }
+                        </em>
+                        <a href="@SiteUrls.Instance().ContentItemDetail(item.ContentItemId)" title="@item.Title">@StringUtility.Trim(item.Title, 24)</a> </li>
+                }
+            </ul>
+        </div>
+    </div>
+}

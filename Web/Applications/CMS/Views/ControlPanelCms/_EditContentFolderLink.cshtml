@@ -1,0 +1,117 @@
+﻿@model FolderEditModel
+@using (Html.BeginAjaxForm("_EditContentFolderLink", "ControlPanelCms", FormMethod.Post, new AjaxFormOptions { OnErrorCallBack = "OnErrorCallBack", OnSuccessCallBack = "OnSuccessCallBack" }))
+{    
+    <input type="hidden" name="ContentFolderId" value="@Model.ContentFolderId" />
+    <div class="tnc-dailog-pd">
+        <div class="tn-form-box">
+
+            <table>
+                <tbody>
+                    <tr>
+                        <th>父栏目名称：
+                        </th>
+                        <td>
+                            @if (Model.ContentFolderId > 0)
+                            {
+                                @Model.ParentName
+                            }
+                            else
+                            {
+                                @Html.FolderDropDownList("ParentId", Model.ParentId.HasValue ? Model.ParentId.Value : 0, ContentTypeKeys.Instance().NewsLink(), Model.ContentFolderId)
+                                @Html.ValidationMessageFor(n => n.ParentId)
+                            }
+                        </td>
+                    </tr>
+                    <tr>
+                        <th><span class="tn-form-required">*</span>
+                            @Html.FormLabelFor(n => n.FolderName)
+                        </th>
+                        <td>
+
+                            @Html.TextBoxFor(n => n.FolderName, InputWidthTypes.Long, new RouteValueDictionary { { "maxlength", 64 } })
+                            @Html.ValidationMessageFor(n => n.FolderName)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.FormLabelFor(n => n.LinkUrl)
+                        </th>
+                        <td>
+                            @Html.TextBoxFor(n => n.LinkUrl, InputWidthTypes.Long, new RouteValueDictionary { { "maxlength", 255 }, { "watermark", "http://" } })
+                            @Html.ValidationMessageFor(n => n.LinkUrl)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.FormLabelFor(n => n.Description)</th>
+                        <td>
+                            @Html.TextAreaFor(n => n.Description, InputWidthTypes.Long, htmlAttributes: new RouteValueDictionary { { "maxlength", TextLengthSettings.TEXT_DESCRIPTION_MAXLENGTH } })
+                            @Html.ValidationMessageFor(n => n.Description)
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.FormLabelFor(n => n.IsEnabled)
+                        </th>
+                        <td>
+                            <ul class="tn-radiobutton-list">
+                                <li class="tn-inline-list">
+                                    @Html.RadioButton("IsEnabled", true, new { id = "IsEnabled-true", @class = "tnui-type" })
+                                    <label for="IsEnabled-true">
+                                        是</label>&nbsp;&nbsp;
+                                        @Html.RadioButton("IsEnabled", false, new { id = "IsEnabled-false", @class = "tnui-type" })
+                                    <label for="IsEnabled-false">
+                                        否</label>
+                                    @Html.ValidationMessageFor(n => n.IsEnabled)
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            @Html.FormLabelFor(n => n.IsLinkToNewWindow)
+                        </th>
+                        <td>
+                            <ul class="tn-radiobutton-list">
+                                <li class="tn-inline-list">
+                                    @Html.RadioButton("IsLinkToNewWindow", true, new { id = "IsLinkToNewWindow-true", @class = "tnui-type" })
+                                    <label for="IsLinkToNewWindow-true">
+                                        是</label>&nbsp;&nbsp;
+                                        @Html.RadioButton("IsLinkToNewWindow", false, new { id = "IsLinkToNewWindow-false", @class = "tnui-type" })
+                                    <label for="IsLinkToNewWindow-false">
+                                        否</label>
+                                    @Html.ValidationMessageFor(n => n.IsLinkToNewWindow)
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="tnc-artdilog-btn tn-bg-gray tn-border-gray tn-border-top">
+        @Html.Button("提交", ButtonTypes.Submit, HighlightStyles.Primary)
+        @Html.Button("取消", ButtonTypes.Button, HighlightStyles.Secondary, htmlAttributes: new { dialogOperation = "closeAll" })
+    </div>
+}
+<script type="text/dialog">
+    @if (Model.ContentFolderId > 0)
+    {
+        @: this.title("编辑链接");
+    }
+    else
+    { 
+        @: this.title("添加链接");
+    }
+</script>
+@Html.ScriptBlock(@<script language="javascript" type="text/javascript">
+    function OnSuccessCallBack(data) {
+        art.dialog.tips(data.MessageContent, 1.5, data.MessageType);
+        setTimeout(function () { window.location.reload(); }, 500);
+    }
+    function OnErrorCallBack(data) {
+        alert(data.MessageContent, function () {
+            window.location.reload();
+        })
+    }
+</script>)

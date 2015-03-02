@@ -1,0 +1,54 @@
+﻿@model PagingDataSet<ContentItem>
+@{
+    long firstContentItemId = 0;
+    if (Model.PageIndex == 1 && Model.Count() > 0)
+    {
+        firstContentItemId = Model.First().ContentItemId;
+    }
+}
+<ul class="tn-list">
+    @foreach (var contentItem in Model)
+    {
+        if (contentItem.ContentItemId == firstContentItemId)
+        {
+        <li class="tn-list-item tn-helper-clearfix tn-border-gray tn-border-bottom spb-story-headlines">
+            <div class="tn-list-item-row tn-list-item-heading">
+                <h5><a href="@SiteUrls.Instance().ContentItemDetail(contentItem.ContentItemId)" target="_blank">@contentItem.Title</a></h5>
+            </div>
+            <div class="tn-list-item-row tn-list-item-summary">
+                <p>@Html.Raw(contentItem.Summary)</p>
+            </div>
+            @if (!string.IsNullOrEmpty(contentItem.FeaturedImage))
+            {
+                <div class="tn-list-item-row tn-title-image">
+                    <a href="@SiteUrls.Instance().ContentItemDetail(contentItem.ContentItemId)" target="_blank">
+                        <img src="@SiteUrls.Instance().ImageUrl(contentItem.FeaturedImage, TenantTypeIds.Instance().ContentItem(), ImageSizeTypeKeys.Instance().Big())" width="220" alt="@contentItem.Title"/>
+                    </a>
+                </div>
+            }
+            <div class="tn-list-item-row tn-list-info tn-helper-clearfix">
+                <a class="tn-user-name" href="@SiteUrls.Instance().CmsUser(contentItem.UserId)">@contentItem.Author</a><em class="tn-date tn-text-note">@contentItem.ReleaseDate.ToFriendlyDate()</em>
+                @if (contentItem.ContentFolder != null && contentItem.ContentFolder.IsEnabled)
+                {
+                    <a class="tn-category" href="@SiteUrls.Instance().FolderDetail(contentItem.ContentFolderId)">@contentItem.ContentFolder.FolderName</a>
+                }
+                <span class="tn-explain-icon"><span class="tn-icon tn-icon-bubble"></span><span class="tn-icon-text tn-text-note"><a href="@SiteUrls.Instance().Comments(contentItem.ContentItemId)" title="总评论数">@contentItem.CommentCount</a></span></span>
+                <p class="tn-tags">
+                    @foreach (var tagName in contentItem.TagNames)
+                    {
+                        <span><a href="@SiteUrls.Instance().CmsTagDetail(tagName)">@tagName</a></span>
+                    }
+                </p>
+            </div>
+        </li>
+        }
+        else
+        {
+        @Html.Partial("_ContentItem", contentItem)
+        }
+    }
+</ul>
+@if (Model.PageCount > Model.PageIndex)
+{
+    <div class="tn-load-more tn-bg-gray tn-corner-all" plugin="GetMore" data-pagecount="3"><a href="@Html.Raw(SiteUrls.Instance()._LastestItems(Model.PageSize, Model.PageIndex + 1))">下一页</a></div>
+}

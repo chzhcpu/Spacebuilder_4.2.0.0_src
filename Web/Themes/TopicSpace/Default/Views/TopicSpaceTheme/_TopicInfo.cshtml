@@ -1,0 +1,44 @@
+﻿@model TopicEntity
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-group-panel">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="spb-group-panel-wrap">
+            @if (ViewData.Get<bool>("showTopicLogo", true))
+            {
+                <div class="tn-card tn-helper-clearfix">
+                    <div class="tn-avatar">
+                        <a target="_blank" href="@(SiteUrls.Instance().TopicHome(Model.TopicKey))">
+                            <img width="50" title="@Model.TopicName" src="@(SiteUrls.Instance().LogoUrl(Model.Logo, TenantTypeIds.Instance().Topic(), ImageSizeTypeKeys.Instance().Medium()))"
+                                  alt="@Model.TopicName"></a></div>
+                    <div class="tn-info">
+                        <p class="tn-user-name">
+                            <a href="@(SiteUrls.Instance().TopicHome(Model.TopicKey))"><strong>@Model.TopicName</strong></a></p>
+                        <p class="tn-user-data">
+                            @Html.Action("_ApplyJoinButton", "ChannelTopic", new { topicId = Model.TopicId, buttonName = "加入" })
+                        </p>
+                    </div>
+                </div>
+                <div style="display: none" class="spb-follow-bar-list" id="userFollowedSectionsDiv">
+                    <div class="tn-widget tn-bubble tn-bubble-arrow-top">
+                        <div class="tn-bubble-arrow">
+                            <b class="tn-arrow-b1 tn-border-gray"></b><b class="tn-arrow-b2 tn-widget-bubble">
+                            </b>
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <ul class="spb-group-count tn-helper-clearfix">
+                    <li class="tn-border-gray tn-border-right">
+                        <a target="_self" href="@SiteUrls.Instance().MembersOfTopic(Url.SpaceKey())"><strong class="tn-count">@Model.MemberCount</strong></a>
+                        <span>成员</span> 
+                    </li>
+                    <li>
+                        <a target="_self" href="@Url.Action("SectionDetail","TopicSpaceBar", new { spaceKey = Url.SpaceKey(), area = "Bar" })"><strong class="tn-count">@Model.ThreadAndPostCount</strong></a>
+                        <span>帖子</span>
+                    </li>
+                </ul>
+            }
+        </div>
+    </div>
+</div>

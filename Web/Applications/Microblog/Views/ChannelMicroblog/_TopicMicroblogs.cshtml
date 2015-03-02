@@ -1,0 +1,22 @@
+﻿@model  PagingDataSet<MicroblogEntity>
+@{
+    long tagId = Html.ViewContext.RouteData.Values.Get<long>("tagId", 0);
+}
+@if (Model.Count > 0)
+{
+    foreach (var microblog in Model)
+    {
+    @Html.Partial("~/Applications/Microblog/Views/MicroblogActivity/_Microblog.cshtml", microblog)
+    }
+}
+else
+{
+    <div class="tn-no-data">本话题下暂无微博</div> 
+}
+
+@if (Model.PageCount > Model.PageIndex)
+{
+    <div class="tn-load-more tn-border-gray tn-corner-all" plugin="GetMore">
+        <a href="@SiteUrls.Instance()._TopicMicroblogs(tagId, 20, Model.PageIndex + 1)">更多↓</a>
+    </div>
+}

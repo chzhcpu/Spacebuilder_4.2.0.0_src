@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+@using (Html.BeginHead())
+{
+    @Styles.Render("~/Bundle/Styles/Site")
+    @Html.RenderStyles() 
+    @Scripts.Render("~/Bundle/Scripts/jQuery")
+}
+<body id="@Html.GenerateBodyId()" class="tn-page-bg spb-layout-1">    
+    <div id="tn-doc" class="tn-doc-bg">
+        <div id="tn-header" class="tn-header-bg">
+            <div class="tn-wrapper">
+                @Html.Action("_Header", "Channel", new { area = "Common" }, true)
+            </div>
+        </div>
+        <div id="tn-content" class="tn-content-bg">
+            <div class="tn-wrapper">
+                <div class="tn-grid">
+                    <div class="tnc-main">
+                        @RenderBody()
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="tn-footer" class="tn-footer-bg">
+            <div class="tn-wrapper">
+                @Html.Action("_Footer", "Channel", new { area = "Common" })
+            </div>
+        </div>
+    </div>
+    @Scripts.Render("~/Bundle/Scripts/Site")
+    @RenderSection("Scripts", false)
+    @Html.RenderScripts()
+    @Html.RenderScriptBlocks()    
+</body>
+</html>

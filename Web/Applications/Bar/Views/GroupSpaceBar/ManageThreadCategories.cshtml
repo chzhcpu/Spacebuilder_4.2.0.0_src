@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Category>
+@{
+    Layout = "app-manage-2cols";
+    Html.Style("~/Applications/Bar/Styles/app.css");
+    Html.ViewContext.RouteData.Values["CurrentNavigationId"] = 13101205;
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-bar-manage">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="tn-main-heading tn-border-gray tn-border-bottom">
+            <h2>
+                帖子类别</h2>
+        </div>
+        @{
+            ViewData["ManageSubMenu"] = ManageSubMenu.ManageCategroy;
+        }
+        @Html.Partial("_ManageSubMenu")
+        @Html.Partial("~/Applications/Bar/Views/Bar/_ManageThreadCategories.cshtml", Model)
+    </div>
+</div>

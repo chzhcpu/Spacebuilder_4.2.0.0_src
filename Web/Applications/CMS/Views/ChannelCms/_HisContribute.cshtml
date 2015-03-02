@@ -1,0 +1,24 @@
+﻿@model IEnumerable<ContentItem>
+@{
+    User user = ViewData.Get<User>("user", null);
+    var currentUser = UserContext.CurrentUser;
+    string ta = "我";
+    if (currentUser == null || currentUser.UserId != user.UserId)
+    {
+        ta = user.Profile.ThirdPerson();
+    }
+}
+@if (Model != null && Model.Count() > 0)
+{
+    <div class="tn-content-heading tn-border-gray tn-border-bottom">
+        <div class="tn-option">@Html.Link("更多", SiteUrls.Instance().CmsUser(user.UserId), "更多")</div>
+        <h4>@(ta)的投稿</h4>
+    </div>
+    <ul class="tn-list">
+        @foreach (var item in Model)
+        {
+                    
+            <li class="tn-img-sprite tn-list-bullet">@Html.Link(item.Title, SiteUrls.Instance().ContentItemDetail(item.ContentItemId), item.Title)</li>
+        }
+    </ul>
+}

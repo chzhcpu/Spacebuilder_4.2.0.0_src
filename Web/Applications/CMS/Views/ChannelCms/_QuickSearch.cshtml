@@ -1,0 +1,36 @@
+﻿@model PagingDataSet<ContentItem>
+@{
+    CmsSearcher itemSearcher = (CmsSearcher)SearcherFactory.GetSearcher(CmsSearcher.CODE);
+    string keyword = Request.QueryString.GetString("keyword", string.Empty);
+}
+@if (Model.TotalRecords > 0)
+{
+    <input type="hidden" class="app-count" />
+    <div class="tn-section tn-border-gray tn-border-bottom">
+        <div class="tn-title tn-border-bottom tn-border-gray tnui-option" data-appname="Cms" data-search-url="@itemSearcher.PageSearchActionUrl(keyword)">
+            <a href="@itemSearcher.PageSearchActionUrl(keyword)">搜“<span class="tn-text-bright">@keyword</span>”相关资讯（@Model.TotalRecords）</a>
+        </div>
+        <ul class="tn-list">
+            @foreach (ContentItem item in Model)
+            {
+                string itemUrl = SiteUrls.Instance().ContentItemDetail(item.ContentItemId);
+                <li class="tn-list-item tnui-option" data-search-url="@itemUrl" data-search-key="@item.Title">
+                    <div class="tn-list-item-area-main ">
+                        <div class="tn-list-item-row">
+                            <a title="@item.Title" href="@itemUrl">
+                                @if (item.Title.Length > 13)
+                                {
+                                    @Html.Raw(SearchEngine.Highlight(keyword, HtmlUtility.TrimHtml(item.Title, 13), 100))
+                                }
+                                else
+                                {
+                                    @Html.Raw(SearchEngine.Highlight(keyword, item.Title, 100))
+                                }
+                            </a>
+                        </div>
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+}

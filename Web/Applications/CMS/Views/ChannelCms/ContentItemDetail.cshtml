@@ -1,0 +1,370 @@
+﻿@model ContentItem
+@{
+    Layout = "~/Applications/CMS/Layouts/cms-2cols.cshtml";
+    Html.Style("~/Applications/CMS/Styles/app.css");
+    Html.Script("~/Scripts/jquery/jquery.media.js");
+
+    Authorizer authorizer = DIContainer.Resolve<Authorizer>();
+    IUser currentUser = UserContext.CurrentUser;
+    int pageIndex = Request.QueryString.Get<int>("pageIndex", 1);
+    string body = Model.GetResolvedBody();
+    string[] contents = body.Split(new string[] { ContentPages.PageSeparator }, StringSplitOptions.RemoveEmptyEntries);
+    if (contents != null && contents.Length > 1)
+    {
+        if (pageIndex > contents.Length + 1)
+        {
+            pageIndex = 1;
+        }
+        body = contents[pageIndex - 1];
+    }
+    PagingDataSet<string> pds = new PagingDataSet<string>(contents);
+    pds.PageIndex = pageIndex;
+    pds.PageSize = 1;
+    pds.TotalRecords = contents.Length;
+    SiteSettings siteSettings = DIContainer.Resolve <ISettingsManager<SiteSettings>>().Get();
+}
+@section Aside{
+    @Html.Action("_UserData", "ChannelCms", new { userId = Model.UserId })
+    @Html.Action("_Tops", "ChannelCms")
+    @Html.Action("_VisitorAlsoVisited", "ChannelCms", new { contentItemId = Model.ContentItemId, topNumber = 8 })
+}
+@Html.StatusMessage()
+@if (authorizer.CMS_ManageContentFolder(Model.ContentFolder) && (int)Model.AuditStatus < (int)(new AuditService().GetPubliclyAuditStatus(CmsConfig.Instance().ApplicationId)))
+{
+    <div class="tn-cue-highlight tn-corner-all tn-message-box" id="prompt">
+        <a href="#" class="tn-icon tn-smallicon-cross tn-helper-right" id="hidespan"></a>
+        <span class="tn-helper-left"><span class="tn-icon tn-icon-exclamation"></span></span>
+        <div class="tn-helper-flowfix">
+            <strong>提示：</strong>当前资讯尚未通过审核，你可以<a href="@SiteUrls.Instance().CmsUpdateAuditStatus(true, Model.ContentItemId)" id = "audit-success">通过审核</a>
+            @if (Model.AuditStatus == AuditStatus.Pending)
+            {
+                @:或者
+                <a href="@SiteUrls.Instance().CmsUpdateAuditStatus(false, Model.ContentItemId)" id = "audit-fail">不通过审核</a>
+            }
+        </div>
+    </div>
+    @Html.ScriptBlock(@<script type="text/javascript">
+        $(function () {
+            $("#hidespan").click(function (e) {
+                e.preventDefault();
+                $("#prompt").hide();
+            });
+
+            //通过审核
+            $("a[id^='audit-']").click(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    type: "Post",
+                    url: $(this).attr("href"),
+                    success: function (data) {
+                        art.dialog.tips(data.MessageContent, 2, data.MessageType, function () {
+                            if (data.MessageType > 0)
+                                $("#prompt").hide();
+                        });
+                    }
+                });
+            });
+        });
+    </script>)
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-story-detail">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="tn-detail">
+            <div class="tn-breadcrumb">
+                <span class="tn-breadcrumb-item">
+                    <a href="@SiteUrls.Instance().CmsHome()">资讯</a>
+                </span>
+                @if (Model.ContentFolder != null && Model.ContentFolder.Parents.Count() > 0)
+                {
+                    foreach (var folder in Model.ContentFolder.Parents)
+                    {
+                        if (folder.IsEnabled)
+                        {
+                    <span class="tn-seperator">&gt;</span>
+                    <span class="tn-breadcrumb-item"><a href="@SiteUrls.Instance().FolderDetail(folder.ContentFolderId)">@folder.FolderName</a></span>
+                        }
+                    }
+                }
+                @if (Model.ContentFolder != null && Model.ContentFolder.IsEnabled)
+                {
+                    <span class="tn-seperator">&gt;</span>
+                    <span class="tn-breadcrumb-item">
+                        <a href="@SiteUrls.Instance().FolderDetail(Model.ContentFolderId)">@Model.ContentFolder.FolderName</a>
+                    </span>
+                }
+                <span class="tn-seperator">&gt;</span>
+                <span class="tn-breadcrumb-item tn-selected">正文</span>
+            </div>
+            <div class="tn-text-heading">
+                <h1 class="tn-title">
+                    @Model.Title
+                    @if (Model.IsGlobalSticky || Model.IsFolderSticky)
+                    { 
+                        <span title="置顶" class="tn-icon-colorful tn-icon-colorful-top tn-icon-inline"></span>
+                    }
+                    @if (Model.IsEssential)
+                    {
+                        <span title="精华" class="tn-icon-colorful tn-icon-colorful-fine tn-icon-inline"></span>
+                    }
+                </h1>
+            </div>
+            <div class="tn-text-note tn-border-gray tn-border-top tn-detail-info">
+                <div class="tn-row tn-helper-clearfix">
+
+                    <div class="tn-actions">
+                        @if (authorizer.CMS_EditContentItem(Model))
+                        {
+                            string editUrl = SiteUrls.Instance().Contribute(Model.ContentItemId);
+                            if (authorizer.IsAdministrator(CmsConfig.Instance().ApplicationId))
+                            {
+                                editUrl = SiteUrls.Instance().EditContentItem(Model.ContentItemId);
+                            }
+                            @Html.Link("编辑", editUrl, "编辑", new { @class = "tn-item-link" })                            
+                        }
+                        @if (authorizer.CMS_DeleteContentItem(Model))
+                        {
+                            @Html.Link("删除", SiteUrls.Instance()._DeleteContribute(Model.ContentItemId), "删除", new { @class = "tn-item-link", id = "News-delete" })
+                        }
+
+                        @if (authorizer.IsAdministrator(CmsConfig.Instance().ApplicationId))
+                        {
+                            <span class="tn-action tn-action-text-icon-right tn-action-has-drop-menu tn-border-trl"
+                                menu="#manage-News"><span class="tn-icon tn-smallicon-triangle-down"></span><a href="javascript:;"
+                                    class="tn-action-text">管理操作</a> </span>
+
+                            <div id="manage-News" class="tn-more-options tn-widget-content tn-border-gray" style="display: none">
+                                <ul class="tn-more-list">
+                                    <li>@Html.Link("置顶", string.Empty, "置顶", new { @class = "tn-item-link", link = SiteUrls.Instance()._SetStickyDate(Model.ContentItemId), id = "art_dialog_SetStickyDate" }) </li>
+                                    <li>@Html.Link("管理员推荐", SiteUrls.Instance()._RecommendItem(TenantTypeIds.Instance().ContentItem(), Model.ContentItemId, Model.Title, userId: Model.UserId), "管理员推荐", new { @class = "tn-item-link", id = "contentItem-set-recommend", plugin = "dialog" })</li>
+                                </ul>
+                            </div>
+                       
+                        }
+                    </div>
+                    <span class="tn-author">作者：
+                         @if (!string.IsNullOrEmpty(Model.AdditionalProperties.Get<string>("OriginalAuthor", string.Empty)))
+                         {
+                             @(Model.AdditionalProperties.Get<string>("OriginalAuthor", string.Empty))
+                         }
+                         else
+                         {
+                             <a class="tn-user-name" href="@SiteUrls.Instance().CmsUser(Model.UserId)">@Model.Author</a>
+                         }</span>
+                    <em class="tn-date">@Model.ReleaseDate.ToFriendlyDate()</em>
+                    <span class="tn-source">
+                        @if (!string.IsNullOrEmpty(Model.AdditionalProperties.Get<string>("CopyFrom", string.Empty)))
+                        {
+                            
+                            <em class="tn-text-note">来源：</em>   
+                            if (!string.IsNullOrEmpty(Model.AdditionalProperties.Get<string>("CopyFromUrl", string.Empty)))
+                            {
+                            <a href="@(Model.AdditionalProperties.Get<string>("CopyFromUrl", string.Empty))" target="_blank">@(Model.AdditionalProperties.Get<string>("CopyFrom", string.Empty))</a>
+                            }
+                            else
+                            {
+                            <span>@(Model.AdditionalProperties.Get<string>("CopyFrom", string.Empty))</span>
+                            }
+
+                        }
+                    </span>
+                    @if (!CmsConfig.Instance().EnableSocialComment)
+                    {
+                        if (Model.AdditionalProperties.Get<bool>("EnableComment", true))
+                        { 
+                        <a class="tn-count" href="#comment">评论(@Model.CommentCount)</a>
+                        }
+                    }
+                    <em class="tn-view">浏览(@Model.HitTimes)</em>
+                </div>
+                <div class="tn-row tn-helper-clearfix">
+                    <p class="tn-tags">
+                        @foreach (var tagName in Model.TagNames)
+                        {                         
+                            <span><a href="@SiteUrls.Instance().CmsTagDetail(tagName)">@tagName</a></span>
+                        }
+                    </p>
+                    <div class="tn-actions">
+                        <a href="javascript:void(0)" class="tn-button tn-corner-all tn-button-secondary tn-button-lite tn-button-icon-only" id="smaller">
+                            <span class="tn-icon tn-icon-font-decrease"></span><span class="tn-button-text">减小字号</span></a>
+                        <a href="javascript:void(0)" class="tn-button tn-corner-all tn-button-secondary tn-button-lite tn-button-icon-only" id="biger">
+                            <span class="tn-icon tn-icon-font-expand"></span><span class="tn-button-text">增大字号</span></a>
+                    </div>
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.Summary))
+            {
+                <div class="tn-summaries tn-bg-gray tn-border-gray">
+                    @Html.Raw(Model.Summary)
+                </div>
+            }
+            <div class="tn-detail-text">
+                @Html.DisplayHtmlEditorContent(TenantTypeIds.Instance().ContentItem(), body, 600)
+            </div>
+            <div class="tn-pagination">
+                @Html.PagingButton(pds)
+            </div>
+            @{
+                string editor = Model.AdditionalProperties.Get<string>("Editor", string.Empty);
+            }
+            @if (!string.IsNullOrEmpty(editor))
+            {
+                <div class="tn-editor tn-text-note">
+                    <span>责任编辑：</span>
+                    @editor
+                </div>
+            }
+            <div class="tn-border-gray tn-border-top tn-helper-clearfix tn-feedback">
+                <div class="tn-info-part tn-context tn-helper-clearfix">
+                    @{
+                        ContentItem prevContent = Model.PrevContentItem;
+                        ContentItem nextContent = Model.NextContentItem;
+                    }
+                    @if (prevContent != null)
+                    {
+                        <dl class="tn-before">
+                            <dt>前一篇：</dt>
+                            <dd>
+                                <a href="@SiteUrls.Instance().ContentItemDetail(prevContent.ContentItemId)">@prevContent.Title</a></dd>
+                        </dl>
+                    }
+                    @if (nextContent != null)
+                    {
+                        <dl class="tn-after">
+                            <dt>后一篇：</dt>
+                            <dd>
+                                <a href="@SiteUrls.Instance().ContentItemDetail(nextContent.ContentItemId)">@nextContent.Title</a></dd>
+                        </dl>
+                    }
+                </div>
+
+                <div class="tn-share-to">
+                    @Html.ShareToThird()
+                </div>
+                @if (!CmsConfig.Instance().EnableSocialComment)
+                {
+                    if (Model.AdditionalProperties.Get<bool>("EnableComment", true))
+                    {
+                    <div class="tn-actions">
+                        <a href="@SiteUrls.Instance().Comments(Model.ContentItemId)" class="tn-action tn-action-text-icon">
+                            <span class="tn-icon tn-icon-bubble"></span><span class="tn-action-text">评论(@(Model.CommentCount))</span></a>
+                    </div>
+                    }
+                }
+
+                <div class="tn-thumb-rate">
+                    @Html.SupportOppose(TenantTypeIds.Instance().ContentItem(), Model.ContentItemId, Model.UserId, AttitudeMode.Bidirection)
+                </div>
+                <span class="tn-action"><a name="operate_@(Model.UserId)" href="@Html.Raw(SiteUrls.Instance()._ImpeachReport(Model.UserId, Request.RawUrl, StringUtility.Trim(Model.Summary, 50)))" rel="nofollow" plugin="dialog">举报</a></span>
+            </div>
+            <script type="text/javascript" id="wumiiRelatedItems"></script>
+            <a name="comment"></a>
+            <div class="tn-comment-area">
+                @if (Model.AdditionalProperties.Get<bool>("EnableComment", true))
+                {
+                    if (CmsConfig.Instance().EnableSocialComment)
+                    {
+                    <!-- Duoshuo Comment BEGIN -->
+                    <div class="ds-thread" id="ds-thread" data-thread-key="@Model.ContentItemId" data-title="@Model.Title" data-url="@SiteUrls.FullUrl(SiteUrls.Instance().ContentItemDetail(Model.ContentItemId))"></div>
+                    @Html.ScriptBlock(@<script type="text/javascript">
+                        var duoshuoQuery = { short_name: "spacebuilder" };
+                        (function () {
+                            var ds = document.createElement('script');
+                            ds.type = 'text/javascript'; ds.async = true;
+                            ds.src = 'http://static.duoshuo.com/embed.js';
+                            ds.charset = 'UTF-8';
+                            (document.getElementsByTagName('head')[0]
+                            || document.getElementsByTagName('body')[0]).appendChild(ds);
+                        })();
+                    </script>)
+                    <!-- Duoshuo Comment END -->
+                    }
+                    else
+                    {
+                    @Html.Action("_Comment", "Channel", new { area = "Common", commentedObjectId = Model.ContentItemId, toUserId = Model.UserId, ownerId = Model.UserId, tenantTypeId = TenantTypeIds.Instance().ContentItem(), enableComment = !Model.IsLocked, subject = Model.Title })
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.ScriptBlock(@<script type="text/javascript">
+    $(function () {
+        //删除资讯
+        $("a[id='News-delete']").click(function (e) {
+            var self = $(this);
+
+            art.dialog.confirm('您确认要删除吗？', function () {
+                $.post(self.attr("href"), function (data) {
+                    art.dialog.tips(data.MessageContent, 1.5, data.MessageType, function () {
+                        if (data.MessageType == 1) {
+                            window.location = "@SiteUrls.Instance().CmsUser(Model.UserId)";
+                        } else {
+                            art.dialog.tips(data.MessageContent, 2, data.MessageType);
+                        }
+                    });
+                });
+            });
+
+            return false;
+        });
+        //放大缩小字体
+        $('#biger,#smaller').click(function () {
+            var thisEle = $(".tn-detail-text").css("font-size");
+            var textFontSize = parseFloat(thisEle, 10);
+            var unit = thisEle.slice(-2); //获取单位
+            var id = $(this).attr("id");
+            if (id == "biger") {
+                if (textFontSize <= 16)
+                    textFontSize += 2;
+            } else if (id == "smaller") {
+                if (textFontSize >= 14)
+                    textFontSize -= 2;
+            }
+
+            $(".tn-detail-text").css("font-size", textFontSize + unit);
+        });
+        //模式框显示
+        $("a[id^='art_dialog_']").click(function () {
+            $("#manage-News").hide();
+            $link = $(this);
+            var dialog = art.dialog({ id: "tunynet-dialog", title: false });
+            $.get($link.attr("link"), function (data) {
+                dialog.content(data);
+            });
+        });
+    });
+</script>)
+@Html.ScriptBlock(@<script type="text/javascript">
+    $(document).ready(function () {
+        $.fn.media.defaults.mp3Player = $.fn.media.defaults.flvPlayer = '@(Tunynet.Utilities.WebUtility.ResolveUrl("~/Scripts/mediaplayer.swf"))';
+        $("img[id^='media']").each(function () {
+            var url = $(this).data("url");
+            var height = 270;
+            //如果是音乐
+            if ($(this).attr("src").indexOf("music.png") > 0)
+                height = 20;
+            $(this).media({
+                width: 500,
+                height: height,
+                autoplay: false,
+                src: url,
+                params: { allowFullScreen: true },
+                caption: false
+            });
+        });
+    });
+</script>)
+
+@Html.ScriptBlock(@<script type="text/javascript">
+    var wumiiPermaLink = "@SiteUrls.FullUrl(SiteUrls.Instance().ContentItemDetail(Model.ContentItemId))"; //请用代码生成文章永久的链接
+    var wumiiTitle = "@(Model.Title)"; //请用代码生成文章标题
+    var wumiiTags = "@string.Join(",", Model.TagNames)"; //请用代码生成文章标签，以英文逗号分隔，如："标签1,标签2"
+    var wumiiCategories = ["@Model.ContentFolder.FolderName"]; //请用代码生成文章分类，分类名放在 JSONArray 中，如: ["分类1", "分类2"]
+    var wumiiSitePrefix = "@siteSettings.MainSiteRootUrl";
+    var wumiiParams = "&num=10&mode=1&pf=JAVASCRIPT";
+</script>)
+<script type="text/javascript" src="http://widget.wumii.cn/ext/relatedItemsWidget"></script>
+<a href="http://www.wumii.com/widget/relatedItems" style="border: 0;">
+    <img src="http://static.wumii.cn/images/pixel.png" alt="无觅相关文章插件，快速提升流量" style="border: 0; padding: 0; margin: 0;" />
+</a>

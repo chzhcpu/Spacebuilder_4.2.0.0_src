@@ -1,0 +1,43 @@
+﻿@model PagingDataSet<ContentItem>
+@{
+    CmsSearcher contentItemSearcher = (CmsSearcher)SearcherFactory.GetSearcher(CmsSearcher.CODE);
+    string keyword = Request.QueryString.GetString("keyword", string.Empty);
+}
+@if (Model.TotalRecords > 0)
+{
+    <input type="hidden" class="totalRecords" value="@Model.TotalRecords" />
+    <input type="hidden" class="queryDuration" value="@Model.QueryDuration" />
+    <div class="tn-content-heading tn-border-light tn-border-bottom">
+        <div class="tn-option">
+            <a href="@contentItemSearcher.PageSearchActionUrl(keyword)">更多</a>
+        </div>
+        <h4>资讯</h4>
+    </div>
+    <div class="tnc-search-article">
+        <ul class="tn-list">
+            @foreach (ContentItem contentItem in Model)
+            {
+                <li class="tn-list-item tn-helper-clearfix tn-border-gray tn-border-bottom">
+                    <div class="tn-list-item-area-main">
+                        <div class="tn-list-item-row tn-list-item-heading">
+                            <h5 class="tn-helper-reset">
+                                <a target="_blank" href="@SiteUrls.Instance().ContentItemDetail(contentItem.ContentItemId)">
+                                    @Html.Raw(SearchEngine.Highlight(keyword, contentItem.Title, 100))</a>
+                            </h5>
+                        </div>
+                        <div class="tn-list-item-row tn-list-item-summary">
+                            <p>@Html.Raw(SearchEngine.Highlight(keyword, HtmlUtility.TrimHtml(contentItem.Summary, 100), 100))</p>
+                        </div>
+                        <div class="tn-list-item-row tn-list-info">
+                            <p>
+                                <a target="_blank" href="@SiteUrls.Instance().CmsUser(contentItem.UserId)" class="tn-user-name">
+                                    @Html.Raw(SearchEngine.Highlight(keyword, contentItem.Author, 100))</a>
+                                <em class="tn-date tn-text-note">@contentItem.DateCreated.ToUserDateString(true)</em>
+                            </p>
+                        </div>
+                    </div>
+                </li> 
+            }
+        </ul>
+    </div>
+}

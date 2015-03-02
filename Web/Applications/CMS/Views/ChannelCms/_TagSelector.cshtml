@@ -1,0 +1,22 @@
+﻿@{
+    long contentItemId = Request.QueryString.Get<long>("contentItemId", 0);
+    int contentFolderId = Request.QueryString.Get<int>("contentFolderId", 0);
+    IEnumerable<string> selectedTagNames = ViewData.Get<IEnumerable<string>>("selectedTagNames", null);
+    string title = Request.QueryString.Get<string>("title", string.Empty);
+    string url = SiteUrls.Instance()._TagSelector(contentItemId, contentFolderId);
+}
+<div id="TagNamesDiv" class="tn-expand-control-area tn-extract-tags tn-helper-clearfix">
+    @Html.TagSelector("TagNames", selectedTagNames, TenantTypeIds.Instance().ContentItem(), contentItemId, contentFolderId)
+    <a href="javascript:void(0)" id="autoGet" class="tn-action"><span class="tn-action-text">自动提取</span></a>
+</div>
+@Html.ScriptBlock(@<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        $("#autoGet").click(function () {
+            var title = $("#Title").val();
+            $.get("@Html.Raw(url)", { title: title }, function (data) {
+                $("#TagNamesDiv").replaceWith(data);
+            });
+            return false;
+        });
+    });
+</script>)

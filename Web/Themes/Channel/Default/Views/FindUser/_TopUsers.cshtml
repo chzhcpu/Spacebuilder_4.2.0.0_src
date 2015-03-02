@@ -1,0 +1,50 @@
+﻿@model IEnumerable<User>
+@{
+    SortBy_User sortBy = ViewData.Get<SortBy_User>("SortBy", SortBy_User.PreWeekHitTimes);
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all">
+    <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+        <div class="tn-option">@Html.Link("更多", SiteUrls.Instance().FindUserRanking(sortBy), "更多")</div>
+        <h3 class="tn-helper-reset">
+            @switch (sortBy)
+            {
+                case SortBy_User.FollowerCount:
+                @:粉丝最多用户
+                    break;
+                case SortBy_User.ReputationPoints:
+                @:威望最高用户
+                    break;
+                case SortBy_User.PreWeekReputationPoints:
+                @:近期威望最高用户
+                    break;
+                case SortBy_User.HitTimes:
+                @:人气最高用户
+                    break;
+                case SortBy_User.TradePoints:
+                @:金币最多用户
+                    break;
+                case SortBy_User.PreWeekHitTimes:
+                @:近期人气用户
+            break;
+                case SortBy_User.Rank:
+            break;
+                case SortBy_User.DateCreated:
+                @:最新加入
+            break;
+                default:
+            break;
+            }
+        </h3>
+    </div>
+    <div class="tn-box-content tn-widget-content tn-corner-bottom">
+        <ul class="tn-avatar-list tnc-person-flow tn-helper-clearfix">
+            @foreach (var user in Model)
+            { 
+                <li class="tn-avatar-item">@Html.ShowUserAvatar(user.UserId, AvatarSizeType.Small, true)
+                    @Html.Link(user.DisplayName, SiteUrls.Instance().SpaceHome(user.UserId), user.DisplayName, new { @class = "tn-user-name" }, HyperLinkTarget._blank)
+                </li>
+            }
+        </ul>
+    </div>
+</div>
+
