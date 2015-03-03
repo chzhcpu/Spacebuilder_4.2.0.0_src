@@ -1,0 +1,36 @@
+﻿@model Journal
+@{
+    string keyword = Request.QueryString.GetString("keyword", string.Empty);
+    string spaceKey = "admin";
+    //IEnumerable<string> ownerCategoryNames = Model.OwnerCategoryNames;
+}
+@if (Model != null)
+{
+    <li class="tn-list-item tn-helper-clearfix tn-border-gray tn-border-bottom">
+        <div class="tn-list-item-area-main">
+            <div class="tn-list-item-row tn-list-item-heading">
+                <h5 class="tn-helper-reset">
+                    <a target="_blank" href="@SiteUrls.Instance().JournalDetail(spaceKey, Model.id)">
+                        @Html.Raw(SearchEngine.Highlight(keyword, Model.journal, 100))
+                    </a>                    
+                </h5>
+            </div>
+            <div class="tn-list-item-row tn-list-item-summary">                
+                <p>
+                    @Html.Raw(SearchEngine.Highlight(keyword, HtmlUtility.TrimHtml(Model.jdescrip, 800), 100))
+                </p>
+            </div>
+            <div class="tn-list-item-row tn-tags">
+                    <span><a class="tnui-blog-tags" href="SiteUrls.Instance().BlogListByTag(tagName)">Html.Raw(SearchEngine.Highlight(keyword, tagName, 100))</a></span>
+            </div>
+            <div class="tn-list-item-row tn-list-info">
+                <a target="_blank" class="tn-user-name" href="@SiteUrls.Instance().Blog(spaceKey)">
+                    @Html.Raw(SearchEngine.Highlight(keyword, Model.publisher, 100))
+                </a>
+                <em class="tn-date tn-text-note">@Model.abbr</em>
+                <span class="tn-action tn-comment-count"><a href="@SiteUrls.Instance().JournalDetail(spaceKey, Model.id)#comment" class="tn-action-text" target="_blank">评论@Model.CommentCount)</a></span>
+                <span class="tn-action tn-view-count"><a href="@SiteUrls.Instance().JournalDetail(spaceKey, Model.id)" class="tn-action-text" target="_blank">浏览(Model.HitTimes)</a></span>
+            </div>
+        </div>
+    </li>
+}

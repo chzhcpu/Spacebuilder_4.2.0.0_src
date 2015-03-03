@@ -1,0 +1,40 @@
+﻿@model PagingDataSet<long>
+@{
+    Layout = "app-list-2cols";
+    Html.Style("~/Applications/Journals/Styles/app.css");
+    Html.Script("~/Applications/Blog/Scripts/jquery.spb.blog.js");
+    JournalsService js = new JournalsService();
+}
+@section Aside{
+    //Html.Action("_Categories", "Blog", new { spaceKey = Url.SpaceKey() })
+    //Html.Action("_Tags", "Blog", new { spaceKey = Url.SpaceKey() })
+    //Html.Action("_Archives", "Blog", new { spaceKey = Url.SpaceKey() })
+    //Html.AdvertisingPosition("11000000003")
+}
+@Html.PointMessage()
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-blog-list">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+    @if (Model != null && Model.Count > 0)
+    { 
+        <div class=" spb-blog-list-wrap">
+            <ul class="tn-list">
+            @foreach (long id in Model)
+            {
+                Journal j=js.Get(id);
+                @Html.Partial("~/Applications/Journals/Views/ChannelJournals/_Journal.cshtml", j)
+            }
+            </ul>
+        </div>
+        <div class="tn-pagination">
+            @Html.PagingButton(Model, PaginationMode.NumericNextPrevious)
+            @Html.PagingResults(Model)
+        </div>
+    }
+    else
+    { 
+        <div class="tn-no-data">
+            还没有杂志。
+        </div>
+    }
+    </div>
+</div>

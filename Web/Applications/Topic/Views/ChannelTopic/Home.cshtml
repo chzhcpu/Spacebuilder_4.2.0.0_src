@@ -1,0 +1,19 @@
+﻿@model IEnumerable<TopicEntity>
+@{
+    Layout = "app-home-3cols";
+}
+
+@section AsideSecond{
+    @Html.Action("_AreaTopics", "ChannelTopic", new { topNumber = 5 })
+    @Html.Action("_TopTopics", "ChannelTopic", new { topNumber = 5, sortBy = SortBy_Topic.DateCreated_Desc, viewName = "_TopTopics_List" })
+}
+@section Aside{
+    @Html.Action("_CategoryTopics", "ChannelTopic", new { })
+    @Html.AdvertisingPosition("10900200002")
+    @Html.Action("_RecommendedTopicOwners", "ChannelTopic", new { topNumber = 5, recommendTypeId = "00001111" })
+}
+@Html.AdvertisingPosition("10900200001")
+@Html.Action("_RecommendedTopic", "ChannelTopic", new { area = "Topic" })
+@Html.Action("_TopTopics", "ChannelTopic", new { topNumber = 12, sortBy = SortBy_Topic.StageHitTimes, viewName = "_TopTopics_Flow" })
+@Html.Action("_InterestTopic", "ChannelTopic")
+@Html.Action("_TopicTops", "Bar", new { area = "Bar", topNumber = 10})

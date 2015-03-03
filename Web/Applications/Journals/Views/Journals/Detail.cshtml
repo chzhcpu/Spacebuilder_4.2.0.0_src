@@ -1,0 +1,62 @@
+﻿@model Journal
+
+@Html.Script("~/Applications/Microblog/Scripts/tunynet/jquery.spb.microblog.List.js")
+
+@{
+    Layout = "app-home-2cols";
+    
+    Html.Style("~/Applications/Journals/Styles/app.css");
+    Html.Script("~/Applications/Blog/Scripts/jquery.spb.blog.js");
+    Html.ViewContext.RouteData.Values["CurrentNavigationId"] = 109001001;// 119001018;
+
+    Authorizer authorizer = DIContainer.Resolve<Authorizer>();
+    IUser currentUser = UserContext.CurrentUser;
+
+    IEnumerable<Attachment> attachments = ViewData.Get<IEnumerable<Attachment>>("attachments", null);
+
+    string spaceKey = "admin";
+    
+}
+
+@Html.PointMessage()
+
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-blog-detail">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="tn-detail">
+            <div class="tn-text-heading">
+                <h1 class="tn-title">@Model.journal            
+                </h1>
+                @if (UserContext.CurrentUser != null)
+            {
+                FavoriteService faroriteService = new FavoriteService(TenantTypeIds.Instance().Journals());
+                long currentUserId = UserContext.CurrentUser.UserId;
+
+                string text = "收藏", stauts = "0";
+                if (faroriteService.IsFavorited(Model.id, UserContext.CurrentUser.UserId))
+                {
+                    text = "取消收藏";
+                    stauts = "1";
+                }
+                <span class="tn-spacer tn-text-note">|</span>
+                <span class="tn-action">
+                    @Html.Link(text, SiteUrls.Instance().JournalFavorite(spaceKey, Model.id, currentUserId), text, new { id = "favoriteMicroblog-" + Model.id, status = stauts })
+                </span>                
+            }
+            </div>
+            <div class="tn-text-note tn-border-gray tn-border-top tn-detail-info">                
+                横线
+            </div>
+            <div class="tn-detail-text">
+                @Html.Raw(@Model.jdescrip)
+            </div>            
+            @Html.AdvertisingPosition("10100200003")
+            <a name="comment"></a> 
+            @Html.Action("_Comment", "Channel", new { area = "Common", commentedObjectId = Model.id, toUserId = 207677921948, ownerId = 207677921948, tenantTypeId = TenantTypeIds.Instance().Journals(), enableComment = true, subject = Model.subject })
+        </div>
+    </div>
+</div>
+
+
+@section Aside{
+    todo:显示相关杂志  猜想是否是ajax控制的post url
+}

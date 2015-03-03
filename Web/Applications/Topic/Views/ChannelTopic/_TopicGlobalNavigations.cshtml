@@ -1,0 +1,32 @@
+﻿@model IEnumerable<TopicEntity>
+@{
+    IUser currentUser = UserContext.CurrentUser;
+}
+<a class="spb-menu-link" href="@SiteUrls.Instance().ChannelTopicHome()">专题</a>
+@if (currentUser != null)
+{
+    <ul class="tn-widget-content tn-border-gray spb-group-menu">
+        <li class="tn-title tn-border-gray tn-border-bottom"><a href="@SiteUrls.Instance().FindTopic()">
+            发现专题</a><strong>我的专题</strong></li>
+        @if (Model != null && Model.Count() > 0)
+        {
+            foreach (var item in Model)
+            { 
+            <li class="tn-person">
+                <div class="tn-avatar">
+                    <a href="@SiteUrls.Instance().TopicHome(item.TopicKey)" title="@item.TopicName" >
+                        <img alt="@item.TopicName" title="@item.TopicName" src="@SiteUrls.Instance().LogoUrl(item.Logo, TenantTypeIds.Instance().Topic(), ImageSizeTypeKeys.Instance().Medium())" width="50" height="50"/>
+                    </a>
+                </div>
+                <a href="@SiteUrls.Instance().TopicHome(item.TopicKey)"  class="tn-name">@item.TopicName</a>
+            </li> 
+            }
+        }
+        else
+        {
+            <li class="tn-no-data">您还没有加入任何专题，到<a href="@SiteUrls.Instance().ChannelTopicHome()">专题首页</a>逛逛吧。</li>
+        }
+        <li class="tn-actions tn-border-gray tn-border-top"><a href="@SiteUrls.Instance().CreateTopic()">
+            创建专题</a><a href="@SiteUrls.Instance().UserJoinedTopics(UserContext.CurrentUser.UserName)">查看我的专题</a></li>
+    </ul>
+}

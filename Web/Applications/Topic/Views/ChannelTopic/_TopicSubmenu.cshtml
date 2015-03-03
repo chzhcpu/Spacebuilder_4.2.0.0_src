@@ -1,0 +1,9 @@
+﻿<h2 class="tn-pagename">
+    <span class="tn-icon-special tn-special-icon-group"></span><a href="@SiteUrls.Instance().ChannelTopicHome()" title="专题首页">专题</a>
+</h2>
+<div class="tn-shortcut">
+    @if (DIContainer.Resolve<Authorizer>().Topic_Create())
+    { 
+        @Html.Button("创建专题", ButtonTypes.Link, HighlightStyles.Lite, ButtonSizes.Default, IconTypes.SmallAdd, url: SiteUrls.Instance().CreateTopic())
+    }
+</div>

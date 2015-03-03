@@ -1,0 +1,67 @@
+﻿@model IEnumerable<TopicEntity>
+@{
+    SortBy_Topic sortBy = ViewData.Get<SortBy_Topic>("SortBy", SortBy_Topic.DateCreated_Desc);
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-hot-group">
+    <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom ">
+        <h3 class="tn-helper-reset">
+            @switch (sortBy)
+            {
+                case SortBy_Topic.DateCreated_Desc:
+                @:最新专题
+                    break;
+                case SortBy_Topic.StageHitTimes:
+                case SortBy_Topic.HitTimes:
+                @:热门专题
+                    break;
+                case SortBy_Topic.MemberCount_Desc:
+                case SortBy_Topic.GrowthValue_Desc:
+                @:活跃专题
+                break;
+            }
+        </h3>
+    </div>
+    <div class="tn-box-content tn-widget-content tn-corner-bottom">
+        <div class="tnc-person-list">
+            @if (Model.Count() <= 0)
+            {
+                <div class="tn-no-data">
+                    暂无专题</div> 
+            }
+            else
+            {
+                <ul class="tn-list tn-trisect tn-helper-clearfix">
+                    @foreach (var item in Model)
+                    { 
+                        <li class="tn-list-item tn-helper-clearfix">
+                            <div class="tn-list-item-area-left">
+                                <div class="tn-avatar">
+                                    <a href="@SiteUrls.Instance().TopicHome(item.TopicKey)" title="@item.TopicName" target="_blank">
+                                        <img src="@SiteUrls.Instance().LogoUrl(item.Logo, TenantTypeIds.Instance().Group(), ImageSizeTypeKeys.Instance().Medium())" width="50px" alt="@item.TopicName"/></a></div>
+                            </div>
+                            <div class="tn-list-item-area-main">
+                                <div class="tn-list-item-row tn-list-item-heading">
+                                    <h5 class="tn-helper-reset">
+                                        <a href="@SiteUrls.Instance().TopicHome(item.TopicKey)" title="@item.TopicName" target="_blank">@item.TopicName</a>
+                                    </h5>
+                                </div>
+                                <div class="tn-list-item-row tn-list-item-summary">
+                                    <p>
+                                        群主:
+                                        @if (item.User != null)
+                                        {
+                                            <a href="@SiteUrls.Instance().UserJoinedTopics(item.User.UserName)" title="@item.User.UserName">@item.User.DisplayName</a>
+                                        }</p>
+                                    <p>
+                                        成员：@item.MemberCount</p>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+        <div class="tn-more tn-border-gray tn-border-dashed tn-border-top">
+            <a href="@SiteUrls.Instance().FindTopic(sortBy: SortBy_Topic.StageHitTimes)">更多</a></div>
+    </div>
+</div>

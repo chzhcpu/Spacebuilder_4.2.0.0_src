@@ -1,0 +1,18 @@
+﻿@model PagingDataSet<Journal>
+@if (Model != null && Model.Count> 0)
+{ 
+    <div class=" spb-blog-list-wrap" id="blog-list">
+        <ul class="tn-list">
+        @foreach (var journal in Model)
+        {        
+            @Html.Partial("_Journal", journal)
+        }                   
+        </ul>
+        <div class="tn-pagination">
+            @Html.PagingButton(Model, PaginationMode.NumericNextPrevious, 5)
+        </div>
+    </div>
+}
+else { 
+    <div class="tn-no-data">暂无数据</div>
+}

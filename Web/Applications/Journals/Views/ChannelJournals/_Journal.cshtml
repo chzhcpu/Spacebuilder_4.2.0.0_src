@@ -1,0 +1,54 @@
+﻿@model Journal
+
+
+@{
+    string spaceKey = "admin";
+       
+}
+<li class="tn-list-item tn-helper-clearfix tn-border-gray tn-border-bottom">
+    <div class="tn-list-item-area-left">
+        <a href='@SiteUrls.Instance().JournalDetail(spaceKey, Model.id)' title="@Model.journal" target="_blank">
+            <img src="@Tunynet.Utilities.WebUtility.ResolveUrl("~/Uploads/journal_cover201412.jpg")" alt="@Model.journal" width="100px" />
+        </a>
+    </div>
+
+    <div class="tn-list-item-area-right">
+           
+    </div>
+   
+    <div class="tn-list-item-area-main">
+        <div class="tn-list-item-row tn-list-item-heading">
+            <h5>
+                <a href="@SiteUrls.Instance().JournalDetail(spaceKey, Model.id)" class="tn-user-name" title="@Model.journal" target="_blank">
+                         @StringUtility.Trim(Model.journal, 30)
+                </a>
+            </h5>
+            <h6>
+                <a href="@Model.jsite" class="tn-user-name" title="@Model.journal" target="_blank">@Model.abbr</a>
+            </h6>
+        </div>
+        <div class="tn-list-item-row">
+            <span class="tn-user-name tn-text-note">出版商：<a href='@Model.publishersite' title="@Model.publisher">@Model.publisher</a></span>
+            <span class="tn-date tn-text-note">ISSN：@Model.issn</span>
+            <span class="tn-date tn-text-note">eISSN：@Model.eissn</span> 
+        </div>
+        <div class="tn-list-item-row tn-list-info tn-text-note">
+            @if (Model.subject != null)
+            {
+                <span class="tn-category">学科：@Html.Raw(@Model.subject) </span>
+            }
+        </div>
+        <div class="tn-list-item-row">
+                <p class="tn-tags-cloud">
+                 子学科：<span class="tn-bg-light tn-border-light">@Model.subcat</span>
+                </p>
+          </div>
+     
+        @if (Model.jdescrip.Length > 0)
+        {
+            <div class="tn-list-item-row tn-list-item-summary">简介：
+                @HtmlUtility.TrimHtml(Model.jdescrip, 75)
+            </div>
+        }
+    </div>
+</li>

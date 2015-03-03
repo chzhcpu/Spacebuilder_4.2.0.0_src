@@ -1,0 +1,18 @@
+﻿@model Journal
+<li class="tn-list-item tn-helper-clearfix tn-border-gray tn-border-bottom tn-border-dashed">
+<!--
+if (!string.IsNullOrEmpty(Model.FeaturedImage)){ 
+    <div class="tn-list-item-area-left"><img alt="Model.ResolvedSubject" height="100px" width="100px" src="SiteUrls.Instance().ImageUrl(Model.FeaturedImage,TenantTypeIds.Instance().BlogThread(),ImageSizeTypeKeys.Instance().Small())" /></div>
+}SiteUrls.Instance().BlogDetail(UserIdToUserNameDictionary.GetUserName(Model.UserId), Model.ThreadId)
+   -->
+<div class="tn-list-item-area-main">
+    <div class="tn-list-item-row tn-list-item-heading">
+        <h5 class="tn-helper-reset"> <a href="@SiteUrls.Instance().BlogDetail(UserIdToUserNameDictionary.GetUserName(Model.UserId), Model.ThreadId)" target="_blank">@Model.journal</a>     
+        </h5>
+    </div>
+    <div class="tn-list-item-row tn-list-item-summary">
+        <p>@Html.Raw(Model.jdescrip)</p>
+    </div>
+
+</div>
+</li>

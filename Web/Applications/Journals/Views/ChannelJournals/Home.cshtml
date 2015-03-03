@@ -1,0 +1,15 @@
+﻿@model PagingDataSet<Journal>
+@{
+    Layout = "app-home-2cols";
+    Html.Style("~/Applications/Journals/Styles/app.css");
+}
+
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-blog-list">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        @Html.Partial("_List", Model)
+    </div>
+</div>
+
+@section Aside{
+    <p>这里是主侧边栏</p>
+}

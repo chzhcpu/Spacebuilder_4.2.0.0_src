@@ -1,0 +1,9 @@
+﻿@model PagingDataSet<Journal>
+@{
+    JournalSearcher journalSearcher = (JournalSearcher)SearcherFactory.GetSearcher(JournalSearcher.CODE);
+    string keyword = Request.QueryString.GetString("keyword", string.Empty);
+}
+@if (Model.TotalRecords > 0)
+{
+  <div>@Model.Count()</div>
+}

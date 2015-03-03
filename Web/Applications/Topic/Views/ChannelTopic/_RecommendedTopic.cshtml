@@ -1,0 +1,49 @@
+﻿@model IEnumerable<RecommendItem>
+@if (Model != null && Model.Count() > 0) 
+{
+    <div class="tn-box tn-widget tn-widget-content tn-corner-all spb-hot-group">
+        <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom ">
+            <h3 class="tn-helper-reset">
+                推荐专题
+            </h3>
+        </div>
+        <div class="tn-box-content tn-widget-content tn-corner-bottom">
+            <div class="tnc-person-list">
+                <ul class="tn-list tn-trisect tn-helper-clearfix">
+                    @foreach (var item in Model)
+                    {
+                        if (item.GetTopic() != null && item.GetTopic().AuditStatus == AuditStatus.Success)
+                        { 
+                        <li class="tn-list-item tn-helper-clearfix">
+                            <div class="tn-list-item-area-left">
+                                <div class="tn-avatar">
+                                    <a href="@SiteUrls.Instance().TopicHome(item.GetTopic().TopicKey)" title="@item.GetTopic().TopicName" target="_blank">
+                                        <img src="@SiteUrls.Instance().LogoUrl(item.GetTopic().Logo, TenantTypeIds.Instance().Group(), ImageSizeTypeKeys.Instance().Medium())" width="50px" alt="@item.GetTopic().TopicName"/>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="tn-list-item-area-main">
+                                <div class="tn-list-item-row tn-list-item-heading">
+                                    <h5 class="tn-helper-reset">
+                                        <a href="@SiteUrls.Instance().TopicHome(item.GetTopic().TopicKey)" title="@item.ItemName" target="_blank">@item.ItemName</a>
+                                    </h5>
+                                </div>
+                                <div class="tn-list-item-row tn-list-item-summary">
+                                    <p>
+                                        群主:
+                                        @if (item.GetTopic().User != null)
+                                        {
+                                            <a href="@SiteUrls.Instance().UserJoinedTopics(item.GetTopic().User.UserName)" title="@item.GetTopic().User.UserName">@item.GetTopic().User.DisplayName</a>
+                                        }</p>
+                                    <p>
+                                        成员：@item.GetTopic().MemberCount</p>
+                                </div>
+                            </div>
+                        </li>
+                        }
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+}

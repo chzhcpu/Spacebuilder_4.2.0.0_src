@@ -1,0 +1,53 @@
+﻿@model TopicEntity
+@Html.Script("~/Applications/Group/Scripts/jquery.spb.group.js")
+
+@{
+    bool isMember = ViewData.Get<bool>("isMember", false);
+    bool showQuit = ViewData.Get<bool>("showQuit", false);
+    string buttonName = ViewData.Get<string>("buttonName", "加入");
+    bool isOwner = ViewData.Get<bool>("isOwner", false);
+    bool isApplied = ViewData.Get<bool>("isApplied", false);
+    bool isManager = ViewData.Get<bool>("isManager", false);
+    string url = string.Empty;
+    string plugin = string.Empty;
+    if (Model.JoinWay == TopicJoinWay.ByApply)
+    {
+        url = SiteUrls.Instance()._EditApplyOfTopic(Model.TopicId);
+        if (!isApplied)
+        {
+            plugin = "dialog";
+        }
+    }
+    if (Model.JoinWay == TopicJoinWay.Direct)
+    {
+        url = SiteUrls.Instance().JoinTopic(Model.TopicId);
+    }
+    if (Model.JoinWay == TopicJoinWay.ByQuestion)
+    {
+        url = SiteUrls.Instance()._ValidateQuestionOfTopic(Model.TopicId);
+        plugin = "dialog";
+    }
+    bool isPrivate = (Model.JoinWay == TopicJoinWay.ByInvite);
+}
+@if (isMember)
+{
+    if (!isOwner || !isManager)
+    { 
+    <span class="tn-explain-icon"><span class="tn-icon tn-icon-accept"></span><span class="tn-icon-text">已加入</span></span>
+    }
+    if (showQuit && !isOwner)
+    {
+    <span class="tn-action"><span class="tn-action-text"><a id="quitGroup-@(Model.TopicId)" href="@SiteUrls.Instance()._QuitTopic(Model.TopicId)">退出</a></span></span>
+    }
+}
+else
+{
+    if (!isPrivate)
+    { 
+    <a data-joinway="@(Model.JoinWay)" data-success="JoinGroupSuccessCallBack" data-isApplied="@isApplied" id="applyJoin-@(Model.TopicId)" href="@url" plugin="@plugin" class="tn-button tn-corner-all tn-button-default tn-button-text-icon-primary"><span class="tn-icon tn-smallicon-add"></span><span class="tn-button-text">@buttonName</span> </a>
+    }
+    if (Model.JoinWay == TopicJoinWay.Direct)
+    { 
+    <span class="tn-explain-icon" style="display: none"><span class="tn-icon tn-icon-accept"></span><span class="tn-icon-text">已加入</span></span>
+    }
+}

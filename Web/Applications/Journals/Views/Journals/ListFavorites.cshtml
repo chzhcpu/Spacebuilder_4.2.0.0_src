@@ -1,0 +1,49 @@
+﻿@model  PagingDataSet<Journal>
+@{
+    Layout = "app-list-2cols";
+    bool showNavigation = false;
+    if (UserContext.CurrentUser != null && UserContext.CurrentUser.UserName == Url.SpaceKey())
+    {
+        showNavigation = true;
+    }
+    Html.ViewContext.RouteData.Values["ShowNavigation"] = showNavigation;
+}
+@section Aside{
+    Html.Action("_TopTopics", "ChannelMicroblog", new { topNum = 10 })
+}
+@{
+    Html.Style("~/Applications/Microblog/Styles/app.css");
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-microfav">
+            <div class="tn-box-content tn-widget-content tn-corner-all">
+                <div class="spb-microfav-wrap">
+                <div class="tn-main-heading tn-border-gray tn-border-bottom">
+                  <h2>
+                  我的收藏
+                    @if (Model.TotalRecords > 0)
+                    {
+                        @("（共" + Model.TotalRecords + "条）")
+                    }
+                  </h2>
+                </div>
+                    @if (Model != null && Model.Count() > 0)
+                    {
+                           
+                        <ul class="tn-list tnc-dynamic">
+                            @foreach (Journal microblog in Model)
+                            {
+                                @Html.Partial("~/Applications/Journals/Views/ChannelJournals/_Journal.cshtml", microblog)
+                            }
+                        </ul>
+                        <div class="tn-pagination">
+                            @Html.PagingButton(Model)
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="tn-no-data">
+                            还没有收藏过微博</div>
+                    }
+                </div>
+            </div>
+        </div>

@@ -1,0 +1,26 @@
+﻿@model BatchDois 
+@{
+    Layout = "manage-2cols";
+    //Layout = "app-1col";
+    //Html.ViewContext.RouteData.Values["CurrentNavigationId"] = 13900190;
+}
+@Html.StatusMessage()
+<div class="tn-box tn-widget tn-widget-content tn-corner-all spb-group-edit">
+    <div class="tn-box-content tn-widget-content tn-corner-all">
+        <div class="tn-main-heading tn-border-gray tn-border-bottom">
+            <h2>
+                批量添加文章</h2>
+        </div>
+        @using (Html.BeginForm("BatchAddPapers", "TopicSpaceSettings", new { spaceKey = Url.SpaceKey() }, FormMethod.Post, new { enctype = "MULTIPART/FORM-DATA", id = "form-paper-add" }))
+        {
+            <h2>@Model.TopicName</h2>       
+            <div class="tn-form-box">
+                <span>请输入文章doi,每行一个：</span><br />
+                @Html.TextAreaFor(n => n.dois, new {@id="papersdoi", @class = "tn-textarea tn-border-gray",@rows="20", @cols="40" })
+                
+            </div>
+            <button type="submit">提交</button>
+        }
+    </div>
+</div>
+

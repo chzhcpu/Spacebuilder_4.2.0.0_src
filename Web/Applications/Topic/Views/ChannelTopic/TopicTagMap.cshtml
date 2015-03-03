@@ -1,0 +1,17 @@
+﻿@{
+    Layout = "app-list-2cols";
+}
+@section ContentHeader{
+   @Html.Action("_TopicSubmenu", "ChannelTopic")
+}
+@section Aside{
+     @Html.Action("_TopTopics", "ChannelTopic", new { topNumber = 5, sortBy = SortBy_Topic.DateCreated_Desc, viewName = "_TopTopics_List" })
+    @Html.Action("_RecommendedTopicOwners", "ChannelTopic", new { topNumber = 2, recommendTypeId = "00001111" })
+}
+<div class="tn-box tn-widget tn-widget-content tn-corner-all">
+    <div class="tn-box-header tn-widget-header tn-corner-top tn-border-bottom">
+        <h3 class="tn-helper-reset">
+            标签云图</h3>
+    </div>
+    @Html.Action("_TagCloud", "Channel", new { area = "Common", num = 100, tenantTypeId = TenantTypeIds.Instance().Topic()})
+</div>
