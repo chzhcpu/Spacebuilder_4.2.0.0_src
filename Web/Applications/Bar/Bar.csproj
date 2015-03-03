@@ -200,6 +200,7 @@
     <Compile Include="Configuration\BarTagUrlGetter.cs" />
     <Compile Include="Configuration\BarApplicationStatisticDataGetter.cs" />
     <Compile Include="Configuration\BarPostAtUserAssociatedUrlGetter.cs" />
+    <Compile Include="Configuration\TopicUrlGetter.cs" />
     <Compile Include="Controllers\BarActivityController.cs" />
     <Compile Include="Controllers\BarController.cs" />
     <Compile Include="Controllers\ControlPanelBarController.cs" />
@@ -440,6 +441,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Bar\_TopicTops.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Bar\_SectionDetailOfTopic.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Bar\SectionDetailOfTopic.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

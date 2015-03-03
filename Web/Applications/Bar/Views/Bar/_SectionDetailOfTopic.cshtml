@@ -17,7 +17,7 @@
     #region 贴吧群组扩展代码
 
     string tenantTypeId = ViewData.Get<string>("TenantTypeId", TenantTypeIds.Instance().Bar());
-    ViewData["TenantTypeId"] = tenantTypeId == TenantTypeIds.Instance().Group() ? TenantTypeIds.Instance().Group() : TenantTypeIds.Instance().Bar();
+    ViewData["TenantTypeId"] = tenantTypeId == TenantTypeIds.Instance().Topic() ? TenantTypeIds.Instance().Topic() : TenantTypeIds.Instance().Bar();
     IBarUrlGetter urlGetter = BarUrlGetterFactory.Get(tenantTypeId);
 
     #endregion
@@ -30,7 +30,7 @@
     {
         postCountSelectedClass = "tn-tabs-selected";
     }
-    else if (tenantTypeId == TenantTypeIds.Instance().Group() && isPosted.HasValue)
+    else if (tenantTypeId == TenantTypeIds.Instance().Topic() && isPosted.HasValue)
     {
         if (isPosted == true)
         {
@@ -60,9 +60,9 @@
                 热门</a> </li>
             <li class="tn-widget-content tn-border-gray tn-border-trl @essentialSelectedClass"><a href="@Html.Raw(urlGetter.SectionDetail(barSection.SectionId, SortBy_BarThread.StageHitTimes, true))">
                 精华</a> </li>
-            @if (tenantTypeId == TenantTypeIds.Instance().Group() && currentUser != null)
+            @if (tenantTypeId == TenantTypeIds.Instance().Topic() && currentUser != null)
             { 
-                <li class="tn-widget-content tn-border-gray tn-border-trl @threadsSelectedClass"><a href="@SiteUrls.Instance().GroupSectionDetail(GroupIdToGroupKeyDictionary.GetGroupKey(barSection.SectionId), isPosted: false)">
+                <li class="tn-widget-content tn-border-gray tn-border-trl @threadsSelectedClass"><a href="@SiteUrls.Instance().TopicSectionDetail(TopicIdToTopicKeyDictionary.GetTopicKey(barSection.SectionId), isPosted: false)">
                     我的讨论</a> </li>
             }
             @if (ViewData.Get<bool>("ShowEditButton", true))
@@ -138,9 +138,9 @@
             { 
                 <div class="tn-directory tn-helper-clearfix">
                     <div class="tn-directory-level">
-                        <span class="tn-directory-item tn-text-note @myThreadsSelectedClass"><a href="@SiteUrls.Instance().GroupSectionDetail(GroupIdToGroupKeyDictionary.GetGroupKey(barSection.SectionId), isPosted: false)">
+                        <span class="tn-directory-item tn-text-note @myThreadsSelectedClass"><a href="@SiteUrls.Instance().TopicSectionDetail(TopicIdToTopicKeyDictionary.GetTopicKey(barSection.SectionId), isPosted: false)">
                             我的帖子</a> </span><span class="tn-spacer tn-text-note">|</span> <span class="tn-directory-item  @myPostSelectedClass">
-                                <a href="@SiteUrls.Instance().GroupSectionDetail(GroupIdToGroupKeyDictionary.GetGroupKey(barSection.SectionId), isPosted: true)">
+                                <a href="@SiteUrls.Instance().TopicSectionDetail(TopicIdToTopicKeyDictionary.GetTopicKey(barSection.SectionId), isPosted: true)">
                                     我的回复</a> </span>
                     </div>
                 </div>
