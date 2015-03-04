@@ -44,3 +44,8 @@ Temporary Items
 
 bin
 obj
+IndexFiles
+
+.config
+.suo
+.csproj
